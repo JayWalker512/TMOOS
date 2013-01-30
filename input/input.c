@@ -1,0 +1,96 @@
+#include "input.h"
+
+#ifndef TESTCASE
+#include "../os.h"
+#endif
+
+#include "../hardware/hardware.h"
+#include "../time/time.h"
+#include "../sharedlib/binary.h"
+
+#ifdef DEBUG
+#include "../debug/debug.h"
+#include "../avr_common.h"
+#endif
+
+unsigned char m_inputUpdateInterval; //max of 255ms which is ~4hz
+unsigned long m_timeToUpdate;
+unsigned int m_calibMin, m_calibMax;
+unsigned char m_wheelPos;
+unsigned char m_buttonStates;
+unsigned char m_inputPins[3];
+
+/* TODO Maybe we should add functions to allow calibrating the input wheel via the
+interactive console, but for now it will be hardcoded. */
+char 
+INP_Init(void)
+{
+	m_inputUpdateInterval = 20;
+	m_timeToUpdate = 0;
+	m_calibMin = 150;
+	m_calibMax = 850;
+	m_buttonStates = 0;
+	
+	m_inputPins[INPUT_WHEEL] = 8;
+	m_inputPins[INPUT_PB1] = 25; /*refer to pins_arduino.h 25 refers to D7 which 
+	isnt correctly reflected on teensy... so we'll have to edit it later. */
+	/* TODO get pins_arduino.h and core_pins.h from teensyduino lib so this stuff
+	works properly. */
+				
+	m_inputPins[INPUT_PB2] = 10;
+	return 1;
+}
+
+void 
+INP_Update(void)
+{	
+	unsigned long curTime = TME_GetAccurateMillis();
+	if (curTime < m_timeToUpdate)
+		return;
+		
+	m_timeToUpdate = curTime + m_inputUpdateInterval;
+	//print("Updated input!\n");
+
+	//update wheel 
+	unsigned long tempState = 0;
+	tempState = HRD_GetPinAnalog(m_inputPins[INPUT_WHEEL]);
+	if (tempState > m_calibMax)
+		tempState = m_calibMax;
+	else if (tempState < m_calibMin)
+		tempState = m_calibMin;
+		
+	m_wheelPos = (unsigned long)(tempState - m_calibMin) * 255 / (m_calibMax - m_calibMin);
+	
+	//update buttons
+	if (HRD_GetPinDigital(m_inputPins[INPUT_PB1]) == 0) //active low, remember!
+		SetBit(&m_buttonStates, INPUT_PB1);
+	else
+		ClearBit(&m_buttonStates, INPUT_PB1);
+		
+	if (HRD_GetPinDigital(m_inputPins[INPUT_PB2]) == 0)
+		SetBit(&m_buttonStates, INPUT_PB2);
+	else
+		ClearBit(&m_buttonStates, INPUT_PB2);
+}
+
+
+unsigned long 
+INP_GetInputState(enum e_InputDevice device)
+{
+	switch (device)
+	{
+		case INPUT_WHEEL:
+			return m_wheelPos;
+			break;
+		case INPUT_PB1:
+			return GetBit(&m_buttonStates, INPUT_PB1);
+			break;
+		case INPUT_PB2:
+			return GetBit(&m_buttonStates, INPUT_PB2);
+			break;
+		default:
+			return 0;
+	}
+	return 0;
+}
+

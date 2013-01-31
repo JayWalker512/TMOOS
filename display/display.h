@@ -56,7 +56,7 @@ char DSP_BitBLT(const char * const src,
 void DSP_Clear(const char state);
 
 //well teensy compiler is shitting the bed about enums... time for sleep
-char DSP_SetConfig(enum e_DSPParameter parameter, const char newValue);
+char DSP_SetConfig(enum e_DSPParameter parameter, const unsigned char newValue);
 
 char DSP_GetConfig(enum e_DSPParameter parameter);
 

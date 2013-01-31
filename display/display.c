@@ -14,13 +14,6 @@
 #include "../avr_common.h"
 #endif
 
-/* There are two display models available. Model 0 is (slightly) faster, but 
-wastes a fair amount of memory. Model 1 is slower but uses the absolute minimum
-required memory. Since pixel data is stored in memory differently for each of these,
-they require different code for setting/getting pixels, clearing framebuffer, and
-doing bitblit operations. */
-#define DISPLAYMODEL_1
-
 #define DEFAULT_REFRESH_RATE 50
 
 #ifndef NO_DOUBLE_BUFFER_SAVE_MEMORY
@@ -50,7 +43,7 @@ doing bitblit operations. */
 #define DISPLAY_ROWS 5
 #endif
 
-static void DSP_ConfigureDriver(const char refreshRate);
+static void DSP_ConfigureDriver(const unsigned char refreshRate);
 
 static void DSP_RefreshDriver0(void);
 static void DSP_RefreshDriver1(void);
@@ -61,24 +54,22 @@ char DSP_GetPixelMem(const char * const src,
 			const unsigned char srcX,
 			const unsigned char srcY);
 
-/* TODO Display Model 0 soon to be deprecated... don't think I'll be using it. 
-Remove these functions whenever. */
-#ifdef DISPLAYMODEL_0
-#define FRAMEBUFFER_TYPE unsigned short int
-static FRAMEBUFFER_TYPE m_frameBuffer[NUM_BUFFERS][FRAMEBUFFER_ROWS];
-#endif
 
-#ifdef DISPLAYMODEL_1
 #define FRAMEBUFFER_TYPE unsigned char
 #define DISPLAY_NUMPIXELS DISPLAY_ROWS * DISPLAY_COLUMNS
 #define FRAMEBUFFER_SIZE_BYTES (DISPLAY_NUMPIXELS) / (sizeof(FRAMEBUFFER_TYPE) * 8) + 1
 #define FRAMEBUFFER_TYPE_BITS (sizeof(FRAMEBUFFER_TYPE) * 8)
 static FRAMEBUFFER_TYPE m_frameBuffer[NUM_BUFFERS][FRAMEBUFFER_SIZE_BYTES];
-#endif
+
 
 static FRAMEBUFFER_TYPE *m_backBuffer, *m_frontBuffer;
 
-static unsigned int m_scanlineDelayUs;
+static unsigned long m_scanlineDelayUs;
+
+//relevant to DSP_RefreshDriver1()
+static unsigned long m_nextScanlineTime;
+static char m_curRow;
+
 static unsigned char m_DSPState;
 
 //shouldnt initialize here, but doing it anyway for now
@@ -113,9 +104,12 @@ DSP_Init(void)
 	#ifdef NO_DOUBLE_BUFFER_SAVE_MEMORY
 	m_frontBuffer = m_backBuffer = &m_frameBuffer;
 	#endif
+
+	m_curRow = 0; //for driver1
+	m_nextScanlineTime = 0;
 	
 	DSP_ConfigureDriver(DEFAULT_REFRESH_RATE);
-	DSP_SetConfig(DSP_VSYNC, 1);
+	DSP_SetConfig(DSP_VSYNC, 0);
 	DSP_SetConfig(DSP_DESTRUCTIVE_BITBLT, 1);
 	
 	/* FIXME no double buffer is broken right now... */
@@ -139,7 +133,7 @@ DSP_Init(void)
 }
 
 static void
-DSP_ConfigureDriver(const char refreshRate)
+DSP_ConfigureDriver(const unsigned char refreshRate)
 {
 	m_scanlineDelayUs = 1000000 / (DISPLAY_ROWS * refreshRate);
 }
@@ -253,76 +247,38 @@ DSP_RefreshDriver1(void)
 	time information and return when it's not time to update the next row yet.
 	May be slightly inconsistent row timing, but that's why it's ASYNC! Also
 	games aren't locked at displays refresh rate. */
-}
-
-#ifdef DISPLAYMODEL_0
-void 
-DSP_PutPixel(const char x, const char y, const char state)
-{
-	if (x >= 0 && x < DISPLAY_COLUMNS)
-	{
-		if (y >= 0 && y < DISPLAY_ROWS)
-		{
-			if (state)
-				SetBit((m_backBuffer+y), sizeof(FRAMEBUFFER_TYPE) * 8 - (x+1));
-			else
-				ClearBit((m_backBuffer+y), sizeof(FRAMEBUFFER_TYPE) * 8 - (x+1));
-		}
-	}
 	
-	//old code for reference
-	/*if (state)
-		*(m_backBuffer+y) |= (1 << (sizeof(FRAMEBUFFER_TYPE) * 8 - (x+1) )); //works as expected now
+	
+	if (TME_GetAccurateMicros() < m_nextScanlineTime)
+		return;
+			
+	//set previous row anode low
+	if (m_curRow == 0)
+		HRD_SetPin(m_anodePins[(DISPLAY_ROWS - 1) * 2], m_anodePins[(DISPLAY_ROWS - 1) * 2 + 1], 0);
 	else
-		*(m_backBuffer+y) &= ~(1 << (sizeof(FRAMEBUFFER_TYPE) * 8 - (x+1) ));*/
-}
+		HRD_SetPin(m_anodePins[(m_curRow - 1) * 2], m_anodePins[(m_curRow - 1) * 2 + 1], 0);
 
-char 
-DSP_GetPixel(const char x, const char y)
-{
-	//may be tricky behavior... should we check back or front buffer?
-	//checking against the FRONT buffer for now, seems most intuitive
-	if (x >= 0 && x < DISPLAY_COLUMNS)
-	{
-		if (y >= 0 && y < DISPLAY_ROWS)
+	//setting active cathodes low. Do this first to avoid ghosting
+	for (int x = 0; x < DISPLAY_COLUMNS; x++)
+	{				
+		if (DSP_GetPixel(x, m_curRow)) //can inline this, using function now for clarity
+		{	
+			HRD_SetPin(m_cathodePins[x * 2], m_cathodePins[x * 2 + 1], 0);
+		}
+		else
 		{
-			//return !!( *(m_frontBuffer+y) & (1 << (sizeof(FRAMEBUFFER_TYPE) * 8 - (x+1) )) );
-			return GetBit((m_frontBuffer+y), (sizeof(FRAMEBUFFER_TYPE) * 8 - (x - 1)) );	
+			HRD_SetPin(m_cathodePins[x * 2], m_cathodePins[x * 2 + 1], 1);
 		}
 	}
+
+	//set current row anode high
+	HRD_SetPin(m_anodePins[m_curRow * 2], m_anodePins[m_curRow * 2 + 1], 1);
 	
-	return 0;
+	m_curRow++; 
+	if (m_curRow >= DISPLAY_ROWS)
+		m_curRow = 0;
+	m_nextScanlineTime = TME_GetAccurateMicros() + m_scanlineDelayUs;
 }
-
-char 
-DSP_BitBLT(const char * const src, 
-		const unsigned char srcWidth, 
-		const unsigned char srcHeight,
-		const int dstX,
-		const int dstY)
-{
-
-	//maybe write so that 1 is only returned if anything was actually copied to frameBuffer
-	return 1;
-}
-
-void 
-DSP_Clear(const char state)
-{
-	for (char y = 0; y < DISPLAY_ROWS; y++)
-	{
-		if (!state)
-			*(m_backBuffer+y) = 0;
-		else
-			*(m_backBuffer+y) = ~((*m_backBuffer+y) & 0);
-	}
-}
-#endif
-
-#ifdef DISPLAYMODEL_1
-/* DISPLAYMODEL_1 uses memory more efficiently by storing pixel data in a linear array of bits.
-This is slightly slower, but memory is a scarcer resource in this environment. */
-
 
 void 
 DSP_PutPixel(const char x, const char y, const char state)
@@ -442,10 +398,9 @@ DSP_Clear(const char state)
 			*(m_backBuffer+y) = ~((*m_backBuffer+y) & 0);
 	}
 }
-#endif
 
 char 
-DSP_SetConfig(enum e_DSPParameter parameter, const char newValue)
+DSP_SetConfig(enum e_DSPParameter parameter, const unsigned char newValue)
 {
 	switch ( parameter )
 	{
@@ -487,21 +442,6 @@ DSP_GetConfig(enum e_DSPParameter parameter)
 }
 
 #ifdef DEBUG
-
-#ifdef DISPLAYMODEL_0
-void 
-DSP_DBG_PrintFrontBufBin(void)
-{
-	for(char y = 0; y < DISPLAY_ROWS; y++)
-	{
-		printBin16Bit(*(m_frontBuffer+y));
-		print("\n");
-		_delay_us(10000);
-	}
-}
-#endif 
-
-#ifdef DISPLAYMODEL_1
 void
 DSP_DBG_PrintFrontBufBin(void)
 {
@@ -512,6 +452,4 @@ DSP_DBG_PrintFrontBufBin(void)
 		_delay_us(10000);
 	}
 }
-#endif
-
 #endif

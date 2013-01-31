@@ -120,7 +120,7 @@ OS_Init(void)
 	OS_SetConfig(CPU_SCALING_ENABLED, 0);
 	OS_SetConfig(SOUND_ENABLED, 1);
 	
-	DSP_SetConfig(DSP_REFRESH_HZ, 50);
+	DSP_SetConfig(DSP_REFRESH_HZ, 60);
 	
 	return 1;
 }

@@ -1,14 +1,14 @@
 #include "gfx.h"
 #include "../display/display.h"
 #include "../sharedlib/binary.h"
-#include "../sharedlib/glyphs.h"
+//#include "../sharedlib/glyphs.h"
 
-unsigned char m_gfxState;
+unsigned char m_GFXState;
 
 void 
 GFX_Init(void)
 {
-	m_gfxState = 0;
+	m_GFXState = 0;
 	GFX_PutPixel = &DSP_PutPixel;
 	GFX_GetPixel = &DSP_GetPixel;
 	GFX_BitBLT = &DSP_BitBLT;
@@ -19,13 +19,13 @@ GFX_Init(void)
 void 
 GFX_Enable(enum e_GFXState parameter)
 {
-	SetBit(&m_gfxState, parameter);
+	SetBit(&m_GFXState, parameter);
 }
 
 void 
 GFX_Disable(enum e_GFXState parameter)
 {
-	ClearBit(&m_gfxState, parameter);
+	ClearBit(&m_GFXState, parameter);
 }
 
 void 

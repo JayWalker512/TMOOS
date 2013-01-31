@@ -108,6 +108,7 @@ static const uint8_t MOSI = 16;
 static const uint8_t MISO = 14;
 static const uint8_t SCK  = 15;
 
+//TODO edit this to be compatible with teensy 2.0
 // Mapping of analog pins as digital I/O
 // A6-A11 share with digital pins
 static const uint8_t A0 = 18;

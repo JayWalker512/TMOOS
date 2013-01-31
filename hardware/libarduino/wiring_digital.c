@@ -163,7 +163,7 @@ void digitalWrite(uint8_t pin, uint8_t val)
 
 int digitalRead(uint8_t pin)
 {
-	uint8_t timer = digitalPinToTimer(pin);
+	//uint8_t timer = digitalPinToTimer(pin);
 	uint8_t bit = digitalPinToBitMask(pin);
 	uint8_t port = digitalPinToPort(pin);
 
@@ -171,7 +171,13 @@ int digitalRead(uint8_t pin)
 
 	// If the pin that support PWM output, we need to turn it off
 	// before getting a digital reading.
-	if (timer != NOT_ON_TIMER) turnOffPWM(timer);
+	
+	
+	/* FIXME I think the big fat branch in turnOffPWM is causing the hangup here.
+	Can't we just turn off all PWM's once at the beginning of the program? 
+	 
+	 No need, this doesn't actually do anything afaik*/
+	//if (timer != NOT_ON_TIMER) turnOffPWM(timer);
 
 	if (*portInputRegister(port) & bit) return HIGH;
 	return LOW;

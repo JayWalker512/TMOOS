@@ -9,7 +9,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#include "binary.h"
+#include "binary_ard.h"
 
 #ifdef __cplusplus
 extern "C"{

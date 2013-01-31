@@ -116,10 +116,13 @@ OS_Init(void)
 	m_idleTimeStart = 0;
 	m_idleTimeEnd = 0;
 	m_idleTime = 0;
-	
-	OS_SetConfig(CPU_SCALING_ENABLED, 0);
-	OS_SetConfig(SOUND_ENABLED, 1);
-	
+
+	/* TODO These should be loaded from EEPROM on startup*/
+	OS_SetConfig(OS_CPU_SCALING_ENABLED, 0);
+	OS_SetConfig(OS_SOUND_ENABLED, 1);
+	OS_SetConfig(OS_DISPLAY_ENABLED, 1);
+	OS_SetConfig(OS_INPUT_ENABLED, 1);
+
 	DSP_SetConfig(DSP_REFRESH_HZ, 60);
 	
 	return 1;
@@ -134,10 +137,14 @@ OS_Update(void)
 	OS_CPULoadCalc(TIMER_START);
 	
 	//CON_Update();
-	INP_Update();
-	DSP_Refresh();
 	
-	if (GetBit(&g_OSState, SOUND_ENABLED))
+	if (GetBit(&g_OSState, OS_INPUT_ENABLED))
+		INP_Update();
+	
+	if (GetBit(&g_OSState, OS_DISPLAY_ENABLED))
+		DSP_Refresh();
+	
+	if (GetBit(&g_OSState, OS_SOUND_ENABLED))
 		SND_Update();
 		
 	/*UpdateGlobals(); undecided on this one. probably should use this to
@@ -180,20 +187,32 @@ OS_SetConfig(enum e_OSParameter parameter, const char newValue)
 {
 	switch ( parameter )
 	{
-		case CPU_SCALING_ENABLED:
+		case OS_CPU_SCALING_ENABLED:
 			if (newValue)
-				SetBit(&g_OSState, CPU_SCALING_ENABLED);
+				SetBit(&g_OSState, OS_CPU_SCALING_ENABLED);
 			else
 			{
-				ClearBit(&g_OSState, CPU_SCALING_ENABLED);
+				ClearBit(&g_OSState, OS_CPU_SCALING_ENABLED);
 				//TME_ScaleCpu(CPU_16MHZ);
 			}
 			break;
-		case SOUND_ENABLED:
+		case OS_SOUND_ENABLED:
 			if (newValue)
-				SetBit(&g_OSState, SOUND_ENABLED);
+				SetBit(&g_OSState, OS_SOUND_ENABLED);
 			else
-				ClearBit(&g_OSState, SOUND_ENABLED);
+				ClearBit(&g_OSState, OS_SOUND_ENABLED);
+			break;
+		case OS_DISPLAY_ENABLED:
+			if (newValue)
+				SetBit(&g_OSState, OS_DISPLAY_ENABLED);
+			else
+				ClearBit(&g_OSState, OS_DISPLAY_ENABLED);
+			break;
+		case OS_INPUT_ENABLED:
+			if (newValue)
+				SetBit(&g_OSState, OS_INPUT_ENABLED);
+			else
+				ClearBit(&g_OSState, OS_INPUT_ENABLED);
 			break;
 		default:
 			return 0;
@@ -205,8 +224,17 @@ OS_SetConfig(enum e_OSParameter parameter, const char newValue)
 char 
 OS_GetConfig(enum e_OSParameter parameter)
 {
-	//TODO write this function...
-	return 0;
+	switch ( parameter )
+	{
+		case OS_CPU_SCALING_ENABLED:
+			return GetBit(&g_OSState, OS_CPU_SCALING_ENABLED);
+			break;
+		case OS_SOUND_ENABLED:
+			return GetBit(&g_OSState, OS_SOUND_ENABLED);
+			break;
+		default:
+			return -1;
+	}
 }
 
 void
@@ -282,7 +310,7 @@ OS_CPULoadCalc(enum e_TimerParams parameter)
 		print(" Mhz\n");
 		#endif
 		
-		if (GetBit(&g_OSState, CPU_SCALING_ENABLED))
+		if (GetBit(&g_OSState, OS_CPU_SCALING_ENABLED))
 			OS_CPUScaleByLoad();
 	}		
 }

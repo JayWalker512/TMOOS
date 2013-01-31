@@ -438,7 +438,28 @@ DSP_SetConfig(enum e_DSPParameter parameter, const unsigned char newValue)
 char 
 DSP_GetConfig(enum e_DSPParameter parameter)
 {
-	return 0;
+	switch (parameter)
+	{
+		case DSP_REFRESH_HZ:
+			return (m_scanlineDelayUs * 1000000) / DISPLAY_ROWS;
+			break;
+		case DSP_VSYNC:
+			if (DSP_Refresh == &DSP_RefreshDriver0)
+				return 1;
+			else
+				return 0;
+			break;
+		case DSP_DESTRUCTIVE_BITBLT:
+			return GetBit(&m_DSPState, DSP_DESTRUCTIVE_BITBLT);
+			break;
+		case DSP_DOUBLE_BUFFER:
+			return GetBit(&m_DSPState, DSP_DOUBLE_BUFFER);
+			break;
+		default:
+			return -1;
+			break;
+	}
+	return -1;
 }
 
 #ifdef DEBUG

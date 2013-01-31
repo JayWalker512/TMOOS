@@ -10,10 +10,23 @@ enum e_InputDevice {
 	INPUT_WHEEL,
 };
 
+enum e_InputParameters {
+	INPUT_LBOUND = 0,
+	INPUT_UBOUND,
+	INPUT_POLLINTERVALMS,
+};
+
 char INP_Init(void);
 
 void INP_Update(void);
 
 unsigned long INP_GetInputState(enum e_InputDevice device);
+
+void INP_Calibrate(enum e_InputParameters parameter);
+
+void INP_SetConfig(enum e_InputParameters parameter,
+			    unsigned char newValue);
+
+int INP_GetConfig(enum e_InputParameters parameter);
 
 #endif

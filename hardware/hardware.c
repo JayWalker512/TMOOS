@@ -1,5 +1,5 @@
 #include "../avr_common.h"
-#include "Arduino.h"
+#include "libarduino/Arduino.h"
 #include "hardware.h"
 #include "analog.h"
 

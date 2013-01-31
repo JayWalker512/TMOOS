@@ -1,0 +1,68 @@
+Benchmarking my teensy OS @ current version. 1/30/2013 23:37
+Brandon Foltz
+************************************************************
+
+OS_SetConfig(OS_CPU_SCALING_ENABLED, 0);
+OS_SetConfig(OS_SOUND_ENABLED, 0);
+OS_SetConfig(OS_DISPLAY_ENABLED, 0);
+OS_SetConfig(OS_INPUT_ENABLED, 0);
+
+Cpu load: 0x0060 @ 0x0010 Mhz
+FPS: 0540
+Cpu load: 0x0060 @ 0x0010 Mhz
+FPS: 0542
+Cpu load: 0x0060 @ 0x0010 Mhz
+FPS: 0541
+Cpu load: 0x0060 @ 0x0010 Mhz
+FPS: 0541
+
+~1345 FPS
+
+-----------------------------------------------------------------
+
+OS_SetConfig(OS_SOUND_ENABLED, 1);
+OS_SetConfig(OS_DISPLAY_ENABLED, 0);
+OS_SetConfig(OS_INPUT_ENABLED, 0);
+
+Cpu load: 0x0060 @ 0x0010 Mhz
+FPS: 0541
+Cpu load: 0x0060 @ 0x0010 Mhz
+FPS: 0541
+
+~1345 FPS. Guess there's not much overhead with no playing sounds...
+
+-------------------------------------------------------------------
+
+OS_SetConfig(OS_SOUND_ENABLED, 1);
+OS_SetConfig(OS_DISPLAY_ENABLED, 1);
+OS_SetConfig(OS_INPUT_ENABLED, 0);
+
+Cpu load: 0x005A @ 0x0010 Mhz
+FPS: 04EB
+Cpu load: 0x005A @ 0x0010 Mhz
+FPS: 04EC
+
+~1260 FPS drawing a single glyph
+
+-------------------------------------------------------------------
+
+OS_SetConfig(OS_SOUND_ENABLED, 1);
+OS_SetConfig(OS_DISPLAY_ENABLED, 1);
+OS_SetConfig(OS_INPUT_ENABLED, 1);
+
+Cpu load: 0x0058 @ 0x0010 Mhz
+FPS: 04C6
+Cpu load: 0x0058 @ 0x0010 Mhz
+FPS: 04C7
+Cpu load: 0x0058 @ 0x0010 Mhz
+FPS: 0319
+Cpu load: 0x005B @ 0x0010 Mhz
+FPS: 01F0
+Cpu load: 0x005D @ 0x0010 Mhz
+FPS: 01F0
+
+~1222 FPS when only taking wheel input
+~496 FPS when taking only 1 pushbutton input. something is MAJORLY hanging up here.
+
+---------------------------------------------------------------------
+

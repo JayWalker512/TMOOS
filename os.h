@@ -11,13 +11,16 @@ necessary files from sharedlib. */
 #include <avr/pgmspace.h>
 #include <stdint.h>
 
+//the enums below are used for accessing bitwise variables most efficiently.
 enum e_FATAL_ERRORS {
 	INIT_ERROR,
 	};
-	
+
 enum e_OSParameter {
-	CPU_SCALING_ENABLED = 0,
-	SOUND_ENABLED = 1,
+	OS_CPU_SCALING_ENABLED = 0,
+	OS_SOUND_ENABLED = 1,
+	OS_DISPLAY_ENABLED = 2,
+	OS_INPUT_ENABLED = 3,
 	};
 	
 enum e_OSDebugLevels {

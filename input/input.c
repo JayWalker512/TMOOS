@@ -27,8 +27,7 @@ INP_Init(void)
 {
 	m_inputUpdateInterval = 20;
 	m_timeToUpdate = 0;
-	m_calibMin = 150;
-	m_calibMax = 850;
+	
 	m_buttonStates = 0;
 	
 	m_inputPins[INPUT_WHEEL] = 8;
@@ -38,6 +37,11 @@ INP_Init(void)
 	works properly. */
 				
 	m_inputPins[INPUT_PB2] = 10;
+	
+	/*TODO These values will need loaded from EEPROM eventually*/
+	m_calibMin = 150;
+	m_calibMax = 850;
+	
 	return 1;
 }
 
@@ -49,7 +53,6 @@ INP_Update(void)
 		return;
 		
 	m_timeToUpdate = curTime + m_inputUpdateInterval;
-	//print("Updated input!\n");
 
 	//update wheel 
 	unsigned long tempState = 0;
@@ -94,3 +97,43 @@ INP_GetInputState(enum e_InputDevice device)
 	return 0;
 }
 
+void INP_Calibrate(enum e_InputParameters parameter)
+{
+	if (parameter == INPUT_LBOUND)
+		m_calibMin = HRD_GetPinAnalog(m_inputPins[INPUT_WHEEL]);
+	else if (parameter == INPUT_UBOUND)
+		m_calibMax = HRD_GetPinAnalog(m_inputPins[INPUT_WHEEL]);
+	
+	return 1;
+}
+
+void INP_SetConfig(enum e_InputParameters parameter,
+			    unsigned char newValue)
+{
+	switch (parameter)
+	{
+		case INPUT_POLLINTERVALMS:
+			m_inputUpdateInterval = newValue;
+			break;
+		default:
+			break;		
+	}
+}
+
+int INP_GetConfig(enum e_InputParameters parameter)
+{
+	switch ( parameter )
+	{
+		case INPUT_LBOUND:
+			return m_calibMin;
+			break;
+		case INPUT_UBOUND:
+			return m_calibMax;
+			break;
+		case INPUT_POLLINTERVALMS:
+			return m_inputUpdateInterval;
+			break;
+		default:
+			return -1;
+	}
+}

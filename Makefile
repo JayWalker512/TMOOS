@@ -1,6 +1,6 @@
 # Hey Emacs, this is a -*- makefile -*-
 #----------------------------------------------------------------------------
-# WinAVR Makefile Template written by Eric B. Weddington, Jörg Wunsch, et al.
+# WinAVR Makefile Template written by Eric B. Weddington, Jï¿½rg Wunsch, et al.
 #
 # Released to the Public Domain
 #
@@ -47,7 +47,7 @@ TARGET = os
 #previously working build. revert to old_ard files if you cant make it work out
 SRC =	$(TARGET).c \
 		display/display.c sound/sound.c time/time.c input/input.c \
-		hardware/hardware.c hardware/wiring.c hardware/wiring_digital.c hardware/analog.c \
+		hardware/hardware.c hardware/libarduino/wiring.c hardware/libarduino/wiring_digital.c hardware/analog.c \
 		debug/usb_debug_only.c debug/print.c sharedlib/glyphs.c sharedlib/string.c \
 		games/game1.c games/gamelib.c gfxlib/gfx.c
 	

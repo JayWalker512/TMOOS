@@ -1,5 +1,5 @@
-#ifndef Binary_h
-#define Binary_h
+#ifndef Binary_Ard_h
+#define Binary_Ard_h
 
 #define B0 0
 #define B00 0

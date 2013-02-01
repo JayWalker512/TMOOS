@@ -7,7 +7,7 @@
 enum e_InputDevice {
 	INPUT_PB1 = 0,
 	INPUT_PB2 = 1,
-	INPUT_WHEEL = 8,
+	INPUT_WHEEL = 2,
 };
 
 enum e_InputParameters {

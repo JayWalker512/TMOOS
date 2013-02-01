@@ -33,7 +33,7 @@ INP_Init(void)
 	
 	m_inputPins[INPUT_WHEEL] = 8; //Arduino analog pin # scheme
 	m_inputPins[INPUT_PB1] = 14;	
-	m_inputPins[INPUT_PB2] = 17;
+	m_inputPins[INPUT_PB2] = 12;
 	
 	/*TODO These values will need loaded from EEPROM eventually*/
 	m_calibMin = 150;

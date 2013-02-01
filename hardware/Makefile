@@ -41,18 +41,15 @@
 
 
 # Target file name (without extension).
-TARGET = os
+TARGET = hardware_testcase
+
 
 # List C source files here. (C dependencies are automatically generated.)
-#previously working build. revert to old_ard files if you cant make it work out
 SRC =	$(TARGET).c \
-		display/display.c sound/sound.c time/time.c input/input.c \
-		hardware/hardware.c hardware/libarduino/wiring.c \
-		debug/usb_debug_only.c debug/print.c sharedlib/glyphs.c sharedlib/string.c \
-		games/game1.c games/gamelib.c gfxlib/gfx.c
-	
-#old hardware files : 
-	
+	hardware.c \
+	../debug/usb_debug_only.c \
+	../debug/print.c
+
 # MCU name, you MUST set this to match the board you are using
 # type "make clean" after changing this, so all files will be rebuilt
 #
@@ -123,8 +120,7 @@ CSTANDARD = -std=gnu99
 
 
 # Place -D or -U options here for C sources
-CDEFS = -DF_CPU=$(F_CPU)UL -DDEBUG
-#-DNO_DOUBLE_BUFFER_SAVE_MEMORY
+CDEFS = -DF_CPU=$(F_CPU)UL
 
 
 # Place -D or -U options here for ASM sources
@@ -148,7 +144,7 @@ CPPDEFS = -DF_CPU=$(F_CPU)UL
 CFLAGS = -g$(DEBUG)
 CFLAGS += $(CDEFS)
 CFLAGS += -O$(OPT)
-#CFLAGS += -funsigned-char
+CFLAGS += -funsigned-char
 CFLAGS += -funsigned-bitfields
 CFLAGS += -ffunction-sections
 CFLAGS += -fpack-struct
@@ -175,7 +171,7 @@ CFLAGS += $(CSTANDARD)
 CPPFLAGS = -g$(DEBUG)
 CPPFLAGS += $(CPPDEFS)
 CPPFLAGS += -O$(OPT)
-#CPPFLAGS += -funsigned-char
+CPPFLAGS += -funsigned-char
 CPPFLAGS += -funsigned-bitfields
 CPPFLAGS += -fpack-struct
 CPPFLAGS += -fshort-enums

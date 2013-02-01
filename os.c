@@ -67,8 +67,8 @@ main(void)
 	{
 		OS_Update();
 		
-		//GameMain();
-		Game2Main();
+		GameMain();
+		//Game2Main();
 		//Game3Main();
 	}
 	return 0;
@@ -123,7 +123,7 @@ OS_Init(void)
 	OS_SetConfig(OS_DISPLAY_ENABLED, 1);
 	OS_SetConfig(OS_INPUT_ENABLED, 1);
 
-	DSP_SetConfig(DSP_REFRESH_HZ, 60);
+	DSP_SetConfig(DSP_REFRESH_HZ, 100);
 	
 	return 1;
 }
@@ -177,7 +177,7 @@ OS_FatalError(enum e_FATAL_ERRORS error)
 		print("Well shit, something went wrong during OS_Init()\n");
 		#endif
 		
-		HRD_SetPin('D', 6, 1);
+		HRD_SetPinDigital(11, 1);
 		while(1); //loop forever
 	}
 }

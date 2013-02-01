@@ -73,7 +73,9 @@ static char m_curRow;
 static unsigned char m_DSPState;
 
 //shouldnt initialize here, but doing it anyway for now
-static char m_anodePins[DISPLAY_ROWS * 2] = {	'C', 6,
+static char m_anodePins[DISPLAY_ROWS] = { 9, 8, 7, 6, 5 };
+static char m_cathodePins[DISPLAY_COLUMNS] = { 4, 3, 2, 1, 0, 21 };
+/*static char m_anodePins[DISPLAY_ROWS * 2] = {	'C', 6,
 						'D', 3,
 						'D', 2,
 						'D', 1,
@@ -83,7 +85,7 @@ static char m_cathodePins[DISPLAY_COLUMNS * 2] = {	'B', 7,
 							'B', 2,
 							'B', 1,
 							'B', 0,
-							'F', 0 };
+							'F', 0 };*/
 
 int 
 DSP_Init(void)
@@ -173,14 +175,6 @@ DSP_RefreshDriver0(void)
 	
 	SetBit(&m_DSPState, DSP_CURRENTLY_REFRESHING);
 	
-	#ifdef DEBUG 
-	/*print("Refreshing...");
-	phex16(TME_GetAccurateMicros());
-	_delay_us(1000);
-	print("\n");
-	phex16(TME_GetAccurateMicros());*/
-	#endif
-	
 	unsigned long endTime = TME_GetAccurateMicros();
 	char curRow = 0;
 	
@@ -192,20 +186,20 @@ DSP_RefreshDriver0(void)
 			
 			//set previous row anode low
 			if (curRow == 0)
-				HRD_SetPin(m_anodePins[(DISPLAY_ROWS - 1) * 2], m_anodePins[(DISPLAY_ROWS - 1) * 2 + 1], 0);
+				HRD_SetPinDigital(m_anodePins[DISPLAY_ROWS - 1], 0);
 			else
-				HRD_SetPin(m_anodePins[(curRow - 1) * 2], m_anodePins[(curRow - 1) * 2 + 1], 0);
+				HRD_SetPinDigital(m_anodePins[curRow - 1], 0);
 			
 			//setting active cathodes low. Do this first to avoid ghosting
 			for (int x = 0; x < DISPLAY_COLUMNS; x++)
 			{				
 				if (DSP_GetPixel(x, curRow)) //can inline this, using function now for clarity
 				{	
-					HRD_SetPin(m_cathodePins[x * 2], m_cathodePins[x * 2 + 1], 0);
+					HRD_SetPinDigital(m_cathodePins[x], 0);
 				}
 				else
 				{
-					HRD_SetPin(m_cathodePins[x * 2], m_cathodePins[x * 2 + 1], 1);
+					HRD_SetPinDigital(m_cathodePins[x], 1);
 				}
 				#ifndef TESTCASE
 				OS_Update();
@@ -213,7 +207,7 @@ DSP_RefreshDriver0(void)
 			}
 			
 			//set current row anode high
-			HRD_SetPin(m_anodePins[curRow * 2], m_anodePins[curRow * 2 + 1], 1);
+			HRD_SetPinDigital(m_anodePins[curRow], 1);
 			
 			curRow++; 
 		}
@@ -224,7 +218,6 @@ DSP_RefreshDriver0(void)
 	
 	/* Maybe rather than this, keep a member variable tracking when the display was last updated, 
 	so we don't spend too long or short a time on last row. */
-	
 	endTime = TME_GetAccurateMicros() + m_scanlineDelayUs;
 	
 	#ifdef TESTCASE
@@ -242,37 +235,30 @@ DSP_RefreshDriver0(void)
 static void 
 DSP_RefreshDriver1(void)
 {
-	/* Implement an asynchronious updating display driver here. Rather than 
-	idling in the refresh loop until it's time to light the next row, keep local
-	time information and return when it's not time to update the next row yet.
-	May be slightly inconsistent row timing, but that's why it's ASYNC! Also
-	games aren't locked at displays refresh rate. */
-	
-	
 	if (TME_GetAccurateMicros() < m_nextScanlineTime)
 		return;
 			
 	//set previous row anode low
 	if (m_curRow == 0)
-		HRD_SetPin(m_anodePins[(DISPLAY_ROWS - 1) * 2], m_anodePins[(DISPLAY_ROWS - 1) * 2 + 1], 0);
+		HRD_SetPinDigital(m_anodePins[DISPLAY_ROWS - 1], 0);
 	else
-		HRD_SetPin(m_anodePins[(m_curRow - 1) * 2], m_anodePins[(m_curRow - 1) * 2 + 1], 0);
+		HRD_SetPinDigital(m_anodePins[m_curRow - 1], 0);
 
 	//setting active cathodes low. Do this first to avoid ghosting
 	for (int x = 0; x < DISPLAY_COLUMNS; x++)
 	{				
 		if (DSP_GetPixel(x, m_curRow)) //can inline this, using function now for clarity
 		{	
-			HRD_SetPin(m_cathodePins[x * 2], m_cathodePins[x * 2 + 1], 0);
+			HRD_SetPinDigital(m_cathodePins[x], 0);
 		}
 		else
 		{
-			HRD_SetPin(m_cathodePins[x * 2], m_cathodePins[x * 2 + 1], 1);
+			HRD_SetPinDigital(m_cathodePins[x], 1);
 		}
 	}
 
 	//set current row anode high
-	HRD_SetPin(m_anodePins[m_curRow * 2], m_anodePins[m_curRow * 2 + 1], 1);
+	HRD_SetPinDigital(m_anodePins[m_curRow], 1);
 	
 	m_curRow++; 
 	if (m_curRow >= DISPLAY_ROWS)

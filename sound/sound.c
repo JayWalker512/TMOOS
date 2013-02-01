@@ -45,12 +45,12 @@ void SND_Update(void)
 			if (m_pinState == 0)
 			{
 				m_pinState = 1;
-				HRD_SetPin('F', 5, 1);
+				HRD_SetPinDigital(18, 1);
 			}
 			else
 			{
 				m_pinState = 0;
-				HRD_SetPin('F', 5, 0);	
+				HRD_SetPinDigital(18, 0);	
 			}
 		
 			m_cycleEndTime = curTime + m_cycleTime;

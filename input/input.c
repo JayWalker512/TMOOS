@@ -25,18 +25,15 @@ interactive console, but for now it will be hardcoded. */
 char 
 INP_Init(void)
 {
-	m_inputUpdateInterval = 20;
+	m_inputUpdateInterval = 40;
 	m_timeToUpdate = 0;
 	
 	m_buttonStates = 0;
+	m_wheelPos = 0;
 	
-	m_inputPins[INPUT_WHEEL] = 8;
-	m_inputPins[INPUT_PB1] = 25; /*refer to pins_arduino.h 25 refers to D7 which 
-	isnt correctly reflected on teensy... so we'll have to edit it later. */
-	/* TODO get pins_arduino.h and core_pins.h from teensyduino lib so this stuff
-	works properly. */
-				
-	m_inputPins[INPUT_PB2] = 10;
+	m_inputPins[INPUT_WHEEL] = 8; //Arduino analog pin # scheme
+	m_inputPins[INPUT_PB1] = 14;	
+	m_inputPins[INPUT_PB2] = 17;
 	
 	/*TODO These values will need loaded from EEPROM eventually*/
 	m_calibMin = 150;

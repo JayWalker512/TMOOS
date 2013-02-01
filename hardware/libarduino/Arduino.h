@@ -98,17 +98,17 @@ void ARD_Init(void);
 //BMO project isn't using these so.... they can just go away.
 
 void pinMode(uint8_t, uint8_t);
-/*void digitalWrite(uint8_t, uint8_t);*/
+//void digitalWrite(uint8_t, uint8_t);
 int digitalRead(uint8_t);
-/*int analogRead(uint8_t);
-void analogReference(uint8_t mode);
-void analogWrite(uint8_t, int);*/ 
+//int analogRead(uint8_t);
+//void analogReference(uint8_t mode);
+//void analogWrite(uint8_t, int);
 
 unsigned long millis(void);
 unsigned long micros(void);
 void delay(unsigned long);
-void delayMicroseconds(unsigned int us);
-unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout);
+//void delayMicroseconds(unsigned int us);
+//unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout);
 
 void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val);
 uint8_t shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder);
@@ -188,7 +188,7 @@ extern const uint8_t PROGMEM digital_pin_to_timer_PGM[];
 #ifdef __cplusplus
 } // extern "C"
 #endif
-
+/*
 #ifdef __cplusplus
 #include "WCharacter.h"
 #include "WString.h"
@@ -210,7 +210,7 @@ long random(long, long);
 void randomSeed(unsigned int);
 long map(long, long, long, long, long);
 
-#endif
+#endif */
 
 #include "pins_arduino.h"
 

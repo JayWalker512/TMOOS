@@ -47,6 +47,7 @@ Game2Main(void)
 		
 	unsigned char wheelPos = GLIB_GetInput(GLIB_WHEEL);
 	unsigned char pb1State = GLIB_GetInput(GLIB_PB1);
+	unsigned char pb2State = GLIB_GetInput(GLIB_PB2);
 
 	GFX_Clear(0);
 	
@@ -60,19 +61,20 @@ Game2Main(void)
 		lastChar = characterSelect;
 	}
 	
-	GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 0, 0);
-	/*GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 1, 0);
-	GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 2, 0);
-	GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 3, 0);
-	GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 4, 0);
-	GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 5, 0);*/
-	
-	if (pb1State)
+	if (pb1State || pb2State)
 	{
 		GFX_DrawRect(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT, GFX_FILLED_RECT);
 		GFX_DrawRect(1, 1, 4, 3, GFX_BLANK_DESTRUCTIVE_RECT);
-		//GFX_DrawRect(0, 0, 6, 5, GFX_BLANK_DESTRUCTIVE_RECT);
 		GFX_DrawRect(2, 2, 2, 1, GFX_FILLED_RECT);
+	}
+	else
+	{
+		GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 0, 0);
+		//GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 1, 0);
+		//GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 2, 0);
+		GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 3, 0);
+		//GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 4, 0);
+		//GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 5, 0);
 	}
 	
 	GFX_SwapBuffers();

@@ -9,4 +9,10 @@ unsigned int (*DSK_ReadWord)(const unsigned int *address);
 
 unsigned long (*DSK_ReadDoubleWord)(const unsigned int *address);
 
+void (*DSK_WriteByte)(unsigned char *address, unsigned char value);
+
+void (*DSK_WriteWord)(unsigned char *address, unsigned int value);
+
+void (*DSK_WriteDoubleWord)(unsigned char *address, unsigned long value);
+
 #endif

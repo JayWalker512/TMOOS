@@ -31,8 +31,8 @@ INP_Init(void)
 	m_buttonStates = 0;
 	m_wheelPos = 0;
 	
-	m_inputPins[INPUT_WHEEL] = 8; //Arduino analog pin # scheme
-	m_inputPins[INPUT_PB1] = 14;	
+	m_inputPins[INPUT_WHEEL] = 2; //Arduino analog pin # scheme
+	m_inputPins[INPUT_PB1] = 18;	
 	m_inputPins[INPUT_PB2] = 12;
 	
 	/*TODO These values will need loaded from EEPROM eventually*/

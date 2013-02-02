@@ -68,9 +68,9 @@ main(void)
 		OS_Update();
 		
 		//GameMain();
-		//Game2Main();
+		Game2Main();
 		//Game3Main();
-		Game4Main();
+		//Game4Main();
 	}
 	return 0;
 }

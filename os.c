@@ -68,8 +68,9 @@ main(void)
 		OS_Update();
 		
 		//GameMain();
-		Game2Main();
+		//Game2Main();
 		//Game3Main();
+		Game4Main();
 	}
 	return 0;
 }
@@ -82,7 +83,7 @@ OS_InitSubsystems(void)
 	_delay_us(100000);
 	#endif
 
-	if (!TME_Init()) //start at 16mhz
+	if (!TME_Init()) 
 		return 0;
 		
 	if (!DSP_Init())
@@ -93,15 +94,15 @@ OS_InitSubsystems(void)
 		
 	if (!SND_Init())
 		return 0;
-		
-	if (!GLIB_Init())
-		return 0;
-		
-	/*if (!CON_Init())
-		return 0;
 	
 	if (!DSK_Init(512))
-		return 0;*/
+		return 0;
+	
+	if (!CON_Init())
+		return 0;
+	
+	if (!GLIB_Init())
+		return 0;
 	
 	return 1;
 }
@@ -123,7 +124,7 @@ OS_Init(void)
 	OS_SetConfig(OS_DISPLAY_ENABLED, 1);
 	OS_SetConfig(OS_INPUT_ENABLED, 1);
 
-	DSP_SetConfig(DSP_REFRESH_HZ, 100);
+	DSP_SetConfig(DSP_REFRESH_HZ, 50);
 	
 	return 1;
 }

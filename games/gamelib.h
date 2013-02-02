@@ -29,4 +29,9 @@ void GameMain(void);
 
 void Game2Main(void);
 
+void Game3Init(void);
+void Game3Main(void);
+
+void Game4Main(void);
+
 #endif

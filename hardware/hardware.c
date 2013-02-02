@@ -7,6 +7,8 @@
 #include "../debug/debug.h"
 #endif
 
+#define PIN_OFFSET_TABLE
+
 /* TODO Arduino Pin Compatibility
  
  So we'd have an array with the # of pins onboard like the one below. The array 
@@ -21,8 +23,20 @@
  unsigned char m_arduinoPins[25]; */
 
 #if defined(__AVR_ATmega32U4__)
+
+#ifdef PIN_OFFSET_TABLE
+
+/* This could be optimized further still by removing address additions from 
+ set/get functions, but that would obfuscate things a bit. */
+const unsigned char m_arduinoPinsTable[][2] = { {0,0}, {0,1}, {0,2}, {0,3},
+{0,7}, {6,0}, {6,1}, {6,2}, {6,3}, {3,6}, {3,7}, {6,6}, {6,7}, {0,4}, {0,5},
+{0,6}, {12,7}, {12,6}, {12,5}, {12,4}, {12,1}, {12,0}, {6,4}, {6,5}, {9,6} }; 
+
+#elif PIN_OFFSET_CALC
 const unsigned char m_arduinoPinsTable[] = { 0, 1, 2, 3, 7, 20, 21, 22, 23, 16, 
 	17, 26, 27, 4, 5, 6, 47, 46, 45, 44, 41, 40, 24, 25, 36 };
+#endif
+
 #elif defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB1286__)
 	//todo teensy 2.0++
 #endif
@@ -40,6 +54,41 @@ HRD_Init(void)
 	return 1;
 }
 
+#ifdef PIN_OFFSET_TABLE
+char
+HRD_SetPinDigital(const unsigned char ardPin, unsigned char value)
+{
+	/* This function is only written for the Atmel Mega 32u4 */
+	
+	//set the pin
+	if (value == 0)
+	{
+		// make the pin an output (DDRx)
+		SetBit((unsigned char *)(&DDRB + m_arduinoPinsTable[ardPin][0]), m_arduinoPinsTable[ardPin][1]);
+		// drive it low (PORTx)
+		ClearBit((unsigned char *)(&PORTB + m_arduinoPinsTable[ardPin][0]), m_arduinoPinsTable[ardPin][1]);
+		
+	}
+	else
+	{
+		// make the pin an output
+		SetBit((unsigned char *)(&DDRB + m_arduinoPinsTable[ardPin][0]), m_arduinoPinsTable[ardPin][1]);
+		// drive it high
+		SetBit((unsigned char *)(&PORTB + m_arduinoPinsTable[ardPin][0]), m_arduinoPinsTable[ardPin][1]);
+	}
+	
+	return 1;
+}
+
+unsigned char 
+HRD_GetPinDigital(const unsigned char ardPin)
+{	
+	ClearBit((unsigned char *)(&PORTB + m_arduinoPinsTable[ardPin][0]), m_arduinoPinsTable[ardPin][1]); //pullup resistor mode
+	return GetBit((unsigned char *)(&PINB + m_arduinoPinsTable[ardPin][0]), m_arduinoPinsTable[ardPin][1]);
+}
+#endif
+
+#ifdef PIN_OFFSET_CALC
 char 
 HRD_SetPinDigital(const unsigned char ardPin, unsigned char value)
 {
@@ -86,82 +135,9 @@ HRD_GetPinDigital(const unsigned char ardPin)
 	ClearBit((unsigned char *)(&PORTB + port), pin); //pullup resistor mode
 	return GetBit((unsigned char *)(&PINB + port), pin);
 }
-
-
-#ifdef OLD_PIN_COMPAT
-/* TODO perhaps these should correspond to Arduino style pin numbers... */
-char  
-HRD_SetPin(char charport, char pin, char val)
-{
-	/* This function is only written for the Atmel Mega 32u4 */
-	unsigned char port = 0;
-
-	//check for invalid values, return 0 if they are invalid.
-	if (charport < 'A' || charport > 'F')
-		return 0;
-	
-	if (pin < 0 || pin > 7)
-		return 0; 
-		
-	port = charport - 'B';
-	
-	//set the pin
-	if (val == 0)
-	{
-		// make the pin an output (DDRx)
-		*(unsigned char *)(&DDRB + port * 3) |= (1 << pin);
-		// drive it low (PORTx)
-		*(unsigned char *)(&PORTB + port * 3) &= ~(1 << pin);
-	}
-	else
-	{
-		// make the pin an output
-		*(unsigned char *)(&DDRB + port * 3) |= (1 << pin);
-		// drive it high
-		*(unsigned char *)(&PORTB + port * 3) |= (1 << pin);
-	}
-	
-	return 1;
-}
-
-unsigned char 
-HRD_GetPinDigital(char charport, char pin)
-{
-	/* This function is only written for the Atmel Mega 32u4 */
-	
-	/* FIXME something wonky is happening here. Top row of display flickers
-	 when input is enabled which only calls this for pushbuttons... */
-	
-	unsigned char port = 0;
-
-	//check for invalid values, return 0 if they are invalid.
-	if (charport < 'A' || charport > 'F')
-		return 0;
-	
-	if (pin < 0 || pin > 7)
-		return 0; 
-		
-	port = charport - 'B'; //starting at B. We don't have any A pins
-	
-	//whatever... this keeps things happy for now
-	//ClearBit((uint8_t *)(0x24 + port * 3), pin); //set as input
-	//ClearBit((uint8_t *)(0x25 + port * 3), pin); //pullup resistor mode
-	
-	//weird issues occur when these are enabled instead...
-	//ClearBit((uint8_t *)(&DDRB + port * 3), pin); //set as input (it would seem this is unnecessary...)
-	ClearBit((uint8_t *)(&PORTB + port * 3), pin); //pullup resistor mode
-	
-	/*
-	print("Accessed director @ ");
-	phex16(0x24 + port * 3);
-	print("\n");
-	_delay_ms(100);
-	*/
-	
-	//return GetBit((uint8_t *)(0x23 + port * 3), pin);
-	return GetBit((uint8_t *)(&PINB + port * 3), pin);
-}
 #endif
+
+
 
 /* These functions straight from the PJRC site, compatible with 2.0 and 2.0++ */
 static uint8_t aref = (1<<REFS0); // default to AREF = Vcc

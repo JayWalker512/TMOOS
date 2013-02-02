@@ -6,7 +6,7 @@
 #include "../debug/debug.h"
 #endif
 
-static unsigned long endTime; //used multiple times
+static unsigned long endTime = 0; //used multiple times
 
 void 
 GameMain(void)
@@ -81,12 +81,14 @@ Game2Main(void)
 }
 
 static unsigned char curGlyph;
+void
 Game3Init(void)
 {
 	curGlyph = 36; //so it cycles back to A immediately
 	endTime = 0;
 }
 
+void
 Game3Main(void)
 {
 	/* XXX below is demo code, delete eventually */
@@ -101,4 +103,25 @@ Game3Main(void)
 		DSP_BitBLT(&g_alphaNumGlyphs[curGlyph], 3, 5, 2, 0); 
 		DSP_SwapBuffers();		
 	}
+}
+
+#define ANIM_DELAY 200
+static unsigned char x = 0;
+void
+Game4Main(void)
+{
+	
+	unsigned char wheelPos = GLIB_GetInput(GLIB_WHEEL);
+	
+	//if (endTime <= g_OSIdleLoopTimeMs)
+	//{
+		endTime = g_OSIdleLoopTimeMs + ANIM_DELAY;
+		
+		x = (wheelPos / 42);
+		
+		GFX_Clear(0);
+		GFX_BitBLT(&g_alphaNumGlyphs[0], 3, 5, x, 0);
+
+		GFX_SwapBuffers(); 
+	//}
 }

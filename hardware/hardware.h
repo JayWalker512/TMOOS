@@ -7,13 +7,8 @@
 int HRD_Init(void);
 
 char HRD_SetPinDigital(const unsigned char ardPin, unsigned char value);
+
 unsigned char HRD_GetPinDigital(const unsigned char ardPin);
-
-#ifdef OLD_PIN_COMPAT
-char HRD_SetPin(char charport, char pin, char val);
-
-unsigned char HRD_GetPinDigital(char charport, char pin);
-#endif
 
 unsigned long (*HRD_GetMicros)(void);
 

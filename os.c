@@ -95,11 +95,11 @@ OS_InitSubsystems(void)
 	if (!SND_Init())
 		return 0;
 	
-	if (!DSK_Init(512))
+	if (!DSK_Init())
 		return 0;
 	
-	if (!CON_Init())
-		return 0;
+	//if (!CON_Init())
+		//return 0;
 	
 	if (!GLIB_Init())
 		return 0;

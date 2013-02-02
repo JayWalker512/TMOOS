@@ -47,7 +47,7 @@ TARGET = os
 #previously working build. revert to old_ard files if you cant make it work out
 SRC =	$(TARGET).c \
 		display/display.c sound/sound.c time/time.c input/input.c \
-		hardware/hardware.c hardware/libarduino/wiring.c \
+		hardware/hardware.c hardware/libarduino/wiring.c disk/disk.c \
 		debug/usb_debug_only.c debug/print.c sharedlib/glyphs.c sharedlib/string.c \
 		games/game1.c games/gamelib.c gfxlib/gfx.c
 	

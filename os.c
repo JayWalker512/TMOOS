@@ -60,8 +60,8 @@ main(void)
 	if (!OS_Init())
 		OS_FatalError(INIT_ERROR);
 
-	SND_Beep(1710, 80); //startup OK notification
-	
+	SND_Beep(1710, 800); //startup OK notification
+	TME_DelayRealMillis(1000);
 	//Game3Init();
 	while(1)
 	{
@@ -120,11 +120,11 @@ OS_Init(void)
 
 	/* TODO These should be loaded from EEPROM on startup*/
 	OS_SetConfig(OS_CPU_SCALING_ENABLED, 0);
-	OS_SetConfig(OS_SOUND_ENABLED, 1);
+	OS_SetConfig(OS_SOUND_ENABLED, 0);
 	OS_SetConfig(OS_DISPLAY_ENABLED, 1);
 	OS_SetConfig(OS_INPUT_ENABLED, 1);
 
-	DSP_SetConfig(DSP_REFRESH_HZ, 50);
+	DSP_SetConfig(DSP_REFRESH_HZ, 60);
 	
 	return 1;
 }

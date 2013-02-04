@@ -61,7 +61,7 @@ Game2Main(void)
 		lastChar = characterSelect;
 	}
 	
-	if (pb1State || pb2State)
+	if (pb1State)
 	{
 		GFX_DrawRect(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT, GFX_FILLED_RECT);
 		GFX_DrawRect(1, 1, 4, 3, GFX_BLANK_DESTRUCTIVE_RECT);
@@ -105,23 +105,17 @@ Game3Main(void)
 	}
 }
 
-#define ANIM_DELAY 200
-static unsigned char x = 0;
+
 void
 Game4Main(void)
 {
-	
+	unsigned char x = 0;
 	unsigned char wheelPos = GLIB_GetInput(GLIB_WHEEL);
-	
-	//if (endTime <= g_OSIdleLoopTimeMs)
-	//{
-		endTime = g_OSIdleLoopTimeMs + ANIM_DELAY;
-		
-		x = (wheelPos / 42);
-		
-		GFX_Clear(0);
-		GFX_BitBLT(&g_alphaNumGlyphs[0], 3, 5, x, 0);
 
-		GFX_SwapBuffers(); 
-	//}
+	x = (wheelPos / 42);
+
+	GFX_Clear(0);
+	GFX_BitBLT(&g_alphaNumGlyphs[0], 3, 5, x, 0);
+
+	GFX_SwapBuffers(); 
 }

@@ -42,6 +42,7 @@ void SND_Update(void)
 		unsigned long curTime = TME_GetAccurateMicros();
 		if (curTime >= m_cycleEndTime)
 		{
+			unsigned long offset = curTime - m_cycleEndTime;
 			if (m_pinState == 0)
 			{
 				m_pinState = 1;
@@ -53,7 +54,7 @@ void SND_Update(void)
 				HRD_SetPinDigital(10, 0);	
 			}
 		
-			m_cycleEndTime = curTime + m_cycleTime;
+			m_cycleEndTime = curTime + m_cycleTime - offset;
 		}	
 	
 		if (TME_GetAccurateMillis() >= m_playStop)

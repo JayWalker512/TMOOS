@@ -23,14 +23,17 @@ enum e_OSParameter {
 	OS_INPUT_ENABLED = 3,
 	};
 	
+/* No global "debug enabled", each subsys just checks against its respective 
+ bit so we can see only what we want. */
 enum e_OSDebugLevels {
-	DEBUG_OS = 0,
+	DEBUG_OS,
 	DEBUG_DSP,
 	DEBUG_SND,
 	DEBUG_INP,
 	DEBUG_DSK,
 	DEBUG_TME,
-	DEBUG_CNS
+	DEBUG_CNS,
+	DEBUG_GAME,
 };
 
 enum e_TimerParams {

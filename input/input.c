@@ -23,7 +23,7 @@ unsigned char m_inputPins[3];
 /* TODO Maybe we should add functions to allow calibrating the input wheel via the
 interactive console, but for now it will be hardcoded. */
 char 
-INP_Init(void)
+INP_Init(void) //TODO init settings (poll rate, calib) should be passed here from OS
 {
 	m_inputUpdateInterval = 40;
 	m_timeToUpdate = 0;

@@ -21,11 +21,12 @@
 
 /* Parameters 0-7 are stored bitwise in static m_DSPState */
 enum e_DSPParameter {
-	DSP_DESTRUCTIVE_BITBLT = 0,
-	DSP_CURRENTLY_REFRESHING = 1,
+	DSP_DESTRUCTIVE_BITBLT = 0, //should always be disabled on boot.
+	DSP_CURRENTLY_REFRESHING = 1, //should always be disabled on boot.
 	DSP_DOUBLE_BUFFER = 2,
-	DSP_REFRESH_HZ = 9,
-	DSP_VSYNC = 10,
+        DSP_VSYNC = 3,
+	DSP_REFRESH_HZ = 8,
+	DSP_STATE_BITS = 9,
 };
 
 int DSP_Init(void);

@@ -88,7 +88,7 @@ static char m_cathodePins[DISPLAY_COLUMNS * 2] = {	'B', 7,
 							'F', 0 };*/
 
 int 
-DSP_Init(void)
+DSP_Init(void) //TODO init settings (refresh rate, double buffer) should be passed here from OS
 {
 	for(char b = 0; b < 2; b++)
 	{
@@ -395,9 +395,15 @@ DSP_SetConfig(enum e_DSPParameter parameter, const unsigned char newValue)
 			break;
 		case DSP_VSYNC:
 			if (newValue == 1)
+                        {
 				DSP_Refresh = &DSP_RefreshDriver0;
+                                SetBit(&m_DSPState, DSP_VSYNC);
+                        }
 			else if (newValue == 0)
+                        {
 				DSP_Refresh = &DSP_RefreshDriver1;	
+                                ClearBit(&m_DSPState, DSP_VSYNC);
+                        }
 			break;
 		case DSP_DESTRUCTIVE_BITBLT:
 			if (newValue == 0)
@@ -430,6 +436,7 @@ DSP_GetConfig(enum e_DSPParameter parameter)
 			return (m_scanlineDelayUs * 1000000) / DISPLAY_ROWS;
 			break;
 		case DSP_VSYNC:
+                        //this is set in m_DSPState as well, but this is literal check
 			if (DSP_Refresh == &DSP_RefreshDriver0)
 				return 1;
 			else
@@ -441,6 +448,8 @@ DSP_GetConfig(enum e_DSPParameter parameter)
 		case DSP_DOUBLE_BUFFER:
 			return GetBit(&m_DSPState, DSP_DOUBLE_BUFFER);
 			break;
+		case DSP_STATE_BITS:
+			return m_DSPState;
 		default:
 			return -1;
 			break;

@@ -30,12 +30,26 @@ peripheral subsystems through their respective interfaces. */
 #define LOAD_REFRESH_MS 1000
 #define LOAD_REFRESH_US 1000000
 
+enum e_OSConfigFileSystem {
+    FILE_OS_STATE = 0x00, //1 byte
+    FILE_OS_DEBUGLEVELS = 0x01, //1 byte
+    
+    FILE_INP_CALIBMIN = 0x02, //2 bytes
+    FILE_INP_CALIBMAX = 0x04, //2 bytes
+    FILE_INP_POLLRATE = 0x06, //1 byte
+    
+    FILE_DSP_STATE = 0x07, //1 byte
+    FILE_DSP_REFRESHRATE = 0x08, //1 byte
+};
+
 void OS_Update(void);
 static char OS_Init(void);
 static char OS_InitSubsystems(void);
 static void OS_FatalError(enum e_FATAL_ERRORS error);
 static void OS_CPUScaleByLoad(void);
 static void OS_CPULoadCalc(enum e_TimerParams parameter);
+static char OS_SaveSysConfig(void);
+static char OS_RestoreSysConfig(void);
 
 //cached version of TME_GetAccurateMillis() from beginning of OS_Update() for non-time-critical use only. Good for games.
 unsigned long g_OSIdleLoopTimeMs;
@@ -58,6 +72,9 @@ main(void)
 		OS_FatalError(INIT_ERROR);
 		
 	if (!OS_Init())
+		OS_FatalError(INIT_ERROR);
+	
+	if (!OS_RestoreSysConfig())
 		OS_FatalError(INIT_ERROR);
 
 	SND_Beep(1710, 800); //startup OK notification
@@ -124,6 +141,7 @@ OS_Init(void)
 	OS_SetConfig(OS_DISPLAY_ENABLED, 1);
 	OS_SetConfig(OS_INPUT_ENABLED, 1);
 
+	DSP_SetConfig(DSP_VSYNC, 0);
 	DSP_SetConfig(DSP_REFRESH_HZ, 60);
 	
 	return 1;
@@ -316,34 +334,26 @@ OS_CPULoadCalc(enum e_TimerParams parameter)
 	}		
 }
 
-	/*unsigned long curMillis = TME_GetAccurateMillis();
-	m_idleTimeStart = curMillis; 
+static char OS_SaveSysConfig(void)
+{
+	//save OS config
+	DSK_WriteByte(FILE_OS_STATE, g_OSState);
+	DSK_WriteByte(FILE_OS_DEBUGLEVELS, g_OSDebugLevels);
 	
-	if (m_endCycle <= curMillis)
-	{
-		m_endCycle = curMillis + LOAD_REFRESH_MS;
-		//m_sysLoad = 100 * ((float)m_idleTime / (float)LOAD_REFRESH_MS);
-		
-		//shouldnt it be...
-		m_sysLoad = 100 - (100 * m_idleTime) / LOAD_REFRESH_MS;
+	//save input config
+	DSK_WriteWord(FILE_INP_CALIBMIN, INP_GetConfig(INPUT_LBOUND));
+	DSK_WriteWord(FILE_INP_CALIBMAX, INP_GetConfig(INPUT_UBOUND));
+	DSK_WriteByte(FILE_INP_POLLRATE, INP_GetConfig(INPUT_POLLINTERVALMS));
+	
+	//save dsp config
+	DSK_WriteByte(FILE_DSP_STATE, DSP_GetConfig(DSP_STATE_BITS));
+	DSK_WriteByte(FILE_DSP_REFRESHRATE, DSP_GetConfig(DSP_REFRESH_HZ));
+	return 1;
+}
 
-		if (m_sysLoad > 100)
-			m_sysLoad = 100;
-		else if (m_sysLoad < 0)
-			m_sysLoad = 0;
-
-		m_idleTime = 0;
-		
-		#ifdef DEBUG 
-		print("Cpu load: 0x");
-		phex16(m_sysLoad);
-		print(" @ 0x");
-		phex16(TME_GetCpuClockMhz());
-		print(" Mhz\n");
-		#endif
-		
-		if (GetBit(&g_OSState, CPU_SCALING_ENABLED))
-		{
-			OS_CPUScaleByLoad();
-		}
-	}*/
+static char OS_RestoreSysConfig(void)
+{
+	/*need to write something for DSP like "import state" or something,
+	 * certain values shouldn't be retained after reboot. */
+	return 1;
+}

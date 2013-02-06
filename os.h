@@ -21,6 +21,8 @@ enum e_OSParameter {
 	OS_SOUND_ENABLED = 1,
 	OS_DISPLAY_ENABLED = 2,
 	OS_INPUT_ENABLED = 3,
+	OS_STATE = 8,
+	OS_DEBUGLEVELS = 9,
 	};
 	
 /* No global "debug enabled", each subsys just checks against its respective 

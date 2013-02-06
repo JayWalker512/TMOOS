@@ -109,6 +109,12 @@ void INP_SetConfig(enum e_InputParameters parameter,
 {
 	switch (parameter)
 	{
+		case INPUT_LBOUND:
+			m_calibMin = newValue;
+			break;
+		case INPUT_UBOUND:
+			m_calibMax = newValue;
+			break;
 		case INPUT_POLLINTERVALMS:
 			m_inputUpdateInterval = newValue;
 			break;

@@ -420,6 +420,11 @@ DSP_SetConfig(enum e_DSPParameter parameter, const unsigned char newValue)
 			else if (newValue == 1)
 				SetBit(&m_DSPState, DSP_DOUBLE_BUFFER);
 			break;
+		case DSP_STATE_BITS:
+			m_DSPState = newValue;
+			ClearBit(&m_DSPState, DSP_DESTRUCTIVE_BITBLT);
+			ClearBit(&m_DSPState, DSP_CURRENTLY_REFRESHING);
+			break;
 		default:
 			return 0;
 	}

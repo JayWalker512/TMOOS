@@ -210,10 +210,7 @@ OS_SetConfig(enum e_OSParameter parameter, const char newValue)
 			if (newValue)
 				SetBit(&g_OSState, OS_CPU_SCALING_ENABLED);
 			else
-			{
 				ClearBit(&g_OSState, OS_CPU_SCALING_ENABLED);
-				//TME_ScaleCpu(CPU_16MHZ);
-			}
 			break;
 		case OS_SOUND_ENABLED:
 			if (newValue)
@@ -233,6 +230,12 @@ OS_SetConfig(enum e_OSParameter parameter, const char newValue)
 			else
 				ClearBit(&g_OSState, OS_INPUT_ENABLED);
 			break;
+		case OS_STATE:
+			g_OSState = newValue;
+			break;
+		case OS_DEBUGLEVELS:
+			g_OSDebugLevels = newValue;
+			break;
 		default:
 			return 0;
 	}
@@ -250,6 +253,18 @@ OS_GetConfig(enum e_OSParameter parameter)
 			break;
 		case OS_SOUND_ENABLED:
 			return GetBit(&g_OSState, OS_SOUND_ENABLED);
+			break;
+		case OS_DISPLAY_ENABLED:
+			return GetBit(&g_OSState, OS_DISPLAY_ENABLED);
+			break;
+		case OS_INPUT_ENABLED:
+			return GetBit(&g_OSState, OS_INPUT_ENABLED);
+			break;
+		case OS_STATE:
+			return g_OSState;
+			break;
+		case OS_DEBUGLEVELS:
+			return g_OSDebugLevels;
 			break;
 		default:
 			return -1;
@@ -353,7 +368,17 @@ static char OS_SaveSysConfig(void)
 
 static char OS_RestoreSysConfig(void)
 {
-	/*need to write something for DSP like "import state" or something,
-	 * certain values shouldn't be retained after reboot. */
+	//restore OS
+	OS_SetConfig(OS_STATE, DSK_ReadByte(FILE_OS_STATE));
+	OS_SetConfig(OS_DEBUGLEVELS, DSK_ReadByte(FILE_OS_DEBUGLEVELS));
+	
+	//restore input
+	INP_SetConfig(INPUT_LBOUND, DSK_ReadWord(FILE_INP_CALIBMIN));
+	INP_SetConfig(INPUT_UBOUND, DSK_ReadByte(FILE_INP_CALIBMAX));
+	INP_SetConfig(INPUT_POLLINTERVALMS, DSK_ReadByte(FILE_INP_POLLRATE));
+	
+	//restore dsp
+	DSP_SetConfig(DSP_STATE_BITS, DSK_ReadByte(FILE_DSP_STATE));
+	DSP_SetConfig(DSP_REFRESH_HZ, DSK_ReadByte(FILE_DSP_REFRESHRATE));
 	return 1;
 }

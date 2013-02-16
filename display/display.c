@@ -118,17 +118,10 @@ DSP_Init(void) //TODO init settings (refresh rate, double buffer) should be pass
 	DSP_SetConfig(DSP_DOUBLE_BUFFER, 1);
 	
 	#ifdef DEBUG
-	_delay_us(15000);
+	
 	print("Framebuffer size (BITS): ");
-	//phex16((DISPLAY_ROWS * DISPLAY_COLUMNS) / sizeof(FRAMEBUFFER_TYPE));
 	phex16(sizeof(m_frameBuffer[1]) * 8);
 	print("\n");
-	_delay_us(15000);
-	print("Framebuffer type size (BITS): ");
-	//phex16((DISPLAY_ROWS * DISPLAY_COLUMNS) / sizeof(FRAMEBUFFER_TYPE));
-	phex16(sizeof(FRAMEBUFFER_TYPE) * 8);
-	print("\n");
-	_delay_us(15000);
 	#endif
 	
 	return 1;

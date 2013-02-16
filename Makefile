@@ -46,9 +46,9 @@ TARGET = os
 # List C source files here. (C dependencies are automatically generated.)
 #previously working build. revert to old_ard files if you cant make it work out
 SRC =	$(TARGET).c \
-		display/display.c sound/sound.c time/time.c input/input.c \
-		hardware/hardware.c hardware/libarduino/wiring.c disk/disk.c \
-		debug/usb_debug_only.c debug/print.c sharedlib/glyphs.c sharedlib/string.c \
+		display/display.c sound/sound.c time/time.c input/input.c console/console.c \
+		hardware/hardware.c hardware/libarduino/wiring.c disk/disk.c console/usb_serial.c \
+		sharedlib/glyphs.c sharedlib/string.c \
 		games/game1.c games/gamelib.c gfxlib/gfx.c
 	
 #old hardware files : 
@@ -123,7 +123,7 @@ CSTANDARD = -std=gnu99
 
 
 # Place -D or -U options here for C sources
-CDEFS = -DF_CPU=$(F_CPU)UL -DDEBUG
+CDEFS = -DF_CPU=$(F_CPU)UL
 #-DNO_DOUBLE_BUFFER_SAVE_MEMORY
 
 

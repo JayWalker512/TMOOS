@@ -94,7 +94,8 @@ INP_GetInputState(enum e_InputDevice device)
 	return 0;
 }
 
-void INP_Calibrate(enum e_InputParameters parameter)
+void 
+INP_Calibrate(enum e_InputParameters parameter)
 {
 	if (parameter == INPUT_LBOUND)
 		m_calibMin = HRD_GetPinAnalog(m_inputPins[INPUT_WHEEL]);
@@ -104,7 +105,8 @@ void INP_Calibrate(enum e_InputParameters parameter)
 	return 1;
 }
 
-void INP_SetConfig(enum e_InputParameters parameter,
+void 
+INP_SetConfig(enum e_InputParameters parameter,
 			    unsigned char newValue)
 {
 	switch (parameter)
@@ -123,7 +125,8 @@ void INP_SetConfig(enum e_InputParameters parameter,
 	}
 }
 
-int INP_GetConfig(enum e_InputParameters parameter)
+int 
+INP_GetConfig(enum e_InputParameters parameter)
 {
 	switch ( parameter )
 	{

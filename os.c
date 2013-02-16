@@ -74,8 +74,8 @@ main(void)
 	if (!OS_Init())
 		OS_FatalError(INIT_ERROR);
 	
-	if (!OS_RestoreSysConfig())
-		OS_FatalError(INIT_ERROR);
+	//if (!OS_RestoreSysConfig())
+		//OS_FatalError(INIT_ERROR);
 
 	SND_Beep(1710, 800); //startup OK notification
 	TME_DelayRealMillis(1000);
@@ -102,6 +102,9 @@ OS_InitSubsystems(void)
 
 	if (!TME_Init()) 
 		return 0;
+	
+	if (!CON_Init())
+		return 0;
 		
 	if (!DSP_Init())
 		return 0;
@@ -114,9 +117,6 @@ OS_InitSubsystems(void)
 	
 	if (!DSK_Init())
 		return 0;
-	
-	//if (!CON_Init())
-		//return 0;
 	
 	if (!GLIB_Init())
 		return 0;
@@ -155,7 +155,7 @@ OS_Update(void)
 	spent idling. */
 	OS_CPULoadCalc(TIMER_START);
 	
-	//CON_Update();
+	CON_Update();
 	
 	if (GetBit(&g_OSState, OS_INPUT_ENABLED))
 		INP_Update();
@@ -165,22 +165,8 @@ OS_Update(void)
 	
 	if (GetBit(&g_OSState, OS_SOUND_ENABLED))
 		SND_Update();
-		
-	/*UpdateGlobals(); undecided on this one. probably should use this to
-	handle updated cvars */
 	
 	OS_CPULoadCalc(TIMER_STOP);
-	
-	#ifdef DEBUG
-	/*print("m_idleTimeStart: ");
-	phex16(m_idleTimeStart);
-	print("\n");
-	
-	print(" m_idleTimeEnd: ");
-	phex16(m_idleTimeEnd);
-	print("\n");*/
-	//_delay_us(10000);
-	#endif
 }
 
 static void 
@@ -301,10 +287,12 @@ OS_CPUScaleByLoad(void)
 
 	}
 	#ifdef DEBUG 
-	print("    Cpu scaled to: 0x");
-	phex16(TME_GetCpuClockMhz());
-	print(" Mhz\n");
-	SND_Beep(440, 100); //TODO remove this soon enough....
+	if (GetBit(&g_OSDebugLevels, DEBUG_OS))
+	{
+		print("    Cpu scaled to: 0x");
+		phex16(TME_GetCpuClockMhz());
+		print(" Mhz\n");
+	}
 	#endif
 }
 
@@ -337,11 +325,14 @@ OS_CPULoadCalc(enum e_TimerParams parameter)
 		m_idleTime = 0;
 		
 		#ifdef DEBUG 
-		print("Cpu load: 0x");
-		phex16(m_sysLoad);
-		print(" @ 0x");
-		phex16(TME_GetCpuClockMhz());
-		print(" Mhz\n");
+		if (GetBit(&g_OSDebugLevels, DEBUG_OS))
+		{
+			print("Cpu load: 0x");
+			phex16(m_sysLoad);
+			print(" @ 0x");
+			phex16(TME_GetCpuClockMhz());
+			print(" Mhz\n");
+		}
 		#endif
 		
 		if (GetBit(&g_OSState, OS_CPU_SCALING_ENABLED))
@@ -349,7 +340,8 @@ OS_CPULoadCalc(enum e_TimerParams parameter)
 	}		
 }
 
-static char OS_SaveSysConfig(void)
+static char 
+OS_SaveSysConfig(void)
 {
 	//save OS config
 	DSK_WriteByte(FILE_OS_STATE, g_OSState);
@@ -366,7 +358,8 @@ static char OS_SaveSysConfig(void)
 	return 1;
 }
 
-static char OS_RestoreSysConfig(void)
+static char 
+OS_RestoreSysConfig(void)
 {
 	//restore OS
 	OS_SetConfig(OS_STATE, DSK_ReadByte(FILE_OS_STATE));

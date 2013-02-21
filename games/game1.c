@@ -72,7 +72,7 @@ Game2Main(void)
 		GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 0, 0);
 		//GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 1, 0);
 		//GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 2, 0);
-		GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 3, 0);
+		//GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 3, 0);
 		//GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 4, 0);
 		//GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 5, 0);
 	}

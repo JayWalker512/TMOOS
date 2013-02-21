@@ -84,10 +84,16 @@ main(void)
 	{
 		OS_Update();
 		
+#ifdef PROFILING
+		//start game timer
+#endif
 		//GameMain();
 		Game2Main();
 		//Game3Main();
 		//Game4Main();
+#ifdef PROFILING
+		//stop game timer
+#endif
 	}
 	return 0;
 }
@@ -158,14 +164,26 @@ OS_Update(void)
 	CON_Update();
 	
 	if (GetBit(&g_OSState, OS_INPUT_ENABLED))
+	{
+#ifdef PROFILING
+		//start input timer
+#endif
 		INP_Update();
-	
+#ifdef PROFILING
+		//end input timer
+#endif
+	}
+		
 	if (GetBit(&g_OSState, OS_DISPLAY_ENABLED))
+	{
 		DSP_Refresh();
+	}
 	
 	if (GetBit(&g_OSState, OS_SOUND_ENABLED))
+	{
 		SND_Update();
-	
+	}
+		
 	OS_CPULoadCalc(TIMER_STOP);
 }
 

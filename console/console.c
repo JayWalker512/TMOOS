@@ -8,7 +8,6 @@ static uint8_t CON_RecieveString(char *buf, uint8_t size);
 static char CON_BufferInput(char *buffer, const unsigned char size);
 static char CON_ParseArgcArgv(char **argv, const char bufSize, const char *cmdString);
 
-//static void CON_PushBuffer(const char c);
 #define CMD_BUFFER_SIZE 32
 
 static char m_consoleState;
@@ -37,7 +36,7 @@ CON_Update(void)
 	
 		usb_serial_flush_input();
 		SetBit(&m_consoleState, CONSOLE_USB_CONFIGURED);
-		CON_SendString(PSTR("\r\nBMOS Terminal\r\n"
+		CON_SendString(PSTR("\r\nTMOOS Terminal\r\n"
 			"Format is: command arg1 arg2 arg3\r\n>"));
 	}
 	else
@@ -108,6 +107,17 @@ CON_SendString(const char *s)
 	}
 }
 
+void 
+CON_SendRAMString(const char *s)
+{
+	unsigned char i = 0; //max string length 255
+	while (1) {
+		if (*(s+i) == '\0') break;
+		usb_serial_putchar(*(s+i));
+		i++;
+	}
+}
+
 // Receive a string from the USB serial port.  The string is stored
 // in the buffer and this function will not exceed the buffer size.
 // A carriage return or newline completes the string, and is not
@@ -147,7 +157,7 @@ char
 CON_ParseArgcArgv(char **argv, const char bufSize, const char *cmdString)
 {
 	/* XXX this function is not working properly yet. Look into the strncpy
-	 function. */
+	 function. Maybe only allow ints/chars as arguments? */
 	char curSpace = 0, prevSpace = 0;
 	char argc = 0;
 	

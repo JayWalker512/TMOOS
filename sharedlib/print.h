@@ -14,3 +14,4 @@ enum e_VarType {
 };
 
 void printv(const char *string, void *var, enum e_VarType type);
+void printInt(long input, enum e_VarType type);

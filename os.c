@@ -15,6 +15,7 @@ peripheral subsystems through their respective interfaces. */
 
 #include "sharedlib/binary.h"
 #include "sharedlib/glyphs.h"
+#include "sharedlib/print.h"
 #include "avr_common.h"
 
 #ifdef DEBUG
@@ -117,15 +118,43 @@ main(void)
 		nLoops++;
 		
 		//here is where we calculate averages and print
-		if (PRO_StopTimer(&profilerTimer) >= 1000000)
+		if (PRO_StopTimer(&profilerTimer) >= LOAD_REFRESH_US)
 		{
 			PRO_StartTimer(&profilerTimer);
-			float conAvg = conSum / nLoops;
-			float inpAvg = inpSum / nLoops;
-			float dspAvg = dspSum / nLoops;
-			float sndAvg = sndSum / nLoops;
-			float gameAvg = gameSum / nLoops;
+			unsigned long conAvg = conSum / nLoops;
+			unsigned long inpAvg = inpSum / nLoops;
+			unsigned long dspAvg = dspSum / nLoops;
+			unsigned long sndAvg = sndSum / nLoops;
+			unsigned long gameAvg = gameSum / nLoops;
 			//TODO print averages.
+			
+			CON_SendString(PSTR("----Profiler Data----\r\n"));
+			
+			CON_SendString(PSTR("Console Avg Time: "));
+			printInt(conAvg, VAR_UNSIGNED);
+			CON_SendString(PSTR("\r\n"));
+			
+			CON_SendString(PSTR("Input Avg Time: "));
+			printInt(inpAvg, VAR_UNSIGNED);
+			CON_SendString(PSTR("\r\n"));
+			
+			CON_SendString(PSTR("Display Avg Time: "));
+			printInt(dspAvg, VAR_UNSIGNED);
+			CON_SendString(PSTR("\r\n"));
+			
+			CON_SendString(PSTR("Sound Avg Time: "));
+			printInt(sndAvg, VAR_UNSIGNED);
+			CON_SendString(PSTR("\r\n"));
+			
+			CON_SendString(PSTR("Game Avg Time: "));
+			printInt(gameAvg, VAR_UNSIGNED);
+			CON_SendString(PSTR("\r\n"));
+			
+			CON_SendString(PSTR("---------------------\r\n"));
+			
+			conAvg = inpAvg = dspAvg = sndAvg = gameAvg = 0;
+			conSum = inpSum = dspSum = sndSum = gameSum = 0;
+			nLoops = 0;
 		}
 #endif
 	}

@@ -3,8 +3,7 @@
 This is the main operating system file. This program has access to all 
 peripheral subsystems through their respective interfaces. */
 
-#include "avr_common.h"
-
+#include "os.h"
 #include "hardware/hardware.h"
 #include "console/console.h"
 #include "disk/disk.h"
@@ -14,13 +13,17 @@ peripheral subsystems through their respective interfaces. */
 #include "time/time.h"
 #include "games/gamelib.h"
 
-//#include "sharedlib/string.h"
 #include "sharedlib/binary.h"
 #include "sharedlib/glyphs.h"
-#include "os.h"
+#include "avr_common.h"
 
 #ifdef DEBUG
 #include "debug/debug.h"
+#include "profiling.h"
+#endif
+
+#ifdef PROFILING
+#include "sharedlib/profiling.h"
 #endif
 
 //may need this here... gonna leave it here for now.
@@ -63,6 +66,21 @@ static unsigned long m_idleTimeStart;
 static unsigned long m_idleTimeEnd;
 static unsigned long m_idleTime;
 
+#ifdef PROFILING
+	t_Timer profilerTimer;
+	t_Timer conTimer;
+	t_Timer inpTimer;
+	t_Timer dspTimer;
+	t_Timer sndTimer;
+	t_Timer gameTimer;
+	unsigned long conSum = 0;
+	unsigned long inpSum = 0;
+	unsigned long dspSum = 0;
+	unsigned long sndSum = 0;
+	unsigned long gameSum = 0;
+	unsigned int nLoops;
+#endif
+
 int 
 main(void)
 {
@@ -77,22 +95,38 @@ main(void)
 	//if (!OS_RestoreSysConfig())
 		//OS_FatalError(INIT_ERROR);
 
-	SND_Beep(1710, 800); //startup OK notification
-	TME_DelayRealMillis(1000);
+#ifdef PROFILING
+	PRO_StartTimer(&profilerTimer);
+#endif
 	//Game3Init();
 	while(1)
 	{
 		OS_Update();
 		
 #ifdef PROFILING
-		//start game timer
+		PRO_StartTimer(&gameTimer);
 #endif
+		
 		//GameMain();
 		Game2Main();
 		//Game3Main();
 		//Game4Main();
+		
 #ifdef PROFILING
-		//stop game timer
+		gameSum += PRO_StopTimer(&gameTimer);
+		nLoops++;
+		
+		//here is where we calculate averages and print
+		if (PRO_StopTimer(&profilerTimer) >= 1000000)
+		{
+			PRO_StartTimer(&profilerTimer);
+			float conAvg = conSum / nLoops;
+			float inpAvg = inpSum / nLoops;
+			float dspAvg = dspSum / nLoops;
+			float sndAvg = sndSum / nLoops;
+			float gameAvg = gameSum / nLoops;
+			//TODO print averages.
+		}
 #endif
 	}
 	return 0;
@@ -160,28 +194,46 @@ OS_Update(void)
 	/* This is the OS idle loop. Any time spent in here is counted as time 
 	spent idling. */
 	OS_CPULoadCalc(TIMER_START);
-	
+
+#ifdef PROFILING
+	PRO_StartTimer(&conTimer);
+#endif
 	CON_Update();
-	
+#ifdef PROFILING
+	conSum += PRO_StopTimer(&conTimer);
+#endif	
+
 	if (GetBit(&g_OSState, OS_INPUT_ENABLED))
 	{
 #ifdef PROFILING
-		//start input timer
+		PRO_StartTimer(&inpTimer);
 #endif
 		INP_Update();
 #ifdef PROFILING
-		//end input timer
+		inpSum += PRO_StopTimer(&inpTimer);
 #endif
 	}
 		
 	if (GetBit(&g_OSState, OS_DISPLAY_ENABLED))
 	{
+#ifdef PROFILING
+		PRO_StartTimer(&dspTimer);
+#endif
 		DSP_Refresh();
+#ifdef PROFILING
+		dspSum += PRO_StopTimer(&dspTimer);
+#endif
 	}
 	
 	if (GetBit(&g_OSState, OS_SOUND_ENABLED))
 	{
+#ifdef PROFILING
+		PRO_StartTimer(&sndTimer);
+#endif
 		SND_Update();
+#ifdef PROFILING
+		sndSum += PRO_StopTimer(&sndTimer);
+#endif
 	}
 		
 	OS_CPULoadCalc(TIMER_STOP);

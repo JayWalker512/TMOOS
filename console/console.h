@@ -10,4 +10,6 @@ int CON_Init(void);
 
 void CON_Update(void);
 
+void CON_SendString(const char *s);
+
 #endif

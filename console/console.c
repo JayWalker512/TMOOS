@@ -4,9 +4,7 @@
 #include "../avr_common.h"
 #include <string.h> //for working with strings in regular RAM
 
-void CON_SendString(const char *s);
-uint8_t CON_RecieveString(char *buf, uint8_t size);
-
+static uint8_t CON_RecieveString(char *buf, uint8_t size);
 static char CON_BufferInput(char *buffer, const unsigned char size);
 static char CON_ParseArgcArgv(char **argv, const char bufSize, const char *cmdString);
 

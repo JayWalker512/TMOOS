@@ -14,5 +14,6 @@ All of the above culminates into the primary objective: to play games!
 Guidelines and rules for code:
 *Absolutely no recursion! 
 *All memory must be statically allocated.
+*Initialize variables explicitly in functions, not implicitly (please).
 
 The project was started in January 2013. Copyright Brandon Foltz. See license.txt for details.

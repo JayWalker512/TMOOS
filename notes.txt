@@ -61,8 +61,22 @@ FPS: 01F0
 Cpu load: 0x005D @ 0x0010 Mhz
 FPS: 01F0
 
-~1222 FPS when only taking wheel input
-~496 FPS when taking only 1 pushbutton input. something is MAJORLY hanging up here.
+~1222 FPS when only taking wheel input.
+Button input has no noticeable overhead.
 
----------------------------------------------------------------------
+********************************************************************************
 
+Profiler working. 2/22/13
+Some initial data:
+
+----Profiler Data----                                                           
+Console Avg Time: 11                                                            
+Input Avg Time: 20                                                              
+Display Avg Time: 69                                                            
+Sound Avg Time: 0                                                               
+Game Avg Time: 691                                                              
+---------------------                                                           
+
+Game time can definitely be trimmed down. I suspect inefficient graphics functions.
+
+********************************************************************************

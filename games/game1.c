@@ -11,19 +11,21 @@ static unsigned long endTime = 0; //used multiple times
 void 
 GameMain(void)
 {
-	unsigned char wheelPos = GLIB_GetInput(GLIB_WHEEL);
-	unsigned char pb1State = GLIB_GetInput(GLIB_PB1);
-
 	GFX_Clear(0);
 	
-	//GFX_Enable(GFX_FILLED_RECT);
-	GFX_DrawRect(0,0,(wheelPos / 40),3, GFX_FILLED_RECT);
+	//GFX_DrawRect(0,0,8,8, GFX_BORDERED_RECT);
 	
-	if (pb1State)
-	{
-		//GFX_PutPixel(1,1,1);
-		GFX_DrawRect(0, 3, 6, 2, GFX_FILLED_RECT);
-	}
+	//draw face
+	/*GFX_PutPixel(2,2,1);
+	GFX_PutPixel(5,2,1);
+	
+	GFX_PutPixel(2,5,1);
+	GFX_PutPixel(3,5,1);
+	GFX_PutPixel(4,5,1);
+	GFX_PutPixel(5,5,1);
+	
+	GFX_PutPixel(1,4,1);
+	GFX_PutPixel(6,4,1);*/
 	
 	GFX_SwapBuffers();
 }
@@ -34,7 +36,7 @@ void
 Game2Main(void)
 {
 #ifdef DEBUG
-	fps++;
+	/*fps++;
 	if (g_OSIdleLoopTimeMs >= endTime)
 	{
 		endTime = g_OSIdleLoopTimeMs + 1000;
@@ -42,7 +44,7 @@ Game2Main(void)
 		phex16(fps);
 		print("\n");
 		fps = 0;
-	}
+	}*/
 #endif
 		
 	unsigned char wheelPos = GLIB_GetInput(GLIB_WHEEL);

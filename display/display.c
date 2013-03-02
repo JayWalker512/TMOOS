@@ -1,6 +1,9 @@
 
 #ifndef TESTCASE
 #include "../os.h"
+#else
+#include "../avr_common.h"
+#include "../debug/print.h"
 #endif
 
 #include "display.h"
@@ -12,9 +15,10 @@
 #ifdef DEBUG
 #include "../debug/debug.h"
 #include "../avr_common.h"
+#include "../console/console.h"
 #endif
 
-#define DEFAULT_REFRESH_RATE 50
+#define DEFAULT_REFRESH_RATE 60
 
 #ifndef NO_DOUBLE_BUFFER_SAVE_MEMORY
 #define NUM_BUFFERS 2
@@ -24,29 +28,15 @@
 #define NUM_BUFFERS 1
 #endif
 
-//hardcoded stuff for current display
-#ifdef TENXTEN
-#define FRAMEBUFFER_ROWS 10
-#define DISPLAY_COLUMNS 10
-#define DISPLAY_ROWS 10
-#endif
+#define FRAMEBUFFER_ROWS 8 //think this value is irrelevant now...
+#define DISPLAY_COLUMNS 8
+#define DISPLAY_ROWS 8
 
-#ifdef FIVEXFIVE
-#define FRAMEBUFFER_ROWS 5
-#define DISPLAY_COLUMNS 5
-#define DISPLAY_ROWS 5
-#endif
-
-#ifdef SIXXFIVE
-#define FRAMEBUFFER_ROWS 5
-#define DISPLAY_COLUMNS 6
-#define DISPLAY_ROWS 5
-#endif
 
 static void DSP_ConfigureDriver(const unsigned char refreshRate);
 
-static void DSP_RefreshDriver0(void);
-static void DSP_RefreshDriver1(void);
+static void DSP_RefreshDriver0(void); //sync driver
+static void DSP_RefreshDriver1(void); //async driver
 
 char DSP_GetPixelMem(const char * const src,
 			const unsigned char srcWidth,
@@ -57,7 +47,7 @@ char DSP_GetPixelMem(const char * const src,
 
 #define FRAMEBUFFER_TYPE unsigned char
 #define DISPLAY_NUMPIXELS DISPLAY_ROWS * DISPLAY_COLUMNS
-#define FRAMEBUFFER_SIZE_BYTES (DISPLAY_NUMPIXELS) / (sizeof(FRAMEBUFFER_TYPE) * 8) + 1
+#define FRAMEBUFFER_SIZE_BYTES ((DISPLAY_NUMPIXELS) / (sizeof(FRAMEBUFFER_TYPE) * 8)) + 1
 #define FRAMEBUFFER_TYPE_BITS (sizeof(FRAMEBUFFER_TYPE) * 8)
 static FRAMEBUFFER_TYPE m_frameBuffer[NUM_BUFFERS][FRAMEBUFFER_SIZE_BYTES];
 
@@ -73,19 +63,8 @@ static char m_curRow;
 static unsigned char m_DSPState;
 
 //shouldnt initialize here, but doing it anyway for now
-static char m_anodePins[DISPLAY_ROWS] = { 9, 8, 7, 6, 5 };
-static char m_cathodePins[DISPLAY_COLUMNS] = { 4, 3, 2, 1, 0, 21 };
-/*static char m_anodePins[DISPLAY_ROWS * 2] = {	'C', 6,
-						'D', 3,
-						'D', 2,
-						'D', 1,
-						'D', 0 };
-static char m_cathodePins[DISPLAY_COLUMNS * 2] = {	'B', 7,
-							'B', 3,
-							'B', 2,
-							'B', 1,
-							'B', 0,
-							'F', 0 };*/
+static char m_anodePins[DISPLAY_ROWS] = { 16, 20, 8, 17, 2, 7, 4, 9 };
+static char m_cathodePins[DISPLAY_COLUMNS] = { 3, 11, 12, 6, 13, 5, 1, 0 };
 
 int 
 DSP_Init(void) //TODO init settings (refresh rate, double buffer) should be passed here from OS
@@ -114,14 +93,16 @@ DSP_Init(void) //TODO init settings (refresh rate, double buffer) should be pass
 	DSP_SetConfig(DSP_VSYNC, 0);
 	DSP_SetConfig(DSP_DESTRUCTIVE_BITBLT, 1);
 	
-	/* FIXME no double buffer is broken right now... */
+	/* FIXME disabled double buffer is broken right now... */
 	DSP_SetConfig(DSP_DOUBLE_BUFFER, 1);
 	
 	#ifdef DEBUG
-	
-	print("Framebuffer size (BITS): ");
-	phex16(sizeof(m_frameBuffer[1]) * 8);
-	print("\n");
+	CON_SendString(PSTR("Framebuffer size (BITS): "));
+	printInt(sizeof(m_frameBuffer[1]) * 8, VAR_UNSIGNED);
+	CON_SendString(PSTR("\r\n"));
+	CON_SendString(PSTR("Framebuffer size (Bytes): "));
+	printInt(sizeof(m_frameBuffer[1]), VAR_UNSIGNED);
+	CON_SendString(PSTR("\r\n"));
 	#endif
 	
 	return 1;
@@ -153,6 +134,7 @@ DSP_SwapBuffers(void)
 	#endif
 }
 
+//async driver
 static void 
 DSP_RefreshDriver0(void)
 {
@@ -225,6 +207,7 @@ DSP_RefreshDriver0(void)
 	ClearBit(&m_DSPState, DSP_CURRENTLY_REFRESHING);
 }
 
+//async driver
 static void 
 DSP_RefreshDriver1(void)
 {
@@ -288,7 +271,6 @@ DSP_GetPixel(const char x, const char y)
 			unsigned char accessedBit = (y * DISPLAY_COLUMNS) + x;
 			unsigned char offset = floor(accessedBit / FRAMEBUFFER_TYPE_BITS);
 		
-			//return !!( *(m_frontBuffer+offset) & (1 << FRAMEBUFFER_TYPE_BITS - (accessedBit % FRAMEBUFFER_TYPE_BITS) - 1) );
 			return GetBit((m_frontBuffer+offset), FRAMEBUFFER_TYPE_BITS - (accessedBit % FRAMEBUFFER_TYPE_BITS) - 1);
 		}
 	}
@@ -310,7 +292,6 @@ DSP_GetPixelMem(const char * const src,
 	unsigned char accessedBit = (srcY * srcWidth) + srcX;
 	unsigned char offset = floor(accessedBit / srcBits);
 	
-	//return !!( *(src+offset) & (1 << srcBits - (accessedBit % srcBits) - 1) );
 	return GetBit((src+offset), srcBits - (accessedBit % srcBits) - 1);
 }
 
@@ -351,16 +332,6 @@ DSP_BitBLT(const char * const src,
 			}
 		}
 	}
-	
-	#ifdef DEBUG 
-		//phex1(DSP_GetPixelMem(&src, srcWidth, srcHeight, iX, iY));
-		/*_delay_us(1000);
-		print("\nAddress from BitBLT: ");
-		_delay_us(1000);
-		phex16(src);
-		print("\n");
-		_delay_us(1000);*/
-	#endif
 	
 	//maybe write so that 1 is only returned if anything was actually copied to frameBuffer
 	return 1;
@@ -455,7 +426,7 @@ DSP_GetConfig(enum e_DSPParameter parameter)
 	return -1;
 }
 
-#ifdef DEBUG
+#ifdef TESTCASE
 void
 DSP_DBG_PrintFrontBufBin(void)
 {

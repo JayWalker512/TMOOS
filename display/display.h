@@ -2,22 +2,9 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-#define SIXXFIVE
+#define DISPLAY_WIDTH 8
+#define DISPLAY_HEIGHT 8
 
-#ifdef TENXTEN
-#define DISPLAY_WIDTH 10
-#define DISPLAY_HEIGHT 10
-#endif
-
-#ifdef FIVEXFIVE
-#define DISPLAY_WIDTH 5
-#define DISPLAY_HEIGHT 5
-#endif
-
-#ifdef SIXXFIVE
-#define DISPLAY_WIDTH 6
-#define DISPLAY_HEIGHT 5
-#endif
 
 /* Parameters 0-7 are stored bitwise in static m_DSPState */
 enum e_DSPParameter {

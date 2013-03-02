@@ -48,8 +48,7 @@ SRC =	$(TARGET).c \
 		display.c \
 		../time/time.c \
 		../hardware/hardware.c \
-		../hardware/wiring.c \
-		../hardware/wiring_analog.c \
+		../hardware/libarduino/wiring.c \
 		../debug/usb_debug_only.c \
 		../debug/print.c
 	
@@ -123,7 +122,7 @@ CSTANDARD = -std=gnu99
 
 
 # Place -D or -U options here for C sources
-CDEFS = -DF_CPU=$(F_CPU)UL -DDEBUG -DTESTCASE
+CDEFS = -DF_CPU=$(F_CPU)UL -DTESTCASE
 
 
 # Place -D or -U options here for ASM sources

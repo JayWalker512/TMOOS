@@ -20,7 +20,6 @@ peripheral subsystems through their respective interfaces. */
 
 #ifdef DEBUG
 #include "debug/debug.h"
-#include "profiling.h"
 #endif
 
 #ifdef PROFILING
@@ -108,8 +107,8 @@ main(void)
 		PRO_StartTimer(&gameTimer);
 #endif
 		
-		//GameMain();
-		Game2Main();
+		GameMain();
+		//Game2Main();
 		//Game3Main();
 		//Game4Main();
 		
@@ -211,7 +210,7 @@ OS_Init(void)
 	OS_SetConfig(OS_INPUT_ENABLED, 1);
 
 	DSP_SetConfig(DSP_VSYNC, 0);
-	DSP_SetConfig(DSP_REFRESH_HZ, 60);
+	DSP_SetConfig(DSP_REFRESH_HZ, 55);
 	
 	return 1;
 }
@@ -277,10 +276,6 @@ OS_FatalError(enum e_FATAL_ERRORS error)
 	
 	if (error == INIT_ERROR)
 	{
-		#ifdef DEBUG 
-		print("Well shit, something went wrong during OS_Init()\n");
-		#endif
-		
 		HRD_SetPinDigital(11, 1);
 		while(1); //loop forever
 	}
@@ -385,14 +380,6 @@ OS_CPUScaleByLoad(void)
 		curClock = TME_ScaleCpu(CPU_1MHZ);
 
 	}
-	#ifdef DEBUG 
-	if (GetBit(&g_OSDebugLevels, DEBUG_OS))
-	{
-		print("    Cpu scaled to: 0x");
-		phex16(TME_GetCpuClockMhz());
-		print(" Mhz\n");
-	}
-	#endif
 }
 
 static void 
@@ -424,14 +411,14 @@ OS_CPULoadCalc(enum e_TimerParams parameter)
 		m_idleTime = 0;
 		
 		#ifdef DEBUG 
-		if (GetBit(&g_OSDebugLevels, DEBUG_OS))
+		/*if (GetBit(&g_OSDebugLevels, DEBUG_OS))
 		{
 			print("Cpu load: 0x");
 			phex16(m_sysLoad);
 			print(" @ 0x");
 			phex16(TME_GetCpuClockMhz());
 			print(" Mhz\n");
-		}
+		}*/
 		#endif
 		
 		if (GetBit(&g_OSState, OS_CPU_SCALING_ENABLED))

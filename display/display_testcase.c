@@ -1,10 +1,11 @@
-#define DEBUG
+#define TESTCASE
 
 #include "display.h"
 #include "../time/time.h"
 #include "../hardware/hardware.h"
 #include "../avr_common.h"
-#include "../debug/debug.h"
+#include "../debug/usb_debug_only.h"
+#include "../debug/print.h"
 #include "../sharedlib/binary.h"
 
 #define CPU_SET_FREQ(n) (CLKPR = 0x80, CLKPR = (n))
@@ -37,7 +38,6 @@ void Idle(void);
 int 
 main()
 {
-	//HRD_Init();
 	TME_Init();
 	usb_init();
 	_delay_us(1000000);
@@ -50,9 +50,9 @@ main()
 	phex16(sizeof(unsigned char) * 8);
 	print("\n");
 
-	HRD_SetPin('D', 6, 1);
+	HRD_SetPinDigital(11, 1);
 	_delay_us(200000);
-	HRD_SetPin('D', 6, 0);
+	HRD_SetPinDigital(11, 0);
 	_delay_us(200000);
 
 	DSP_Init();

@@ -48,7 +48,7 @@ char DSP_SetConfig(enum e_DSPParameter parameter, const unsigned char newValue);
 
 char DSP_GetConfig(enum e_DSPParameter parameter);
 
-#ifdef DEBUG
+#ifdef TESTCASE
 void DSP_DBG_PrintFrontBufBin(void);
 #endif
 

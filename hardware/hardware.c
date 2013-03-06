@@ -51,6 +51,10 @@ HRD_Init(void)
 	HRD_GetMillis = &millis;
 	//these are the only 2 functions still depending on Arduino library
 	
+	//let's set all pins low as part of the initialization. (teensy 2.0)
+	for (char i = 0; i <= 24; i++)
+		HRD_SetPinDigital(i, 0);
+	
 	return 1;
 }
 

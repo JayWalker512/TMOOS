@@ -38,7 +38,8 @@ void Idle(void);
 int 
 main()
 {
-	TME_Init();
+	CPU_SET_FREQ(0x00);
+	TME_Init(); 
 	usb_init();
 	_delay_us(1000000);
 	
@@ -83,11 +84,11 @@ main()
 		print("Glyph Pixel 1,1 IS NOT set\n");*/
 	_delay_us(10000);
 	
-	phex1(DSP_GetPixelMem(&glyph, 3, 3, 1, 0));
+	//phex1(DSP_GetPixelMem(&glyph, 3, 3, 1, 0));
 	_delay_us(1000);
-	print("\nAddress from Test: ");
+	//print("\nAddress from Test: ");
 	_delay_us(1000);
-	phex16(&glyph);
+	//phex16(&glyph);
 	_delay_us(1000);
 	print("\n");	
 	
@@ -99,15 +100,15 @@ main()
 	if (DSP_GetPixel(3,1))
 		print("Pixel 3,1 IS set\n");
 	else
-		print("Pixel 3,1 IS NOT set\n");
+		print("Pixel 3,1 IS NOT set\n");*/
 		
-	if (DSP_GetPixel(4,3))
-		print("Pixel 4,3 IS set\n");
+	if (DSP_GetPixel(2,7))
+		print("Pixel 2,7 IS set\n");
 	else
-		print("Pixel 4,3 IS NOT set\n");*/
+		print("Pixel 2,7 IS NOT set\n");
 	
 	
-	TME_ScaleCpu(CPU_16MHZ);
+	//TME_ScaleCpu(CPU_16MHZ);
 	DSP_Clear(0);
 	DSP_BitBLT(&AChar, 3, 5, 0, 0);
 	
@@ -153,4 +154,10 @@ void
 Idle(void)
 {
 	DSP_Refresh();
+	
+	/*print("Printing frontBuffer contents\n");
+	_delay_us(100);
+	DSP_DBG_PrintFrontBufBin();
+	print("\n");*/
+	//_delay_us(100);
 }

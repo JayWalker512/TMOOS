@@ -164,8 +164,8 @@ static char
 OS_InitSubsystems(void)
 {
 	#ifdef DEBUG
-	usb_init();
-	_delay_us(100000);
+	//usb_init();
+	//_delay_us(100000);
 	#endif
 
 	if (!TME_Init()) 
@@ -207,10 +207,10 @@ OS_Init(void)
 	OS_SetConfig(OS_CPU_SCALING_ENABLED, 0);
 	OS_SetConfig(OS_SOUND_ENABLED, 0);
 	OS_SetConfig(OS_DISPLAY_ENABLED, 1);
-	OS_SetConfig(OS_INPUT_ENABLED, 1);
+	OS_SetConfig(OS_INPUT_ENABLED, 0);
 
 	DSP_SetConfig(DSP_VSYNC, 0);
-	DSP_SetConfig(DSP_REFRESH_HZ, 55);
+	DSP_SetConfig(DSP_REFRESH_HZ, 85);
 	
 	return 1;
 }
@@ -276,7 +276,7 @@ OS_FatalError(enum e_FATAL_ERRORS error)
 	
 	if (error == INIT_ERROR)
 	{
-		HRD_SetPinDigital(11, 1);
+		//HRD_SetPinDigital(11, 1);
 		while(1); //loop forever
 	}
 }

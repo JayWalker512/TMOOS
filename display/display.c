@@ -6,17 +6,17 @@
 #include "../debug/print.h"
 #endif
 
-#include "display.h"
-#include "../hardware/hardware.h"
-#include "../time/time.h"
-#include "../sharedlib/binary.h"
-#include <math.h>
-
 #ifdef DEBUG
 #include "../debug/debug.h"
 #include "../avr_common.h"
 #include "../console/console.h"
 #endif
+
+#include "display.h"
+#include "../hardware/hardware.h"
+#include "../time/time.h"
+#include "../sharedlib/binary.h"
+#include <math.h>
 
 #define DEFAULT_REFRESH_RATE 60
 
@@ -28,7 +28,7 @@
 #define NUM_BUFFERS 1
 #endif
 
-#define FRAMEBUFFER_ROWS 8 //think this value is irrelevant now...
+#define FRAMEBUFFER_ROWS 9 //think this value is irrelevant now...
 #define DISPLAY_COLUMNS 8
 #define DISPLAY_ROWS 8
 
@@ -63,8 +63,8 @@ static char m_curRow;
 static unsigned char m_DSPState;
 
 //shouldnt initialize here, but doing it anyway for now
-static char m_anodePins[DISPLAY_ROWS] = { 16, 20, 8, 17, 2, 7, 4, 9 };
-static char m_cathodePins[DISPLAY_COLUMNS] = { 3, 11, 12, 6, 13, 5, 1, 0 };
+static unsigned char m_anodePins[DISPLAY_ROWS] = { 16, 20, 8, 17, 2, 7, 4, 9 };
+static unsigned char m_cathodePins[DISPLAY_COLUMNS] = { 3, 14, 15, 21, 13, 24, 1, 0 };
 
 int 
 DSP_Init(void) //TODO init settings (refresh rate, double buffer) should be passed here from OS
@@ -166,7 +166,7 @@ DSP_RefreshDriver0(void)
 				HRD_SetPinDigital(m_anodePins[curRow - 1], 0);
 			
 			//setting active cathodes low. Do this first to avoid ghosting
-			for (int x = 0; x < DISPLAY_COLUMNS; x++)
+			for (char x = 0; x < DISPLAY_COLUMNS; x++)
 			{				
 				if (DSP_GetPixel(x, curRow)) //can inline this, using function now for clarity
 				{	
@@ -207,6 +207,7 @@ DSP_RefreshDriver0(void)
 	ClearBit(&m_DSPState, DSP_CURRENTLY_REFRESHING);
 }
 
+#ifndef TESTCAS
 //async driver
 static void 
 DSP_RefreshDriver1(void)
@@ -221,7 +222,7 @@ DSP_RefreshDriver1(void)
 		HRD_SetPinDigital(m_anodePins[m_curRow - 1], 0);
 
 	//setting active cathodes low. Do this first to avoid ghosting
-	for (int x = 0; x < DISPLAY_COLUMNS; x++)
+	for (char x = 0; x < DISPLAY_COLUMNS; x++)
 	{				
 		if (DSP_GetPixel(x, m_curRow)) //can inline this, using function now for clarity
 		{	
@@ -241,6 +242,66 @@ DSP_RefreshDriver1(void)
 		m_curRow = 0;
 	m_nextScanlineTime = TME_GetAccurateMicros() + m_scanlineDelayUs;
 }
+#else
+static void 
+DSP_RefreshDriver1(void)
+{
+	if (TME_GetAccurateMicros() < m_nextScanlineTime)
+		return;
+			
+	print("Starting scanline row: ");
+	phex16(m_curRow);
+	print("\n");
+	
+	//set previous row anode low
+	if (m_curRow == 0)
+	{
+		HRD_SetPinDigital(m_anodePins[DISPLAY_ROWS - 1], 0);
+		print("Set anode pin ");
+		phex16(m_anodePins[DISPLAY_ROWS - 1]);
+		print(" low\n");
+	}
+	else
+	{
+		HRD_SetPinDigital(m_anodePins[m_curRow - 1], 0);
+		print("Set anode pin ");
+		phex16(m_anodePins[m_curRow - 1]);
+		print(" low\n");
+	}
+
+	//setting active cathodes low. Do this first to avoid ghosting
+	for (char x = 0; x < DISPLAY_COLUMNS; x++)
+	{				
+		if (DSP_GetPixel(x, m_curRow)) //can inline this, using function now for clarity
+		{	
+			HRD_SetPinDigital(m_cathodePins[x], 0);
+			print("Set cathode pin ");
+			phex16(m_cathodePins[x]);
+			print(" low\n");
+		}
+		else
+		{
+			HRD_SetPinDigital(m_cathodePins[x], 1);
+			print("Set cathode pin ");
+			phex16(m_cathodePins[x]);
+			print(" HIGH\n");
+		}
+	}
+
+	//set current row anode high
+	HRD_SetPinDigital(m_anodePins[m_curRow], 1);
+	print("Set anode pin ");
+	phex16(m_anodePins[m_curRow]);
+	print(" HIGH\n");
+	
+	m_curRow++; 
+	if (m_curRow >= DISPLAY_ROWS)
+		m_curRow = 0;
+	m_nextScanlineTime = TME_GetAccurateMicros() + m_scanlineDelayUs;
+	
+	print("Finished scanline!\n");
+}
+#endif
 
 void 
 DSP_PutPixel(const char x, const char y, const char state)
@@ -342,7 +403,7 @@ DSP_Clear(const char state)
 {
 	for (char y = 0; y < FRAMEBUFFER_SIZE_BYTES; y++)
 	{
-		if (!state)
+		if (state == 0)
 			*(m_backBuffer+y) = 0;
 		else
 			*(m_backBuffer+y) = ~((*m_backBuffer+y) & 0);

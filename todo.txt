@@ -1,0 +1,9 @@
+Todo
+
+Custom time functions: removes arduino dep.
+
+Interrupt managed display driver.
+
+Draw display schematic.
+
+

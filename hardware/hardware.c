@@ -24,18 +24,9 @@
 
 #if defined(__AVR_ATmega32U4__)
 
-#ifdef PIN_OFFSET_TABLE
-
-/* This could be optimized further still by removing address additions from 
- set/get functions, but that would obfuscate things a bit. */
-const unsigned char m_arduinoPinsTable[][2] = { {0,0}, {0,1}, {0,2}, {0,3},
-{0,7}, {6,0}, {6,1}, {6,2}, {6,3}, {3,6}, {3,7}, {6,6}, {6,7}, {0,4}, {0,5},
-{0,6}, {12,7}, {12,6}, {12,5}, {12,4}, {12,1}, {12,0}, {6,4}, {6,5}, {9,6} }; 
-
-#elif PIN_OFFSET_CALC
-const unsigned char m_arduinoPinsTable[] = { 0, 1, 2, 3, 7, 20, 21, 22, 23, 16, 
-	17, 26, 27, 4, 5, 6, 47, 46, 45, 44, 41, 40, 24, 25, 36 };
-#endif
+const unsigned char m_arduinoPinsTable[] = {'B',0, 'B',1, 'B',2, 'B',3, 'B', 7,
+	'D',0, 'D',1, 'D',2, 'D',3, 'C',6, 'C',7, 'D',6, 'D',7, 'B',4, 'B',5, 'B',6,
+	'F',7, 'F',6, 'F',5, 'F',4, 'F',1, 'F',0, 'D',4, 'D',5, 'E',6};
 
 #elif defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB1286__)
 	//todo teensy 2.0++
@@ -58,90 +49,49 @@ HRD_Init(void)
 	return 1;
 }
 
-#ifdef PIN_OFFSET_TABLE
-char
-HRD_SetPinDigital(const unsigned char ardPin, unsigned char value)
+char HRD_SetPinDigital(const unsigned char ardPin, unsigned char value)
 {
-	/* This function is only written for the Atmel Mega 32u4 */
-	
+	if (ardPin < 0 || ardPin > 24)
+		return 0;
+
+	unsigned char port, pin;
+	port = m_arduinoPinsTable[ardPin * 2];
+	port = port - 'A';
+	pin = m_arduinoPinsTable[ardPin * 2 + 1];
 	//set the pin
 	if (value == 0)
 	{
-		// make the pin an output (DDRx)
-		SetBit((unsigned char *)(&DDRB + m_arduinoPinsTable[ardPin][0]), m_arduinoPinsTable[ardPin][1]);
-		// drive it low (PORTx)
-		ClearBit((unsigned char *)(&PORTB + m_arduinoPinsTable[ardPin][0]), m_arduinoPinsTable[ardPin][1]);
-		
+		// make the pin an output
+		*(uint8_t *)(0x21 + port * 3) |= (1 << pin);
+		// drive it low
+		*(uint8_t *)(0x22 + port * 3) &= ~(1 << pin);
 	}
 	else
 	{
 		// make the pin an output
-		SetBit((unsigned char *)(&DDRB + m_arduinoPinsTable[ardPin][0]), m_arduinoPinsTable[ardPin][1]);
+		*(uint8_t *)(0x21 + port * 3) |= (1 << pin);
 		// drive it high
-		SetBit((unsigned char *)(&PORTB + m_arduinoPinsTable[ardPin][0]), m_arduinoPinsTable[ardPin][1]);
+		*(uint8_t *)(0x22 + port * 3) |= (1 << pin);
 	}
 	
 	return 1;
 }
 
-unsigned char 
-HRD_GetPinDigital(const unsigned char ardPin)
-{	
-	ClearBit((unsigned char *)(&PORTB + m_arduinoPinsTable[ardPin][0]), m_arduinoPinsTable[ardPin][1]); //pullup resistor mode
-	return GetBit((unsigned char *)(&PINB + m_arduinoPinsTable[ardPin][0]), m_arduinoPinsTable[ardPin][1]);
-}
-#endif
-
-#ifdef PIN_OFFSET_CALC
-char 
-HRD_SetPinDigital(const unsigned char ardPin, unsigned char value)
+unsigned char HRD_GetPinDigital(const unsigned char ardPin)
 {
-	/* This function is only written for the Atmel Mega 32u4 */
-	unsigned char port = 0;
-	unsigned char pin = 0;
+	if (ardPin < 0 || ardPin > 24)
+		return 0;
 
-	port = (m_arduinoPinsTable[ardPin] / 10) * 3;
-	pin = (m_arduinoPinsTable[ardPin] % 10);
+	unsigned char port, pin;
+	port = m_arduinoPinsTable[ardPin * 2];
+	port = port - 'A';
+	pin = m_arduinoPinsTable[ardPin * 2 + 1];
 	
-	//set the pin
-	if (value == 0)
-	{
-		// make the pin an output (DDRx)
-		//*(unsigned char *)(&DDRB + port) |= (1 << pin);
-		SetBit((unsigned char *)(&DDRB + port), pin);
-		// drive it low (PORTx)
-		//*(unsigned char *)(&PORTB + port) &= ~(1 << pin);
-		ClearBit((unsigned char *)(&PORTB + port), pin);
-		
-	}
-	else
-	{
-		// make the pin an output
-		//*(unsigned char *)(&DDRB + port) |= (1 << pin);
-		SetBit((unsigned char *)(&DDRB + port), pin);
-		// drive it high
-		//*(unsigned char *)(&PORTB + port) |= (1 << pin);
-		SetBit((unsigned char *)(&PORTB + port), pin);
-	}
-	
-	return 1;
+	//set pin to input mode
+	*(uint8_t *)(0x21 + port * 3) &= ~(1 << pin);
+	// read the pin
+	return *(uint8_t *)(0x20 + port * 3) & (1 << pin);
 }
-
-unsigned char 
-HRD_GetPinDigital(const unsigned char ardPin)
-{
-	unsigned char port = 0;
-	unsigned char pin = 0;
-	
-	port = (m_arduinoPinsTable[ardPin] / 10) * 3;
-	pin = (m_arduinoPinsTable[ardPin] % 10);
-	
-	ClearBit((unsigned char *)(&PORTB + port), pin); //pullup resistor mode
-	return GetBit((unsigned char *)(&PINB + port), pin);
-}
-#endif
-
-
 
 /* These functions straight from the PJRC site, compatible with 2.0 and 2.0++ */
 static uint8_t aref = (1<<REFS0); // default to AREF = Vcc

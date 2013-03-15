@@ -210,7 +210,7 @@ OS_Init(void)
 	OS_SetConfig(OS_INPUT_ENABLED, 0);
 
 	DSP_SetConfig(DSP_VSYNC, 0);
-	DSP_SetConfig(DSP_REFRESH_HZ, 85);
+	DSP_SetConfig(DSP_REFRESH_HZ, 60);
 	
 	return 1;
 }

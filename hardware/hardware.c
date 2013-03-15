@@ -93,6 +93,12 @@ unsigned char HRD_GetPinDigital(const unsigned char ardPin)
 	return *(uint8_t *)(0x20 + port * 3) & (1 << pin);
 }
 
+void HRD_CycleClockPin(const unsigned char ardPin)
+{
+	HRD_SetPinDigital(ardPin, 1);
+	HRD_SetPinDigital(ardPin, 0);
+}
+
 /* These functions straight from the PJRC site, compatible with 2.0 and 2.0++ */
 static uint8_t aref = (1<<REFS0); // default to AREF = Vcc
 

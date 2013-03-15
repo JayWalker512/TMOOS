@@ -13,10 +13,10 @@ GameMain(void)
 {
 	GFX_Clear(0);
 	
-	//GFX_DrawRect(0,0,8,8, GFX_BORDERED_RECT);
+	GFX_DrawRect(0,0,8,8, GFX_BORDERED_RECT);
 	
 	//draw face
-	/*GFX_PutPixel(2,2,1);
+	GFX_PutPixel(2,2,1);
 	GFX_PutPixel(5,2,1);
 	
 	GFX_PutPixel(2,5,1);
@@ -25,7 +25,7 @@ GameMain(void)
 	GFX_PutPixel(5,5,1);
 	
 	GFX_PutPixel(1,4,1);
-	GFX_PutPixel(6,4,1);*/
+	GFX_PutPixel(6,4,1);
 	
 	GFX_SwapBuffers();
 }

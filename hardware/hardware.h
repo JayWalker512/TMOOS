@@ -10,6 +10,8 @@ char HRD_SetPinDigital(const unsigned char ardPin, unsigned char value);
 
 unsigned char HRD_GetPinDigital(const unsigned char ardPin);
 
+void HRD_CycleClockPin(const unsigned char ardPin);
+
 unsigned long (*HRD_GetMicros)(void);
 
 unsigned long (*HRD_GetMillis)(void);

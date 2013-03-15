@@ -28,7 +28,7 @@
 #define NUM_BUFFERS 1
 #endif
 
-#define FRAMEBUFFER_ROWS 9 //think this value is irrelevant now...
+#define FRAMEBUFFER_ROWS 9 //TODO change this to FRAMEBUFFER_SIZE_BYTES and test
 #define DISPLAY_COLUMNS 8
 #define DISPLAY_ROWS 8
 
@@ -63,8 +63,22 @@ static char m_curRow;
 static unsigned char m_DSPState;
 
 //shouldnt initialize here, but doing it anyway for now
-static unsigned char m_anodePins[DISPLAY_ROWS] = { 16, 20, 8, 17, 2, 7, 4, 9 };
-static unsigned char m_cathodePins[DISPLAY_COLUMNS] = { 3, 14, 15, 21, 13, 24, 1, 0 };
+//static unsigned char m_anodePins[DISPLAY_ROWS] = { 16, 20, 8, 17, 2, 7, 4, 9 };
+//static unsigned char m_cathodePins[DISPLAY_COLUMNS] = { 3, 14, 15, 21, 13, 24, 1, 0 };
+
+#define DSP_POWER_PIN 12
+
+#define ANODE_DATA 1
+#define ANODE_OE 2
+#define ANODE_LATCH 3
+#define ANODE_CLOCK 4
+#define ANODE_CLEAR 5
+
+#define CATHODE_DATA 16
+#define CATHODE_OE 15
+#define CATHODE_LATCH 17
+#define CATHODE_CLOCK 14
+#define CATHODE_CLEAR 13
 
 int 
 DSP_Init(void) //TODO init settings (refresh rate, double buffer) should be passed here from OS
@@ -96,6 +110,13 @@ DSP_Init(void) //TODO init settings (refresh rate, double buffer) should be pass
 	/* FIXME disabled double buffer is broken right now... */
 	DSP_SetConfig(DSP_DOUBLE_BUFFER, 1);
 	
+	DSP_Power(1);
+	
+	//should these go in DSP_Power()?
+	HRD_SetPinDigital(ANODE_CLEAR, 1);
+	HRD_SetPinDigital(CATHODE_CLEAR, 1);
+	HRD_SetPinDigital(CATHODE_OE, 0);
+	
 	#ifdef DEBUG
 	CON_SendString(PSTR("Framebuffer size (BITS): "));
 	printInt(sizeof(m_frameBuffer[1]) * 8, VAR_UNSIGNED);
@@ -106,6 +127,32 @@ DSP_Init(void) //TODO init settings (refresh rate, double buffer) should be pass
 	#endif
 	
 	return 1;
+}
+
+char DSP_Power(const char state)
+{
+	/*TODO finish this. Refresh cycle needs to start from the beginning
+	 when display is powered on, so that the image isn't corrupted by 
+	 shift registers starting to get data part way through a refresh. */
+	if (state == 1)
+	{
+		HRD_SetPinDigital(DSP_POWER_PIN, 1);
+		SetBit(&m_DSPState, DSP_POWERED);
+		
+		ClearBit(&m_DSPState, DSP_CURRENTLY_REFRESHING);
+		m_curRow = 0;
+		m_nextScanlineTime = 0;
+		return 1;
+	}
+	else if (state == 0)
+	{
+		HRD_SetPinDigital(DSP_POWER_PIN, 0);
+		ClearBit(&m_DSPState, DSP_POWERED);
+		
+		ClearBit(&m_DSPState, DSP_CURRENTLY_REFRESHING);
+		return 0;
+	}
+	return -1;
 }
 
 static void
@@ -134,10 +181,11 @@ DSP_SwapBuffers(void)
 	#endif
 }
 
-//async driver
+//sync driver
 static void 
 DSP_RefreshDriver0(void)
 {
+#if 0
 	/* TODO 
 	The display gets ever so slightly brighter or dimmer when the CPU is
 	clocked up or down. May need to profile how much time is spent calling
@@ -205,9 +253,10 @@ DSP_RefreshDriver0(void)
 	#endif
 	
 	ClearBit(&m_DSPState, DSP_CURRENTLY_REFRESHING);
+#endif
 }
 
-#ifndef TESTCAS
+/* driver for old pinout. commented for reference atm
 //async driver
 static void 
 DSP_RefreshDriver1(void)
@@ -242,66 +291,52 @@ DSP_RefreshDriver1(void)
 		m_curRow = 0;
 	m_nextScanlineTime = TME_GetAccurateMicros() + m_scanlineDelayUs;
 }
-#else
+*/
+
 static void 
 DSP_RefreshDriver1(void)
 {
 	if (TME_GetAccurateMicros() < m_nextScanlineTime)
 		return;
-			
-	print("Starting scanline row: ");
-	phex16(m_curRow);
-	print("\n");
 	
-	//set previous row anode low
+	//firstly, disable anode output for now.
+	HRD_SetPinDigital(ANODE_OE, 1);
+	
 	if (m_curRow == 0)
 	{
-		HRD_SetPinDigital(m_anodePins[DISPLAY_ROWS - 1], 0);
-		print("Set anode pin ");
-		phex16(m_anodePins[DISPLAY_ROWS - 1]);
-		print(" low\n");
+		HRD_SetPinDigital(ANODE_DATA, 1);
+		HRD_CycleClockPin(ANODE_CLOCK);
+		HRD_CycleClockPin(ANODE_LATCH);
+		HRD_SetPinDigital(ANODE_DATA, 0);
 	}
 	else
 	{
-		HRD_SetPinDigital(m_anodePins[m_curRow - 1], 0);
-		print("Set anode pin ");
-		phex16(m_anodePins[m_curRow - 1]);
-		print(" low\n");
+		//note above, we already set ANODE_DATA to 0 so we just shift it in
+		HRD_CycleClockPin(ANODE_CLOCK);
+		HRD_CycleClockPin(ANODE_LATCH);
 	}
 
-	//setting active cathodes low. Do this first to avoid ghosting
-	for (char x = 0; x < DISPLAY_COLUMNS; x++)
+	for (char x = DISPLAY_COLUMNS; x > 0; x--)
 	{				
-		if (DSP_GetPixel(x, m_curRow)) //can inline this, using function now for clarity
-		{	
-			HRD_SetPinDigital(m_cathodePins[x], 0);
-			print("Set cathode pin ");
-			phex16(m_cathodePins[x]);
-			print(" low\n");
+		if (DSP_GetPixel(x - 1, m_curRow)) //can inline this, using function now for clarity
+		{		
+			HRD_SetPinDigital(CATHODE_DATA, 0);
+			HRD_CycleClockPin(CATHODE_CLOCK);
 		}
 		else
 		{
-			HRD_SetPinDigital(m_cathodePins[x], 1);
-			print("Set cathode pin ");
-			phex16(m_cathodePins[x]);
-			print(" HIGH\n");
+			HRD_SetPinDigital(CATHODE_DATA, 1);
+			HRD_CycleClockPin(CATHODE_CLOCK);
 		}
 	}
-
-	//set current row anode high
-	HRD_SetPinDigital(m_anodePins[m_curRow], 1);
-	print("Set anode pin ");
-	phex16(m_anodePins[m_curRow]);
-	print(" HIGH\n");
+	HRD_CycleClockPin(CATHODE_LATCH);
+	HRD_SetPinDigital(ANODE_OE, 0);
 	
 	m_curRow++; 
 	if (m_curRow >= DISPLAY_ROWS)
 		m_curRow = 0;
 	m_nextScanlineTime = TME_GetAccurateMicros() + m_scanlineDelayUs;
-	
-	print("Finished scanline!\n");
 }
-#endif
 
 void 
 DSP_PutPixel(const char x, const char y, const char state)

@@ -12,11 +12,14 @@ enum e_DSPParameter {
 	DSP_CURRENTLY_REFRESHING = 1, //should always be disabled on boot.
 	DSP_DOUBLE_BUFFER = 2,
         DSP_VSYNC = 3,
+	DSP_POWERED = 7,
 	DSP_REFRESH_HZ = 8,
 	DSP_STATE_BITS = 9,
 };
 
 int DSP_Init(void);
+
+char DSP_Power(const char state);
 
 void DSP_SwapBuffers(void);
 

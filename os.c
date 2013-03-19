@@ -149,6 +149,10 @@ main(void)
 			printInt(gameAvg, VAR_UNSIGNED);
 			CON_SendString(PSTR("\r\n"));
 			
+			CON_SendString(PSTR("Cycles/Sec: "));
+			printInt(nLoops, VAR_UNSIGNED);
+			CON_SendString(PSTR("\r\n"));
+			
 			CON_SendString(PSTR("---------------------\r\n"));
 			
 			conAvg = inpAvg = dspAvg = sndAvg = gameAvg = 0;
@@ -210,7 +214,7 @@ OS_Init(void)
 	OS_SetConfig(OS_INPUT_ENABLED, 0);
 
 	DSP_SetConfig(DSP_VSYNC, 0);
-	DSP_SetConfig(DSP_REFRESH_HZ, 60);
+	DSP_SetConfig(DSP_REFRESH_HZ, 1000);
 	
 	return 1;
 }

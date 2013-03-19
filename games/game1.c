@@ -34,19 +34,7 @@ static char lastChar = 0;
 static unsigned int fps = 0;
 void 
 Game2Main(void)
-{
-#ifdef DEBUG
-	/*fps++;
-	if (g_OSIdleLoopTimeMs >= endTime)
-	{
-		endTime = g_OSIdleLoopTimeMs + 1000;
-		print("FPS: ");
-		phex16(fps);
-		print("\n");
-		fps = 0;
-	}*/
-#endif
-		
+{	
 	unsigned char wheelPos = GLIB_GetInput(GLIB_WHEEL);
 	unsigned char pb1State = GLIB_GetInput(GLIB_PB1);
 	unsigned char pb2State = GLIB_GetInput(GLIB_PB2);

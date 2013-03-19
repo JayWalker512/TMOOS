@@ -83,3 +83,17 @@ Game time can definitely be trimmed down. I suspect inefficient graphics functio
 
 3/14 
 Today I setup and wrote a shift register based binary counter. Based on the 8th bit flicker rate of ~30hz, I estimate that it's shifting in data at about 7680 bits per second. If we estimate speed based on the display cathode array that is 16 bits long, we find a theoretical maximum refresh rate of 480FPS (480 = 7680 / 16). Realistically with game and OS overhead I expect the cap to be between 300-400. Curious to see how close this estimate is. If we target 60 fps and assume 480 fps cap with no other overhead, we find that the display should take 12.5% of the CPU time. Realistically (with overhead) this will be higher, probably around 20%.
+
+3/19
+With the shift-register driven display driver in place, I can measure some performance numbers. Drawing only the simple 8x8 smiley face, the display refreshes at 699 FPS! Input and sound are disabled for the test. About 380us spent in display driver per cycle.
+
+----Profiler Data----                                                           
+Console Avg Time: 11                                                            
+Input Avg Time: 0                                                               
+Display Avg Time: 380                                                           
+Sound Avg Time: 0                                                               
+Game Avg Time: 950                                                              
+Cycles/Sec: 699                                                                 
+--------------------- 
+
+********************************************************************************

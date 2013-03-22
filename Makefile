@@ -47,7 +47,7 @@ TARGET = os
 #previously working build. revert to old_ard files if you cant make it work out
 SRC =	$(TARGET).c \
 		display/display.c sound/sound.c time/time.c input/input.c console/console.c \
-		hardware/hardware.c hardware/libarduino/wiring.c disk/disk.c console/usb_serial.c \
+		hardware/hardware.c disk/disk.c console/usb_serial.c \
 		common/glyphs.c common/profiling.c common/print.c \
 		games/game1.c games/gamelib.c gfx/gfx.c
 	
@@ -123,8 +123,9 @@ CSTANDARD = -std=gnu99
 
 
 # Place -D or -U options here for C sources
-CDEFS = -DF_CPU=$(F_CPU)UL -DPROFILING -DDEBUG
+CDEFS = -DF_CPU=$(F_CPU)UL -DPROFILING 
 #-DNO_DOUBLE_BUFFER_SAVE_MEMORY
+#-DDEBUG
 
 
 # Place -D or -U options here for ASM sources

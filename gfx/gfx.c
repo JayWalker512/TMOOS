@@ -1,7 +1,6 @@
 #include "gfx.h"
 #include "../display/display.h"
-#include "../sharedlib/binary.h"
-//#include "../sharedlib/glyphs.h"
+#include "../common/binary.h"
 
 unsigned char m_GFXState;
 

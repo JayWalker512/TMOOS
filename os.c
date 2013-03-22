@@ -108,9 +108,6 @@ main(void)
 #endif
 		
 		GameMain();
-		//Game2Main();
-		//Game3Main();
-		//Game4Main();
 		
 #ifdef PROFILING
 		gameSum += PRO_StopTimer(&gameTimer);
@@ -167,11 +164,6 @@ main(void)
 static char
 OS_InitSubsystems(void)
 {
-	#ifdef DEBUG
-	//usb_init();
-	//_delay_us(100000);
-	#endif
-
 	if (!TME_Init()) 
 		return 0;
 	

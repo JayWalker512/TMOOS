@@ -1,8 +1,7 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
-#include <avr/interrupt.h>
-#include <stdint.h>
+#include "../avr_common.h"
 
 int HRD_Init(void);
 
@@ -12,9 +11,9 @@ unsigned char HRD_GetPinDigital(const unsigned char ardPin);
 
 void HRD_CycleClockPin(const unsigned char ardPin);
 
-unsigned long (*HRD_GetMicros)(void);
+unsigned long HRD_GetMicros(void);
 
-unsigned long (*HRD_GetMillis)(void);
+unsigned long HRD_GetMillis(void);
 
 /* Below functions for analog reading.*/
 void HRD_AnalogReference(unsigned char mode);

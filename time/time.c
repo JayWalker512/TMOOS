@@ -42,16 +42,12 @@ TME_Init(void)
 	
 	//we start at 16mhz no matter what. see main() in os.c
 	m_timekeepingMultiplier = 1;
-	//m_timekeepingMultiplier = 2; //teensy seems to be starting at 8mhz...
 	
 	m_lastMicros = HRD_GetMicros();
 	m_lastMillis = HRD_GetMillis();
 	
 	m_lastAccurateMicros = HRD_GetMicros();
 	m_lastAccurateMillis = HRD_GetMillis();
-	
-	//TME_ScaleCpu(CPU_16MHZ); //must init at 16mhz
-	//m_curFreq = CPU_16MHZ;
 	
 	return 1;
 }

@@ -48,8 +48,8 @@ TARGET = os
 SRC =	$(TARGET).c \
 		display/display.c sound/sound.c time/time.c input/input.c console/console.c \
 		hardware/hardware.c hardware/libarduino/wiring.c disk/disk.c console/usb_serial.c \
-		sharedlib/glyphs.c sharedlib/profiling.c sharedlib/print.c \
-		games/game1.c games/gamelib.c gfxlib/gfx.c
+		common/glyphs.c common/profiling.c common/print.c \
+		games/game1.c games/gamelib.c gfx/gfx.c
 	
 #old hardware files : 
 	

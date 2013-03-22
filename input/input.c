@@ -6,7 +6,7 @@
 
 #include "../hardware/hardware.h"
 #include "../time/time.h"
-#include "../sharedlib/binary.h"
+#include "../common/binary.h"
 
 #ifdef DEBUG
 #include "../debug/debug.h"

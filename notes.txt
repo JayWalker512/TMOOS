@@ -96,4 +96,6 @@ Game Avg Time: 950
 Cycles/Sec: 699                                                                 
 --------------------- 
 
+Of course, most of the delay here is from the Game time (draw calls) so the display alone could likely switch even faster. 
+
 ********************************************************************************

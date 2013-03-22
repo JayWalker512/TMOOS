@@ -1,6 +1,6 @@
 #include "console.h"
 #include "usb_serial.h"
-#include "../sharedlib/binary.h"
+#include "../common/binary.h"
 #include "../avr_common.h"
 #include <string.h> //for working with strings in regular RAM
 

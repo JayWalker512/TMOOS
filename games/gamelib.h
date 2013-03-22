@@ -1,8 +1,8 @@
 #ifndef GAMES_H
 #define GAMES_H
 
-#include "../gfxlib/gfx.h"
-#include "../sharedlib/glyphs.h"
+#include "../gfx/gfx.h"
+#include "../common/glyphs.h"
 
 #include "../sound/sound.h"
 

@@ -1,6 +1,6 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-#include "../sharedlib/print.h"
+#include "../common/print.h"
 
 #endif

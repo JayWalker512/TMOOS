@@ -1,7 +1,7 @@
 #include "../avr_common.h"
 #include "libarduino/Arduino.h"
 #include "hardware.h"
-#include "../sharedlib/binary.h"
+#include "../common/binary.h"
 
 #ifdef DEBUG
 #include "../debug/debug.h"

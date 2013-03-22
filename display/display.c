@@ -15,7 +15,7 @@
 #include "display.h"
 #include "../hardware/hardware.h"
 #include "../time/time.h"
-#include "../sharedlib/binary.h"
+#include "../common/binary.h"
 #include <math.h>
 
 #define DEFAULT_REFRESH_RATE 60

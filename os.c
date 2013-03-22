@@ -13,9 +13,9 @@ peripheral subsystems through their respective interfaces. */
 #include "time/time.h"
 #include "games/gamelib.h"
 
-#include "sharedlib/binary.h"
-#include "sharedlib/glyphs.h"
-#include "sharedlib/print.h"
+#include "common/binary.h"
+#include "common/glyphs.h"
+#include "common/print.h"
 #include "avr_common.h"
 
 #ifdef DEBUG
@@ -23,7 +23,7 @@ peripheral subsystems through their respective interfaces. */
 #endif
 
 #ifdef PROFILING
-#include "sharedlib/profiling.h"
+#include "common/profiling.h"
 #endif
 
 //may need this here... gonna leave it here for now.
@@ -214,7 +214,7 @@ OS_Init(void)
 	OS_SetConfig(OS_INPUT_ENABLED, 0);
 
 	DSP_SetConfig(DSP_VSYNC, 0);
-	DSP_SetConfig(DSP_REFRESH_HZ, 1000);
+	DSP_SetConfig(DSP_REFRESH_HZ, 60);
 	
 	return 1;
 }

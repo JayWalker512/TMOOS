@@ -15,15 +15,18 @@ const unsigned char m_arduinoPinsTable[] = {'B',0, 'B',1, 'B',2, 'B',3, 'B', 7,
 	//todo teensy 2.0++
 //#endif
 
-inline unsigned char clockCyclesPerMicrosecond(void) {
+inline unsigned char 
+clockCyclesPerMicrosecond(void) {
 	return F_CPU / 1000000L;
 }
 
-inline unsigned long clockCyclesToMicroseconds(unsigned long cycles) {
+inline unsigned long 
+clockCyclesToMicroseconds(unsigned long cycles) {
 	return cycles / clockCyclesPerMicrosecond();
 }
 
-inline unsigned long microsecondsToClockCycles(unsigned long micros) {
+inline unsigned long 
+microsecondsToClockCycles(unsigned long micros) {
 	return micros * clockCyclesPerMicrosecond();
 }
 
@@ -47,9 +50,9 @@ inline unsigned long microsecondsToClockCycles(unsigned long micros) {
 #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
 #endif
 
-volatile unsigned long timer0_overflow_count = 0;
-volatile unsigned long timer0_millis = 0;
-static unsigned char timer0_fract = 0;
+volatile unsigned long m_timer0OverflowCount = 0;
+volatile unsigned long m_timer0Millis = 0;
+static unsigned char m_timer0Fract = 0;
 
 static unsigned int HRD_ADCRead(unsigned char mux);
 static void HRD_InterruptInit(void);
@@ -58,8 +61,8 @@ ISR(TIMER0_OVF_vect)
 {
     	// copy these to local variables so they can be stored in registers
 	// (volatile variables must be read from memory on every access)
-	unsigned long m = timer0_millis;
-	unsigned char f = timer0_fract;
+	unsigned long m = m_timer0Millis;
+	unsigned char f = m_timer0Fract;
 
 	m += MILLIS_INC;
 	f += FRACT_INC;
@@ -68,9 +71,9 @@ ISR(TIMER0_OVF_vect)
 		m += 1;
 	}
 
-	timer0_fract = f;
-	timer0_millis = m;
-	timer0_overflow_count++;
+	m_timer0Fract = f;
+	m_timer0Millis = m;
+	m_timer0OverflowCount++;
 }
 
 int 
@@ -239,7 +242,7 @@ HRD_GetMillis(void)
 	// disable interrupts while we read timer0_millis or we might get an
 	// inconsistent value (e.g. in the middle of a write to timer0_millis)
 	cli();
-	m = timer0_millis;
+	m = m_timer0Millis;
 	SREG = oldSREG;
 
 	return m;
@@ -250,13 +253,13 @@ unsigned long HRD_GetMicros(void) {
 	uint8_t oldSREG = SREG, t;
 	
 	cli();
-	m = timer0_overflow_count;
+	m = m_timer0OverflowCount;
 #if defined(TCNT0)
 	t = TCNT0;
 #elif defined(TCNT0L)
 	t = TCNT0L;
 #else
-	#error TIMER 0 not defined
+	//#error TIMER 0 not defined
 #endif
 
   

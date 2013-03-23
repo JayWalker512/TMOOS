@@ -1,6 +1,7 @@
 #include "gfx.h"
 #include "../display/display.h"
 #include "../common/binary.h"
+#include <math.h>
 
 unsigned char m_GFXState;
 
@@ -95,5 +96,44 @@ void
 GFX_DrawLine(const char x1, const char y1,
 		const char x2, const char y2)
 {
-	//TODO look up that one perfect line drawing algorithm...
+	/* Bresenhams line algorithm.
+	http://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm#Simplification */
+	char xS = x1;
+	char yS = y1;
+	char xD = x2;
+	char yD = y2;
+	char dX = abs(xD - xS);
+	char dY = abs(yD - yS);
+	char err = dX - dY;
+	
+	char stepX;
+	char stepY;
+	if (xS < xD)
+		stepX = 1;
+	else
+		stepX = -1;
+	
+	if (yS < yD)
+		stepY = 1;
+	else
+		stepY = -1;
+	
+	while (1)
+	{
+		DSP_PutPixel(xS, yS, 1);
+		if (xS == xD && yS == yD)
+			break;
+		
+		char e2 = 2 * err;
+		if (e2 > -dY)
+		{
+			err = err - dY;
+			xS = xS + stepX;
+		}
+		if (e2 < dX)
+		{
+			err = err + dX;
+			yS = yS + stepY;
+		}
+	}
 }

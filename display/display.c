@@ -129,7 +129,8 @@ DSP_Init(void) //TODO init settings (refresh rate, double buffer) should be pass
 	return 1;
 }
 
-char DSP_Power(const char state)
+char 
+DSP_Power(const char state)
 {
 	/*TODO finish this. Refresh cycle needs to start from the beginning
 	 when display is powered on, so that the image isn't corrupted by 

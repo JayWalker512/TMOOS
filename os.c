@@ -99,8 +99,6 @@ main(void)
 	PRO_StartTimer(&profilerTimer);
 #endif
 	//Game3Init();
-	GFX_DrawLine(1,0,7,5);
-	GFX_SwapBuffers();
 	while(1)
 	{
 		OS_Update();
@@ -108,7 +106,8 @@ main(void)
 #ifdef PROFILING
 		PRO_StartTimer(&gameTimer);
 #endif
-		
+		GFX_DrawText("HI", 0, 0);
+		GFX_SwapBuffers();
 		//GameMain();
 		
 #ifdef PROFILING

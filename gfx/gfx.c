@@ -1,7 +1,10 @@
+#include "../os.h"
 #include "gfx.h"
 #include "../display/display.h"
 #include "../common/binary.h"
 #include <math.h>
+#include <string.h>
+#include "../common/glyphs.h"
 
 unsigned char m_GFXState;
 
@@ -135,5 +138,32 @@ GFX_DrawLine(const char x1, const char y1,
 			err = err + dX;
 			yS = yS + stepY;
 		}
+	}
+}
+
+void GFX_DrawText(const char *text, const char x, const char y)
+{
+	char len = strlen(text);
+	char spacingMp = 3; //spacing multiplier
+	char step = 0;
+	for (char xLoc = x; step <= len; xLoc++)
+	{
+		if (*(text+step) >= 'A' && *(text+step) <= 'Z')
+		{
+			DSP_BitBLT(&g_alphaNumGlyphs[*(text+step) - 'A'],
+				3, 5, 
+				xLoc + (step * spacingMp), y);
+		}
+		else if (*(text+step) >= '0' && *(text+step) <= '9')
+		{
+			DSP_BitBLT(&g_alphaNumGlyphs[*(text+step) - '0' + 26],
+				3, 5, 
+				xLoc + (step * spacingMp), y);
+		}
+		else
+			DSP_BitBLT(&g_testGlyph, 2, 3, xLoc + (step * spacingMp), y);
+		
+		step++;
+		OS_Update(); //calling this here because this function is SLOOOWWW
 	}
 }

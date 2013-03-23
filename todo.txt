@@ -1,6 +1,5 @@
 Actionable goals!
 
-Implement line drawing function.
 Move cpu governor to own c file.
 Move glyphs to flash memory.
 Move hardware pin port table to flash memory.

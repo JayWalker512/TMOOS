@@ -35,3 +35,8 @@ GLIB_GetInput(enum e_GLIBenums device)
 	}
 	return 0;
 }
+
+unsigned long GLIB_GetGameMillis(void)
+{
+	return g_OSIdleLoopTimeMs;
+}

@@ -1,5 +1,6 @@
 #include "hardware.h"
 #include "../common/binary.h"
+#include "../display/display.h" //for interrupt controlled refresh
 
 #ifdef DEBUG
 #include "../debug/debug.h"
@@ -50,9 +51,12 @@ microsecondsToClockCycles(unsigned long micros) {
 #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
 #endif
 
-volatile unsigned long m_timer0OverflowCount = 0;
-volatile unsigned long m_timer0Millis = 0;
-static unsigned char m_timer0Fract = 0;
+volatile unsigned long m_timer0OverflowCount;
+volatile unsigned long m_timer0Millis;
+static unsigned char m_timer0Fract;
+
+volatile unsigned char m_displayCounter;
+#define DISPLAY_DIVISOR 3
 
 static unsigned int HRD_ADCRead(unsigned char mux);
 static void HRD_InterruptInit(void);
@@ -74,12 +78,26 @@ ISR(TIMER0_OVF_vect)
 	m_timer0Fract = f;
 	m_timer0Millis = m;
 	m_timer0OverflowCount++;
+	
+	//display interrupt code starts here
+	m_displayCounter++;
+	unsigned char curDisplayCount = m_displayCounter;
+	if (curDisplayCount == DISPLAY_DIVISOR)
+	{
+		DSP_Refresh();
+		m_displayCounter = 0;
+	}
 }
 
 int 
 HRD_Init(void)
 {
 	HRD_InterruptInit();
+	
+	m_timer0OverflowCount = 0;
+	m_timer0Millis = 0;
+	m_timer0Fract = 0;
+	m_displayCounter = 0;
 	
 	//let's set all pins low as part of the initialization. (teensy 2.0)
 	for (char i = 0; i <= 24; i++)

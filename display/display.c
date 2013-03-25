@@ -259,10 +259,7 @@ DSP_RefreshDriver0(void)
 
 static void 
 DSP_RefreshDriver1(void)
-{
-	if (TME_GetAccurateMicros() < m_nextScanlineTime)
-		return;
-	
+{	
 	//firstly, disable anode output for now.
 	HRD_SetPinDigital(ANODE_OE, 1);
 	
@@ -299,7 +296,6 @@ DSP_RefreshDriver1(void)
 	m_curRow++; 
 	if (m_curRow >= DISPLAY_ROWS)
 		m_curRow = 0;
-	m_nextScanlineTime = TME_GetAccurateMicros() + m_scanlineDelayUs;
 }
 
 void 

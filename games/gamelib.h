@@ -18,6 +18,8 @@ void (*GLIB_Idle)(void);
 
 unsigned char GLIB_GetInput(enum e_GLIBenums device);
 
+unsigned long GLIB_GetGameMillis(void);
+
 void (*GLIB_Beep)(unsigned int Hz, unsigned long ms);
 
 
@@ -33,5 +35,7 @@ void Game3Init(void);
 void Game3Main(void);
 
 void Game4Main(void);
+
+void GameScrollText(void);
 
 #endif

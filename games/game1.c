@@ -109,3 +109,26 @@ Game4Main(void)
 
 	GFX_SwapBuffers(); 
 }
+
+char textX = 0;
+unsigned long scrollTime = 0;
+#define SCROLL_RATE 200;
+void GameScrollText(void)
+{
+	GFX_Clear(0);
+	
+	GFX_DrawText("HELLO", textX, 0);
+	GFX_DrawLine(0, 7, 3, 5);
+	GFX_DrawLine(7, 7, 4, 5);
+		
+	GFX_SwapBuffers();
+	
+	if (GLIB_GetGameMillis() > scrollTime)
+	{
+		textX--;
+		if (textX == -20)
+			textX = 0;
+		
+		scrollTime = GLIB_GetGameMillis() + SCROLL_RATE;
+	}
+}

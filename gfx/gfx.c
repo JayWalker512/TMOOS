@@ -143,7 +143,7 @@ GFX_DrawLine(const char x1, const char y1,
 
 void GFX_DrawText(const char *text, const char x, const char y)
 {
-	char len = strlen(text);
+	char len = strlen(text) - 1; //minus one to omit the NULL char
 	char spacingMp = 3; //spacing multiplier
 	char step = 0;
 	for (char xLoc = x; step <= len; xLoc++)

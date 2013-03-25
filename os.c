@@ -106,9 +106,7 @@ main(void)
 #ifdef PROFILING
 		PRO_StartTimer(&gameTimer);
 #endif
-		GFX_DrawText("HI", 0, 0);
-		GFX_SwapBuffers();
-		//GameMain();
+		GameScrollText();
 		
 #ifdef PROFILING
 		gameSum += PRO_StopTimer(&gameTimer);
@@ -135,9 +133,9 @@ main(void)
 			printInt(inpAvg, VAR_UNSIGNED);
 			CON_SendString(PSTR("\r\n"));
 			
-			CON_SendString(PSTR("Display Avg Time: "));
+			/*CON_SendString(PSTR("Display Avg Time: "));
 			printInt(dspAvg, VAR_UNSIGNED);
-			CON_SendString(PSTR("\r\n"));
+			CON_SendString(PSTR("\r\n"));*/
 			
 			CON_SendString(PSTR("Sound Avg Time: "));
 			printInt(sndAvg, VAR_UNSIGNED);
@@ -244,7 +242,11 @@ OS_Update(void)
 #ifdef PROFILING
 		PRO_StartTimer(&dspTimer);
 #endif
-		DSP_Refresh();
+		//DSP_Refresh();
+		/* Being driven by interrupt in hardware.c
+		 * disregard profiler output for display until timing
+		 * points are moved. If we should even do that. Display
+		 overhead should be constant. */
 #ifdef PROFILING
 		dspSum += PRO_StopTimer(&dspTimer);
 #endif

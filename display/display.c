@@ -257,43 +257,6 @@ DSP_RefreshDriver0(void)
 #endif
 }
 
-/* driver for old pinout. commented for reference atm
-//async driver
-static void 
-DSP_RefreshDriver1(void)
-{
-	if (TME_GetAccurateMicros() < m_nextScanlineTime)
-		return;
-			
-	//set previous row anode low
-	if (m_curRow == 0)
-		HRD_SetPinDigital(m_anodePins[DISPLAY_ROWS - 1], 0);
-	else
-		HRD_SetPinDigital(m_anodePins[m_curRow - 1], 0);
-
-	//setting active cathodes low. Do this first to avoid ghosting
-	for (char x = 0; x < DISPLAY_COLUMNS; x++)
-	{				
-		if (DSP_GetPixel(x, m_curRow)) //can inline this, using function now for clarity
-		{	
-			HRD_SetPinDigital(m_cathodePins[x], 0);
-		}
-		else
-		{
-			HRD_SetPinDigital(m_cathodePins[x], 1);
-		}
-	}
-
-	//set current row anode high
-	HRD_SetPinDigital(m_anodePins[m_curRow], 1);
-	
-	m_curRow++; 
-	if (m_curRow >= DISPLAY_ROWS)
-		m_curRow = 0;
-	m_nextScanlineTime = TME_GetAccurateMicros() + m_scanlineDelayUs;
-}
-*/
-
 static void 
 DSP_RefreshDriver1(void)
 {

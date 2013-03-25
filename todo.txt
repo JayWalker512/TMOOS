@@ -3,7 +3,6 @@ Actionable goals!
 Move cpu governor to own c file.
 Move glyphs to flash memory.
 Move hardware pin port table to flash memory.
-Implement text drawing function.
 Figure out how to use hardware PWM.
 Implement a queue for button up and down events and functions to poll them.
 Test teensy sleep mode.

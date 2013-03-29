@@ -104,9 +104,10 @@ HRD_Init(void)
 	m_timer0Fract = 0;
 	m_displayCounter = 0;
 	
+	//XXX This messes with analog input. Figure out why.
 	//let's set all pins low as part of the initialization. (teensy 2.0)
-	for (char i = 0; i <= 24; i++)
-		HRD_SetPinDigital(i, 0);
+	//for (char i = 0; i <= 24; i++)
+	//	HRD_SetPinDigital(i, 0);
 	
 	return 1;
 }

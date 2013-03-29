@@ -8,14 +8,16 @@
 
 enum e_GLIBenums {
 	GLIB_WHEEL,
+	GLIB_PB0,
 	GLIB_PB1,
-	GLIB_PB2
+	GLIB_PB2,
 };
 
 char GLIB_Init(void);
 
 void (*GLIB_Idle)(void);
 
+//This could be handled function pointer style...
 unsigned char GLIB_GetInput(enum e_GLIBenums device);
 
 unsigned long GLIB_GetGameMillis(void);

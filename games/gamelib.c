@@ -15,6 +15,7 @@ GLIB_Init(void)
 	return 1;
 }
 
+//this could be handled function pointer style...
 unsigned char 
 GLIB_GetInput(enum e_GLIBenums device)
 {
@@ -23,6 +24,9 @@ GLIB_GetInput(enum e_GLIBenums device)
 	{
 		case GLIB_WHEEL:
 			return INP_GetInputState(INPUT_WHEEL);
+			break;
+		case GLIB_PB0:
+			return INP_GetInputState(INPUT_PB0);
 			break;
 		case GLIB_PB1:
 			return INP_GetInputState(INPUT_PB1);

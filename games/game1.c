@@ -36,6 +36,7 @@ void
 GameInputTest(void)
 {	
 	unsigned char wheelPos = GLIB_GetInput(GLIB_WHEEL);
+	unsigned char pb0State = GLIB_GetInput(GLIB_PB0);
 	unsigned char pb1State = GLIB_GetInput(GLIB_PB1);
 	unsigned char pb2State = GLIB_GetInput(GLIB_PB2);
 
@@ -51,14 +52,19 @@ GameInputTest(void)
 		lastChar = characterSelect;
 	}
 	
+	if (pb0State)
+	{
+		GFX_PutPixel(3,0,1);
+	}
+	
 	if (pb1State)
 	{
-		GFX_DrawRect(3, 0, 4, 4, GFX_FILLED_RECT);
+		GFX_PutPixel(4,0,1);
 	}
 	
 	if (pb2State)
 	{
-		GFX_DrawRect(3, 4, 2, 3, GFX_FILLED_RECT);
+		GFX_PutPixel(5,0,1);
 	}
 	
 	GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 0, 0);

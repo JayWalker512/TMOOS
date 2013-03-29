@@ -5,9 +5,10 @@
 #define INPUT_WHEEL_MIN 0
 
 enum e_InputDevice {
-	INPUT_PB1 = 0,
-	INPUT_PB2 = 1,
-	INPUT_WHEEL = 2,
+	INPUT_PB0 = 0,
+	INPUT_PB1 = 1,
+	INPUT_PB2 = 2,
+	INPUT_WHEEL = 3,
 };
 
 enum e_InputParameters {
@@ -20,7 +21,7 @@ char INP_Init(void);
 
 void INP_Update(void);
 
-unsigned long INP_GetInputState(enum e_InputDevice device);
+unsigned char INP_GetInputState(enum e_InputDevice device);
 
 void INP_Calibrate(enum e_InputParameters parameter);
 

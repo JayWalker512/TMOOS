@@ -10,26 +10,27 @@ unsigned long m_timeToUpdate;
 unsigned int m_calibMin, m_calibMax;
 unsigned char m_wheelPos;
 unsigned char m_buttonStates;
-unsigned char m_inputPins[3];
+unsigned char m_inputPins[4]; 
 
 /* TODO Maybe we should add functions to allow calibrating the input wheel via the
 interactive console, but for now it will be hardcoded. */
 char 
 INP_Init(void) //TODO init settings (poll rate, calib) should be passed here from OS
 {
-	m_inputUpdateInterval = 40;
+	m_inputUpdateInterval = 60;
 	m_timeToUpdate = 0;
 	
 	m_buttonStates = 0;
 	m_wheelPos = 0;
 	
-	m_inputPins[INPUT_WHEEL] = 2; //== A2 Arduino analog pin # scheme
-	m_inputPins[INPUT_PB1] = 10;	//regular ard # scheme
-	m_inputPins[INPUT_PB2] = 9;
+	m_inputPins[INPUT_WHEEL] = 0; //== A2 Arduino analog pin # scheme
+	m_inputPins[INPUT_PB0] = 10;	//regular ard # scheme
+	m_inputPins[INPUT_PB1] = 9;
+	m_inputPins[INPUT_PB2] = 8;
 	
 	/*TODO These values will need loaded from EEPROM eventually*/
-	m_calibMin = 0;
-	m_calibMax = 1023;
+	m_calibMin = 100;
+	m_calibMax = 900;
 	
 	return 1;
 }
@@ -57,11 +58,16 @@ INP_Update(void)
 	m_wheelPos = (unsigned long)(tempState - m_calibMin) * 255 / (m_calibMax - m_calibMin);
 	
 	//update buttons
-	if (HRD_GetPinDigital(m_inputPins[INPUT_PB1]) == 0) //active low, remember!
+	if (HRD_GetPinDigital(m_inputPins[INPUT_PB0]) == 0) //active low, remember!
+		SetBit(&m_buttonStates, INPUT_PB0);
+	else
+		ClearBit(&m_buttonStates, INPUT_PB0);
+		
+	if (HRD_GetPinDigital(m_inputPins[INPUT_PB1]) == 0)
 		SetBit(&m_buttonStates, INPUT_PB1);
 	else
 		ClearBit(&m_buttonStates, INPUT_PB1);
-		
+	
 	if (HRD_GetPinDigital(m_inputPins[INPUT_PB2]) == 0)
 		SetBit(&m_buttonStates, INPUT_PB2);
 	else
@@ -69,13 +75,16 @@ INP_Update(void)
 }
 
 
-unsigned long 
+unsigned char
 INP_GetInputState(enum e_InputDevice device)
 {
 	switch (device)
 	{
 		case INPUT_WHEEL:
 			return m_wheelPos;
+			break;
+		case INPUT_PB0:
+			return GetBit(&m_buttonStates, INPUT_PB0);
 			break;
 		case INPUT_PB1:
 			return GetBit(&m_buttonStates, INPUT_PB1);

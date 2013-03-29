@@ -1,8 +1,6 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
-#include "../avr_common.h"
-
 int HRD_Init(void);
 
 char HRD_SetPinDigital(const unsigned char ardPin, unsigned char value);

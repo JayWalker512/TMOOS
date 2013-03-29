@@ -33,7 +33,7 @@ GameMain(void)
 static char lastChar = 0;
 static unsigned int fps = 0;
 void 
-Game2Main(void)
+GameInputTest(void)
 {	
 	unsigned char wheelPos = GLIB_GetInput(GLIB_WHEEL);
 	unsigned char pb1State = GLIB_GetInput(GLIB_PB1);
@@ -53,51 +53,21 @@ Game2Main(void)
 	
 	if (pb1State)
 	{
-		GFX_DrawRect(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT, GFX_FILLED_RECT);
-		GFX_DrawRect(1, 1, 4, 3, GFX_BLANK_DESTRUCTIVE_RECT);
-		GFX_DrawRect(2, 2, 2, 1, GFX_FILLED_RECT);
-	}
-	else
-	{
-		GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 0, 0);
-		//GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 1, 0);
-		//GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 2, 0);
-		//GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 3, 0);
-		//GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 4, 0);
-		//GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 5, 0);
+		GFX_DrawRect(3, 0, 4, 4, GFX_FILLED_RECT);
 	}
 	
+	if (pb2State)
+	{
+		GFX_DrawRect(3, 4, 2, 3, GFX_FILLED_RECT);
+	}
+	
+	GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 0, 0);
+
 	GFX_SwapBuffers();
 }
 
-static unsigned char curGlyph;
 void
-Game3Init(void)
-{
-	curGlyph = 36; //so it cycles back to A immediately
-	endTime = 0;
-}
-
-void
-Game3Main(void)
-{
-	/* XXX below is demo code, delete eventually */
-	if (g_OSIdleLoopTimeMs >= endTime)
-	{
-		DSP_Clear(0);
-		endTime = g_OSIdleLoopTimeMs + 1000;
-
-		curGlyph++;
-		if (curGlyph >= 36)
-			curGlyph = 0;
-		DSP_BitBLT(&g_alphaNumGlyphs[curGlyph], 3, 5, 2, 0); 
-		DSP_SwapBuffers();		
-	}
-}
-
-
-void
-Game4Main(void)
+GameSlidingWheelChar(void)
 {
 	unsigned char x = 0;
 	unsigned char wheelPos = GLIB_GetInput(GLIB_WHEEL);

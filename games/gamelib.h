@@ -29,12 +29,9 @@ games yet. Play around with it. */
 
 void GameMain(void);
 
-void Game2Main(void);
+void GameInputTest(void);
 
-void Game3Init(void);
-void Game3Main(void);
-
-void Game4Main(void);
+void GameSlidingWheelChar(void);
 
 void GameScrollText(void);
 

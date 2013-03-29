@@ -10,6 +10,7 @@ printv(const char *string, void *var, enum e_VarType type)
 	
 }
 
+/* XXX INCOMPLETE */
 void 
 printInt(long input, enum e_VarType type)
 {

@@ -1,3 +1,8 @@
+#include <avr/io.h>
+#include <avr/pgmspace.h>
+#include <stdint.h>
+#include "../avr_common.h"
+
 #include "hardware.h"
 #include "../common/binary.h"
 #include "../display/display.h" //for interrupt controlled refresh
@@ -217,7 +222,7 @@ HRD_AnalogReference(unsigned char mode)
 }
 
 // Arduino compatible pin input
-unsigned int 
+unsigned int
 HRD_GetPinAnalog(unsigned char pin)
 {
 #if defined(__AVR_ATmega32U4__)

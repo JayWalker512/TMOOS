@@ -6,6 +6,7 @@ for it here. */
 
 #include "time.h"
 #include "../hardware/hardware.h"
+#include "../avr_common.h"
 
 #ifdef DEBUG
 #include "../debug/debug.h"

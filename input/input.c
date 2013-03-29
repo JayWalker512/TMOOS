@@ -1,17 +1,9 @@
 #include "input.h"
 
-#ifndef TESTCASE
-#include "../os.h"
-#endif
-
 #include "../hardware/hardware.h"
 #include "../time/time.h"
 #include "../common/binary.h"
-
-#ifdef DEBUG
-#include "../debug/debug.h"
-#include "../avr_common.h"
-#endif
+#include "../common/print.h"
 
 unsigned char m_inputUpdateInterval; //max of 255ms which is ~4hz
 unsigned long m_timeToUpdate;
@@ -32,12 +24,12 @@ INP_Init(void) //TODO init settings (poll rate, calib) should be passed here fro
 	m_wheelPos = 0;
 	
 	m_inputPins[INPUT_WHEEL] = 2; //== A2 Arduino analog pin # scheme
-	m_inputPins[INPUT_PB1] = 18;	//regular ard # scheme
-	m_inputPins[INPUT_PB2] = 12;
+	m_inputPins[INPUT_PB1] = 10;	//regular ard # scheme
+	m_inputPins[INPUT_PB2] = 9;
 	
 	/*TODO These values will need loaded from EEPROM eventually*/
-	m_calibMin = 150;
-	m_calibMax = 850;
+	m_calibMin = 0;
+	m_calibMax = 1023;
 	
 	return 1;
 }
@@ -54,6 +46,9 @@ INP_Update(void)
 	//update wheel 
 	unsigned long tempState = 0;
 	tempState = HRD_GetPinAnalog(m_inputPins[INPUT_WHEEL]);
+	printInt(tempState, VAR_UNSIGNED);
+	
+	
 	if (tempState > m_calibMax)
 		tempState = m_calibMax;
 	else if (tempState < m_calibMin)

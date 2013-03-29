@@ -82,7 +82,7 @@ ISR(TIMER0_OVF_vect)
 	//display interrupt code starts here
 	m_displayCounter++;
 	unsigned char curDisplayCount = m_displayCounter;
-	if (curDisplayCount == DISPLAY_DIVISOR)
+	if (curDisplayCount >= DISPLAY_DIVISOR)
 	{
 		DSP_Refresh();
 		m_displayCounter = 0;
@@ -155,27 +155,29 @@ HRD_InterruptInit(void)
 char 
 HRD_SetPinDigital(const unsigned char ardPin, unsigned char value)
 {
-	if (ardPin < 0 || ardPin > 24)
+	if (ardPin < 0 || ardPin > 24) //hardcoded for teensy 2.0
 		return 0;
 
 	unsigned char port, pin;
 	port = m_arduinoPinsTable[ardPin * 2];
 	port = port - 'A';
 	pin = m_arduinoPinsTable[ardPin * 2 + 1];
+	
+	unsigned char offset = port * 3;
 	//set the pin
 	if (value == 0)
 	{
 		// make the pin an output
-		*(uint8_t *)(0x21 + port * 3) |= (1 << pin);
+		*(uint8_t *)(0x21 + offset) |= (1 << pin);
 		// drive it low
-		*(uint8_t *)(0x22 + port * 3) &= ~(1 << pin);
+		*(uint8_t *)(0x22 + offset) &= ~(1 << pin);
 	}
 	else
 	{
 		// make the pin an output
-		*(uint8_t *)(0x21 + port * 3) |= (1 << pin);
+		*(uint8_t *)(0x21 + offset) |= (1 << pin);
 		// drive it high
-		*(uint8_t *)(0x22 + port * 3) |= (1 << pin);
+		*(uint8_t *)(0x22 + offset) |= (1 << pin);
 	}
 	
 	return 1;

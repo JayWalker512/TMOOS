@@ -275,8 +275,17 @@ OS_FatalError(enum e_FATAL_ERRORS error)
 	
 	if (error == INIT_ERROR)
 	{
-		//HRD_SetPinDigital(11, 1);
-		while(1); //loop forever
+		unsigned int overflow = 0;
+		while(1)
+		{
+			if (overflow < 32768)
+				HRD_SetPinDigital(11, 1);
+			else
+				HRD_SetPinDigital(11, 0);
+			
+			overflow++;
+			
+		}; //loop forever
 	}
 }
 

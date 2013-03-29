@@ -7,3 +7,4 @@ Figure out how to use hardware PWM.
 Implement a queue for button up and down events and functions to poll them.
 Test teensy sleep mode.
 Draw punctuation glyphs.
+Implement circle drawing function(s): (approximated by divisions, exact)

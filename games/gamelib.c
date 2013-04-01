@@ -5,6 +5,7 @@
 #include "../disk/disk.h"
 #include "../os.h"
 #include "gamelib.h"
+#include <math.h>
 
 char 
 GLIB_Init(void)
@@ -12,11 +13,13 @@ GLIB_Init(void)
 	GFX_Init();
 	GLIB_Idle = &OS_Update;
 	GLIB_Beep = &SND_Beep;
+	GLIB_GetInput = &INP_GetInputState;
+	GLIB_GetWheelRegion = &INP_GetWheelRegion;
 	return 1;
 }
 
 //this could be handled function pointer style...
-unsigned char 
+/*unsigned char 
 GLIB_GetInput(enum e_GLIBenums device)
 {
 	//would be nice if we could just map these enums directly to the input equivalent without branches...
@@ -38,9 +41,10 @@ GLIB_GetInput(enum e_GLIBenums device)
 			break;
 	}
 	return 0;
-}
+}*/
 
-unsigned long GLIB_GetGameMillis(void)
+unsigned long 
+GLIB_GetGameMillis(void)
 {
 	return g_OSIdleLoopTimeMs;
 }

@@ -51,8 +51,10 @@ static char OS_InitSubsystems(void);
 static void OS_FatalError(enum e_FATAL_ERRORS error);
 static void OS_CPUScaleByLoad(void);
 static void OS_CPULoadCalc(enum e_TimerParams parameter);
+static void OS_CalculateProfilerData(void);
 static char OS_SaveSysConfig(void);
 static char OS_RestoreSysConfig(void);
+
 
 //cached version of TME_GetAccurateMillis() from beginning of OS_Update() for non-time-critical use only. Good for games.
 unsigned long g_OSIdleLoopTimeMs;
@@ -66,20 +68,19 @@ static unsigned long m_idleTimeStart;
 static unsigned long m_idleTimeEnd;
 static unsigned long m_idleTime;
 
-#ifdef PROFILING
-	t_Timer profilerTimer;
-	t_Timer conTimer;
-	t_Timer inpTimer;
-	t_Timer dspTimer;
-	t_Timer sndTimer;
-	t_Timer gameTimer;
-	unsigned long conSum = 0;
-	unsigned long inpSum = 0;
-	unsigned long dspSum = 0;
-	unsigned long sndSum = 0;
-	unsigned long gameSum = 0;
-	unsigned int nLoops;
-#endif
+//profiler variables
+t_Timer profilerTimer;
+t_Timer conTimer;
+t_Timer inpTimer;
+t_Timer dspTimer;
+t_Timer sndTimer;
+t_Timer gameTimer;
+unsigned long conSum = 0;
+unsigned long inpSum = 0;
+unsigned long dspSum = 0;
+unsigned long sndSum = 0;
+unsigned long gameSum = 0;
+unsigned int nLoops;
 
 int 
 main(void)
@@ -104,55 +105,10 @@ main(void)
 		
 		PRO_StartTimer(&gameTimer);
 		//GameScrollText();
-		GameInputTest();
+		//GameInputTest();
+		GameWheelRegionTest();
 		
-		gameSum += PRO_StopTimer(&gameTimer);
-		nLoops++;
-		
-		//here is where we calculate averages and print
-		/*maybe we could appropriately move this to profiler.c?*/
-		if (PRO_StopTimer(&profilerTimer) >= LOAD_REFRESH_US)
-		{
-			PRO_StartTimer(&profilerTimer);
-			unsigned long conAvg = conSum / nLoops;
-			unsigned long inpAvg = inpSum / nLoops;
-			unsigned long dspAvg = dspSum / nLoops;
-			unsigned long sndAvg = sndSum / nLoops;
-			unsigned long gameAvg = gameSum / nLoops;
-			//TODO print averages.
-			
-			CON_SendString(PSTR("----Profiler Data----\r\n"));
-			
-			CON_SendString(PSTR("Console Avg Time: "));
-			printInt(conAvg, VAR_UNSIGNED);
-			CON_SendString(PSTR("\r\n"));
-			
-			CON_SendString(PSTR("Input Avg Time: "));
-			printInt(inpAvg, VAR_UNSIGNED);
-			CON_SendString(PSTR("\r\n"));
-			
-			/*CON_SendString(PSTR("Display Avg Time: "));
-			printInt(dspAvg, VAR_UNSIGNED);
-			CON_SendString(PSTR("\r\n"));*/
-			
-			CON_SendString(PSTR("Sound Avg Time: "));
-			printInt(sndAvg, VAR_UNSIGNED);
-			CON_SendString(PSTR("\r\n"));
-			
-			CON_SendString(PSTR("Game Avg Time: "));
-			printInt(gameAvg, VAR_UNSIGNED);
-			CON_SendString(PSTR("\r\n"));
-			
-			CON_SendString(PSTR("Cycles/Sec: "));
-			printInt(nLoops, VAR_UNSIGNED);
-			CON_SendString(PSTR("\r\n"));
-			
-			CON_SendString(PSTR("---------------------\r\n"));
-			
-			conAvg = inpAvg = dspAvg = sndAvg = gameAvg = 0;
-			conSum = inpSum = dspSum = sndSum = gameSum = 0;
-			nLoops = 0;
-		}
+		OS_CalculateProfilerData();
 	}
 	return 0;
 }
@@ -414,6 +370,58 @@ OS_CPULoadCalc(enum e_TimerParams parameter)
 		if (GetBit(&g_OSState, OS_CPU_SCALING_ENABLED))
 			OS_CPUScaleByLoad();
 	}		
+}
+
+void
+OS_CalculateProfilerData(void)
+{
+	gameSum += PRO_StopTimer(&gameTimer);
+	nLoops++;
+
+	//here is where we calculate averages and print
+	/*maybe we could appropriately move this to profiler.c?*/
+	if (PRO_StopTimer(&profilerTimer) >= LOAD_REFRESH_US)
+	{
+		PRO_StartTimer(&profilerTimer);
+		unsigned long conAvg = conSum / nLoops;
+		unsigned long inpAvg = inpSum / nLoops;
+		unsigned long dspAvg = dspSum / nLoops;
+		unsigned long sndAvg = sndSum / nLoops;
+		unsigned long gameAvg = gameSum / nLoops;
+		//TODO print averages.
+
+		CON_SendString(PSTR("----Profiler Data----\r\n"));
+
+		CON_SendString(PSTR("Console Avg Time: "));
+		printInt(conAvg, VAR_UNSIGNED);
+		CON_SendString(PSTR("\r\n"));
+
+		CON_SendString(PSTR("Input Avg Time: "));
+		printInt(inpAvg, VAR_UNSIGNED);
+		CON_SendString(PSTR("\r\n"));
+
+		/*CON_SendString(PSTR("Display Avg Time: "));
+		printInt(dspAvg, VAR_UNSIGNED);
+		CON_SendString(PSTR("\r\n"));*/
+
+		CON_SendString(PSTR("Sound Avg Time: "));
+		printInt(sndAvg, VAR_UNSIGNED);
+		CON_SendString(PSTR("\r\n"));
+
+		CON_SendString(PSTR("Game Avg Time: "));
+		printInt(gameAvg, VAR_UNSIGNED);
+		CON_SendString(PSTR("\r\n"));
+
+		CON_SendString(PSTR("Cycles/Sec: "));
+		printInt(nLoops, VAR_UNSIGNED);
+		CON_SendString(PSTR("\r\n"));
+
+		CON_SendString(PSTR("---------------------\r\n"));
+
+		conAvg = inpAvg = dspAvg = sndAvg = gameAvg = 0;
+		conSum = inpSum = dspSum = sndSum = gameSum = 0;
+		nLoops = 0;
+	}
 }
 
 static char 

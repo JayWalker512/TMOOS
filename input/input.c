@@ -97,6 +97,18 @@ INP_GetInputState(enum e_InputDevice device)
 	return 0;
 }
 
+unsigned char 
+INP_GetWheelRegion(unsigned char regions)
+{
+	unsigned char wheelPos = INP_GetInputState(INPUT_WHEEL);
+	unsigned char compliment = INPUT_WHEEL_RANGE - wheelPos;
+	unsigned char regionSize = INPUT_WHEEL_RANGE / regions;
+	if (wheelPos < INPUT_WHEEL_RANGE)
+		return floor( wheelPos / regionSize);
+	else
+		return regions - 1;
+}
+
 void 
 INP_Calibrate(enum e_InputParameters parameter)
 {

@@ -9,7 +9,7 @@
 static unsigned long endTime = 0; //used multiple times
 
 void 
-GameMain(void)
+GameSmiley(void)
 {
 	GFX_Clear(0);
 	
@@ -89,7 +89,8 @@ GameSlidingWheelChar(void)
 char textX = 0;
 unsigned long scrollTime = 0;
 #define SCROLL_RATE 200;
-void GameScrollText(void)
+void 
+GameScrollText(void)
 {
 	GFX_Clear(0);
 	
@@ -107,4 +108,13 @@ void GameScrollText(void)
 		
 		scrollTime = GLIB_GetGameMillis() + SCROLL_RATE;
 	}
+}
+
+void 
+GameWheelRegionTest(void)
+{
+	GFX_Clear(0);
+	char region = GLIB_GetWheelRegion(9);
+	GFX_BitBLT(&g_alphaNumGlyphs[26 + region], 3, 5, 0, 0);
+	GFX_SwapBuffers();
 }

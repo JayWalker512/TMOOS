@@ -95,25 +95,22 @@ main(void)
 	//if (!OS_RestoreSysConfig())
 		//OS_FatalError(INIT_ERROR);
 
-#ifdef PROFILING
+
 	PRO_StartTimer(&profilerTimer);
-#endif
 	//Game3Init();
 	while(1)
 	{
 		OS_Update();
 		
-#ifdef PROFILING
 		PRO_StartTimer(&gameTimer);
-#endif
 		//GameScrollText();
 		GameInputTest();
 		
-#ifdef PROFILING
 		gameSum += PRO_StopTimer(&gameTimer);
 		nLoops++;
 		
 		//here is where we calculate averages and print
+		/*maybe we could appropriately move this to profiler.c?*/
 		if (PRO_StopTimer(&profilerTimer) >= LOAD_REFRESH_US)
 		{
 			PRO_StartTimer(&profilerTimer);
@@ -156,7 +153,6 @@ main(void)
 			conSum = inpSum = dspSum = sndSum = gameSum = 0;
 			nLoops = 0;
 		}
-#endif
 	}
 	return 0;
 }
@@ -219,49 +215,34 @@ OS_Update(void)
 	spent idling. */
 	OS_CPULoadCalc(TIMER_START);
 
-#ifdef PROFILING
+
 	PRO_StartTimer(&conTimer);
-#endif
 	CON_Update();
-#ifdef PROFILING
 	conSum += PRO_StopTimer(&conTimer);
-#endif	
 
 	if (GetBit(&g_OSState, OS_INPUT_ENABLED))
 	{
-#ifdef PROFILING
 		PRO_StartTimer(&inpTimer);
-#endif
 		INP_Update();
-#ifdef PROFILING
 		inpSum += PRO_StopTimer(&inpTimer);
-#endif
 	}
 		
 	if (GetBit(&g_OSState, OS_DISPLAY_ENABLED))
 	{
-#ifdef PROFILING
 		PRO_StartTimer(&dspTimer);
-#endif
 		//DSP_Refresh();
 		/* Being driven by interrupt in hardware.c
 		 * disregard profiler output for display until timing
 		 * points are moved. If we should even do that. Display
 		 overhead should be constant. */
-#ifdef PROFILING
 		dspSum += PRO_StopTimer(&dspTimer);
-#endif
 	}
 	
 	if (GetBit(&g_OSState, OS_SOUND_ENABLED))
 	{
-#ifdef PROFILING
 		PRO_StartTimer(&sndTimer);
-#endif
 		SND_Update();
-#ifdef PROFILING
 		sndSum += PRO_StopTimer(&sndTimer);
-#endif
 	}
 		
 	OS_CPULoadCalc(TIMER_STOP);

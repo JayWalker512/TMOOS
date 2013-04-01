@@ -47,7 +47,6 @@ INP_Update(void)
 	//update wheel 
 	unsigned long tempState = 0;
 	tempState = HRD_GetPinAnalog(m_inputPins[INPUT_WHEEL]);
-	printInt(tempState, VAR_UNSIGNED);
 	
 	
 	if (tempState > m_calibMax)

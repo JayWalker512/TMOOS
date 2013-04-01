@@ -1,5 +1,7 @@
 #include "print.h"
 #include "../console/console.h"
+#include "../avr_common.h"
+#include <string.h> //for working with strings in regular RAM
 
 static void printFloat(float input, enum e_VarType type);
 static void printDouble(double input, enum e_VarType type);
@@ -7,6 +9,10 @@ static void printDouble(double input, enum e_VarType type);
 void
 printv(const char *string, void *var, enum e_VarType type)
 {
+	/* & is restricted character here, represents variable. 
+	 Make a call like:
+	 printv("var is & haha!", myint, VAR_UINT16); */
+	
 	
 }
 
@@ -60,7 +66,7 @@ printInt(long input, enum e_VarType type)
 	else if (type == VAR_SIGNED)
 	{
 		if (input < 0)
-			CON_SendRAMString("-"); //puts an extra byte in ram permanently?
+			CON_SendString(PSTR("-")); 
 		
 		CON_SendRAMString(myDigits);
 	}
@@ -76,4 +82,10 @@ void
 printDouble(double input, enum e_VarType type)
 {
 	
+}
+
+void
+printString(const char *string)
+{
+	CON_SendRAMString(&string);
 }

@@ -123,7 +123,7 @@ CSTANDARD = -std=gnu99
 
 
 # Place -D or -U options here for C sources
-CDEFS = -DF_CPU=$(F_CPU)UL 
+CDEFS = -DF_CPU=$(F_CPU)UL -DPROFILING
 #-DNO_DOUBLE_BUFFER_SAVE_MEMORY
 #-DDEBUG
 #-DPROFILING

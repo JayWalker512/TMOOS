@@ -6,6 +6,17 @@
 
 #include "../sound/sound.h"
 
+#define NUM_GAME_ITEMS 3
+
+//TODO this should be moved to games as a "directory" of games and associated data
+typedef struct GameData_s {
+	char name[8]; //TODO this should point to a string in flash memory
+	char (*initFunc)(void);
+	char (*loopFunc)(void);
+} GameData_t;
+
+extern GameData_t GameDataTable[NUM_GAME_ITEMS];
+
 //these need to stay in sync with what's in input.h
 enum e_GLIBenums {
 	GLIB_PB0 = 0,
@@ -31,14 +42,14 @@ void (*GLIB_Beep)(unsigned int Hz, unsigned long ms);
 games yet. Play around with it. */
 
 
-void GameSmiley(void);
+char GameSmiley(void);
 
-void GameInputTest(void);
+char GameInputTest(void);
 
-void GameSlidingWheelChar(void);
+char GameSlidingWheelChar(void);
 
-void GameScrollText(void);
+char GameScrollText(void);
 
-void GameWheelRegionTest(void);
+char GameWheelRegionTest(void);
 
 #endif

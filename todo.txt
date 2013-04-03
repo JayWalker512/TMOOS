@@ -10,4 +10,4 @@ Draw punctuation glyphs.
 Implement circle drawing function(s): (approximated by divisions, exact).
 Make profiler keep averages locally to eliminated fragmented code? 
 32-bit OS state variable. Needs tested, also not sure if needed.
-GetWheelRegion() function for dividing wheel range in to sections.
+Rewrite rect draw using line drawing func.

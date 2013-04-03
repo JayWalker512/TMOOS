@@ -8,31 +8,27 @@
 
 static unsigned long endTime = 0; //used multiple times
 
-void 
+char
 GameSmiley(void)
 {
 	GFX_Clear(0);
-	
-	GFX_DrawRect(0,0,8,8, GFX_BORDERED_RECT);
 	
 	//draw face
 	GFX_PutPixel(2,2,1);
 	GFX_PutPixel(5,2,1);
 	
-	GFX_PutPixel(2,5,1);
-	GFX_PutPixel(3,5,1);
-	GFX_PutPixel(4,5,1);
-	GFX_PutPixel(5,5,1);
+	GFX_DrawLine(2,5,5,5);
 	
 	GFX_PutPixel(1,4,1);
 	GFX_PutPixel(6,4,1);
 	
 	GFX_SwapBuffers();
+	return 1;
 }
 
 static char lastChar = 0;
 static unsigned int fps = 0;
-void 
+char
 GameInputTest(void)
 {	
 	unsigned char wheelPos = GLIB_GetInput(GLIB_WHEEL);
@@ -70,9 +66,10 @@ GameInputTest(void)
 	GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 0, 0);
 
 	GFX_SwapBuffers();
+	return 1;
 }
 
-void
+char
 GameSlidingWheelChar(void)
 {
 	unsigned char x = 0;
@@ -84,12 +81,13 @@ GameSlidingWheelChar(void)
 	GFX_BitBLT(&g_alphaNumGlyphs[0], 3, 5, x, 0);
 
 	GFX_SwapBuffers(); 
+	return 1;
 }
 
-char textX = 0;
+char textX = 8;
 unsigned long scrollTime = 0;
 #define SCROLL_RATE 200;
-void 
+char 
 GameScrollText(void)
 {
 	GFX_Clear(0);
@@ -104,17 +102,19 @@ GameScrollText(void)
 	{
 		textX--;
 		if (textX == -20)
-			textX = 0;
+			textX = 8;
 		
 		scrollTime = GLIB_GetGameMillis() + SCROLL_RATE;
 	}
+	return 1;
 }
 
-void 
+char
 GameWheelRegionTest(void)
 {
 	GFX_Clear(0);
 	char region = GLIB_GetWheelRegion(9);
 	GFX_BitBLT(&g_alphaNumGlyphs[26 + region], 3, 5, 0, 0);
 	GFX_SwapBuffers();
+	return 1;
 }

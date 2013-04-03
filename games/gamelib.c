@@ -7,6 +7,8 @@
 #include "gamelib.h"
 #include <math.h>
 
+GameData_t GameDataTable[NUM_GAME_ITEMS];
+
 char 
 GLIB_Init(void)
 {
@@ -15,33 +17,22 @@ GLIB_Init(void)
 	GLIB_Beep = &SND_Beep;
 	GLIB_GetInput = &INP_GetInputState;
 	GLIB_GetWheelRegion = &INP_GetWheelRegion;
+	
+	//next set up game data table
+	strcpy(&GameDataTable[0].name, "IN");
+	GameDataTable[0].initFunc = &GameInputTest;
+	GameDataTable[0].loopFunc = &GameInputTest;
+	
+	strcpy(&GameDataTable[1].name, "SM");
+	GameDataTable[1].initFunc = &GameSmiley;
+	GameDataTable[1].loopFunc = &GameSmiley;
+	
+	strcpy(&GameDataTable[2].name, "ST");
+	GameDataTable[2].initFunc = &GameScrollText;
+	GameDataTable[2].loopFunc = &GameScrollText;
+	
 	return 1;
 }
-
-//this could be handled function pointer style...
-/*unsigned char 
-GLIB_GetInput(enum e_GLIBenums device)
-{
-	//would be nice if we could just map these enums directly to the input equivalent without branches...
-	switch (device)
-	{
-		case GLIB_WHEEL:
-			return INP_GetInputState(INPUT_WHEEL);
-			break;
-		case GLIB_PB0:
-			return INP_GetInputState(INPUT_PB0);
-			break;
-		case GLIB_PB1:
-			return INP_GetInputState(INPUT_PB1);
-			break;
-		case GLIB_PB2:
-			return INP_GetInputState(INPUT_PB2);
-			break;
-		default:
-			break;
-	}
-	return 0;
-}*/
 
 unsigned long 
 GLIB_GetGameMillis(void)

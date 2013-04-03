@@ -12,6 +12,7 @@ peripheral subsystems through their respective interfaces. */
 #include "sound/sound.h"
 #include "time/time.h"
 #include "games/gamelib.h"
+#include "menu.h"
 
 #include "common/binary.h"
 #include "common/glyphs.h"
@@ -97,16 +98,15 @@ main(void)
 		//OS_FatalError(INIT_ERROR);
 
 
+	MENU_Init();
+	char bRunning = 0, progIndex = -1;
 	PRO_StartTimer(&profilerTimer);
-	//Game3Init();
 	while(1)
 	{
 		OS_Update();
 		
 		PRO_StartTimer(&gameTimer);
-		//GameScrollText();
-		//GameInputTest();
-		GameWheelRegionTest();
+		MENU_GameLauncher();
 		
 		OS_CalculateProfilerData();
 	}

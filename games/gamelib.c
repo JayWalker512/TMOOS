@@ -6,8 +6,10 @@
 #include "../os.h"
 #include "gamelib.h"
 #include <math.h>
+#include <string.h>
 
-ProgData_t GameDataTable[NUM_GAME_ITEMS];
+#define NUM_GAME_ITEMS 3
+ProgData_t m_gameDataTable[NUM_GAME_ITEMS];
 
 char 
 GLIB_Init(void)
@@ -19,17 +21,17 @@ GLIB_Init(void)
 	GLIB_GetWheelRegion = &INP_GetWheelRegion;
 	
 	//next set up game data table
-	strcpy(&GameDataTable[0].name, "IN");
-	GameDataTable[0].initFunc = &GameInputTest;
-	GameDataTable[0].loopFunc = &GameInputTest;
+	strcpy(m_gameDataTable[0].name, "IN");
+	m_gameDataTable[0].initFunc = &GameInputTest;
+	m_gameDataTable[0].loopFunc = &GameInputTest;
 	
-	strcpy(&GameDataTable[1].name, "SM");
-	GameDataTable[1].initFunc = &GameSmiley;
-	GameDataTable[1].loopFunc = &GameSmiley;
+	strcpy(m_gameDataTable[1].name, "SM");
+	m_gameDataTable[1].initFunc = &GameSmiley;
+	m_gameDataTable[1].loopFunc = &GameSmiley;
 	
-	strcpy(&GameDataTable[2].name, "ST");
-	GameDataTable[2].initFunc = &GameScrollText;
-	GameDataTable[2].loopFunc = &GameScrollText;
+	strcpy(m_gameDataTable[2].name, "ST");
+	m_gameDataTable[2].initFunc = &GameScrollText;
+	m_gameDataTable[2].loopFunc = &GameScrollText;
 	
 	return 1;
 }
@@ -37,7 +39,17 @@ GLIB_Init(void)
 ProgData_t *GLIB_GetProgDataTable(enum e_ProgDataTableEnums table)
 {
 	if (table == DATA_GAMES)
-		return &GameDataTable;
+		return m_gameDataTable;
+	
+	return 0;
+}
+
+size_t GLIB_GetProgDataTableSize(enum e_ProgDataTableEnums table)
+{
+	if (table == DATA_GAMES)
+		return (sizeof(m_gameDataTable) / sizeof(m_gameDataTable[0]));
+	
+	return 0;
 }
 
 unsigned long 

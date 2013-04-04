@@ -13,6 +13,9 @@ static unsigned long m_escapeKeyTime;
 static char m_bRunning;
 static char m_progIndex;
 
+static char MENU_Loop(ProgData_t *dataTable, size_t numElements);
+static char MENU_CheckEscapeSequence(void);
+
 char
 MENU_Init(void)
 {
@@ -29,12 +32,13 @@ void
 MENU_LauncherLoop(void)
 {
 	ProgData_t *gameDataTable = GLIB_GetProgDataTable(DATA_GAMES);
+	size_t numElements = GLIB_GetProgDataTableSize(DATA_GAMES);
 	
 	if (!m_bRunning)
-		m_progIndex = MENU_Loop(&gameDataTable);
+		m_progIndex = MENU_Loop(gameDataTable, numElements);
 	else //running game
 	{
-		if (0 == GameDataTable[m_progIndex].loopFunc())
+		if (0 == gameDataTable[m_progIndex].loopFunc())
 		{
 			//game returns 0, we quit
 			m_bRunning = 0;
@@ -46,7 +50,7 @@ MENU_LauncherLoop(void)
 	{
 		//prog index just changed from MENU_Loop(), need to run
 		m_bRunning = 1;
-		GameDataTable[m_progIndex].initFunc();
+		gameDataTable[m_progIndex].initFunc();
 	}
 	
 	if (MENU_CheckEscapeSequence())
@@ -57,17 +61,17 @@ MENU_LauncherLoop(void)
 }
 
 char
-MENU_Loop(ProgData_t *dataTable)
+MENU_Loop(ProgData_t *dataTable, size_t numElements)
 {
 	//menu input handling
-	unsigned char menuIndex = GLIB_GetWheelRegion(NUM_GAME_ITEMS);
+	unsigned char menuIndex = GLIB_GetWheelRegion(numElements);
 	
 	if (GLIB_GetInput(GLIB_PB0))
 		return menuIndex;
 	
 	//menu rendering
 	GFX_Clear(0);
-	GFX_DrawText((dataTable+menuIndex)->name, 0, 0);
+	GFX_DrawText(dataTable[menuIndex].name, 0, 0);
 	GFX_SwapBuffers();
 	
 	return -1; //return -1 unless a program was run. Return its index otherwise.

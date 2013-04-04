@@ -1,5 +1,4 @@
 #include "gamelib.h"
-#include "../display/display.h" //remove this.
 #include "../os.h"
 
 #ifdef DEBUG

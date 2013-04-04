@@ -3,7 +3,6 @@
 
 #include "../gfx/gfx.h"
 #include "../common/glyphs.h"
-
 #include "../sound/sound.h"
 
 typedef struct ProgData_s {
@@ -11,9 +10,6 @@ typedef struct ProgData_s {
 	char (*initFunc)(void);
 	char (*loopFunc)(void);
 } ProgData_t;
-
-#define NUM_GAME_ITEMS 3
-ProgData_t GameDataTable[NUM_GAME_ITEMS];
 
 enum e_ProgDataTableEnums {
 	DATA_GAMES = 0,

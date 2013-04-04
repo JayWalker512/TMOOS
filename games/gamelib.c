@@ -7,7 +7,7 @@
 #include "gamelib.h"
 #include <math.h>
 
-GameData_t GameDataTable[NUM_GAME_ITEMS];
+ProgData_t GameDataTable[NUM_GAME_ITEMS];
 
 char 
 GLIB_Init(void)
@@ -32,6 +32,12 @@ GLIB_Init(void)
 	GameDataTable[2].loopFunc = &GameScrollText;
 	
 	return 1;
+}
+
+ProgData_t *GLIB_GetProgDataTable(enum e_ProgDataTableEnums table)
+{
+	if (table == DATA_GAMES)
+		return &GameDataTable;
 }
 
 unsigned long 

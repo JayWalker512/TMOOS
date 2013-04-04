@@ -106,7 +106,7 @@ main(void)
 		OS_Update();
 		
 		PRO_StartTimer(&gameTimer);
-		MENU_GameLauncher();
+		MENU_LauncherLoop();
 		
 		OS_CalculateProfilerData();
 	}

@@ -5,18 +5,21 @@
 #include "../common/glyphs.h"
 #include "../sound/sound.h"
 
-typedef struct ProgData_s {
+typedef struct ProgData_s 
+{
 	char name[8]; //TODO this should point to a string in flash memory
 	char (*initFunc)(void);
 	char (*loopFunc)(void);
 } ProgData_t;
 
-enum e_ProgDataTableEnums {
+enum e_ProgDataTableEnums 
+{
 	DATA_GAMES = 0,
 };
 
 //these need to stay in sync with what's in input.h
-enum e_GLIBenums {
+enum e_GLIBenums 
+{
 	GLIB_PB0 = 0,
 	GLIB_PB1 = 1,
 	GLIB_PB2 = 2,
@@ -46,6 +49,7 @@ char GameInputTest(void);
 
 char GameSlidingWheelChar(void);
 
+char InitGameScrollText(void);
 char GameScrollText(void);
 
 char GameWheelRegionTest(void);

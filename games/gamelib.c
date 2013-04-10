@@ -30,7 +30,7 @@ GLIB_Init(void)
 	m_gameDataTable[1].loopFunc = &GameSmiley;
 	
 	strcpy(m_gameDataTable[2].name, "ST");
-	m_gameDataTable[2].initFunc = &GameScrollText;
+	m_gameDataTable[2].initFunc = &InitGameScrollText;
 	m_gameDataTable[2].loopFunc = &GameScrollText;
 	
 	return 1;

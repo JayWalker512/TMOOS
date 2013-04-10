@@ -1,10 +1,6 @@
 #include "gamelib.h"
 #include "../os.h"
 
-#ifdef DEBUG
-#include "../debug/debug.h"
-#endif
-
 static unsigned long endTime = 0; //used multiple times
 
 char
@@ -83,27 +79,36 @@ GameSlidingWheelChar(void)
 	return 1;
 }
 
-char textX = 8;
-unsigned long scrollTime = 0;
-#define SCROLL_RATE 200;
+char m_textX;
+unsigned long m_scrollTime;
+unsigned char m_scrollRate;
+char 
+InitGameScrollText(void)
+{
+	m_textX = 8;
+	m_scrollTime = 0;
+	m_scrollRate = GLIB_GetInput(GLIB_WHEEL);
+}
+
 char 
 GameScrollText(void)
 {
 	GFX_Clear(0);
 	
-	GFX_DrawText("HELLO", textX, 0);
+	GFX_DrawText("HELLO", m_textX, 0);
 	GFX_DrawLine(0, 7, 3, 5);
 	GFX_DrawLine(7, 7, 4, 5);
 		
 	GFX_SwapBuffers();
 	
-	if (GLIB_GetGameMillis() > scrollTime)
+	if (GLIB_GetGameMillis() > m_scrollTime)
 	{
-		textX--;
-		if (textX == -20)
-			textX = 8;
+		m_textX--;
+		if (m_textX == -20)
+			m_textX = 8;
 		
-		scrollTime = GLIB_GetGameMillis() + SCROLL_RATE;
+		m_scrollRate = GLIB_GetInput(GLIB_WHEEL);
+		m_scrollTime = GLIB_GetGameMillis() + m_scrollRate;
 	}
 	return 1;
 }

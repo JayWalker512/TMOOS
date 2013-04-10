@@ -1,7 +1,8 @@
 #ifndef GFXLIB_H
 #define GFXLIB_H
 
-enum e_GFXState {
+enum e_GFXState 
+{
 	GFX_FILLED_RECT = 8,
 	GFX_BORDERED_RECT = 9,
 	GFX_BLANK_DESTRUCTIVE_RECT = 10,

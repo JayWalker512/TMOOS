@@ -1,7 +1,8 @@
 #ifndef TIME_H
 #define TIME_H
 
-enum CPU_FREQS {
+enum CPU_FREQS 
+{
 	CPU_16MHZ = 0x00,
 	CPU_8MHZ = 0x01,
 	CPU_4MHZ = 0x02,

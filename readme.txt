@@ -12,7 +12,7 @@ Provide a terminal interface via serial tty connection for system configuration 
 All of the above culminates into the primary objective: to play games!
 
 Guidelines and rules for code:
-*Absolutely no recursion! 
+*Absolutely no recursion (we have very little stack space)!
 *All memory must be statically allocated.
 *Initialize variables explicitly in functions, not implicitly (please).
 *Follows Quake 2 code convention (see code_style.c).

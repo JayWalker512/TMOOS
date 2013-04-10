@@ -11,3 +11,5 @@ Implement circle drawing function(s): (approximated by divisions, exact).
 Make profiler keep averages locally to eliminated fragmented code? 
 32-bit OS state variable. Needs tested, also not sure if needed.
 Rewrite rect draw using line drawing func.
+Halt function turns everything off and clocks down.
+Global pin definition header.

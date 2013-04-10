@@ -7,7 +7,8 @@
 
 
 /* Parameters 0-7 are stored bitwise in static m_DSPState */
-enum e_DSPParameter {
+enum e_DSPParameter 
+{
 	DSP_DESTRUCTIVE_BITBLT = 0, //should always be disabled on boot.
 	DSP_CURRENTLY_REFRESHING = 1, //should always be disabled on boot.
 	DSP_DOUBLE_BUFFER = 2,

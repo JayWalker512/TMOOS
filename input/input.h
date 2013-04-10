@@ -7,14 +7,16 @@
 #define INPUT_WHEEL_MIN 0
 
 
-enum e_InputDevice {
+enum e_InputDevice 
+{
 	INPUT_PB0 = 0,
 	INPUT_PB1 = 1,
 	INPUT_PB2 = 2,
 	INPUT_WHEEL = 3,
 };
 
-enum e_InputParameters {
+enum e_InputParameters 
+{
 	INPUT_LBOUND = 0,
 	INPUT_UBOUND,
 	INPUT_POLLINTERVALMS,

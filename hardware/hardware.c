@@ -13,26 +13,30 @@
 
 //#if defined(__AVR_ATmega32U4__)
 
-const unsigned char m_arduinoPinsTable[] = {'B',0, 'B',1, 'B',2, 'B',3, 'B', 7,
-	'D',0, 'D',1, 'D',2, 'D',3, 'C',6, 'C',7, 'D',6, 'D',7, 'B',4, 'B',5, 'B',6,
-	'F',7, 'F',6, 'F',5, 'F',4, 'F',1, 'F',0, 'D',4, 'D',5, 'E',6};
+const unsigned char m_arduinoPinsTable[] = \
+{'B',0, 'B',1, 'B',2, 'B',3, 'B', 7,
+'D',0, 'D',1, 'D',2, 'D',3, 'C',6, 'C',7, 'D',6, 'D',7, 'B',4, 'B',5, 'B',6,
+'F',7, 'F',6, 'F',5, 'F',4, 'F',1, 'F',0, 'D',4, 'D',5, 'E',6};
 
 //#elif defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB1286__)
 	//todo teensy 2.0++
 //#endif
 
 inline unsigned char 
-clockCyclesPerMicrosecond(void) {
+clockCyclesPerMicrosecond(void) 
+{
 	return F_CPU / 1000000L;
 }
 
 inline unsigned long 
-clockCyclesToMicroseconds(unsigned long cycles) {
+clockCyclesToMicroseconds(unsigned long cycles) 
+{
 	return cycles / clockCyclesPerMicrosecond();
 }
 
 inline unsigned long 
-microsecondsToClockCycles(unsigned long micros) {
+microsecondsToClockCycles(unsigned long micros) 
+{
 	return micros * clockCyclesPerMicrosecond();
 }
 
@@ -75,7 +79,8 @@ ISR(TIMER0_OVF_vect)
 
 	m += MILLIS_INC;
 	f += FRACT_INC;
-	if (f >= FRACT_MAX) {
+	if (f >= FRACT_MAX) 
+	{
 		f -= FRACT_MAX;
 		m += 1;
 	}
@@ -274,7 +279,8 @@ HRD_GetMillis(void)
 	return m;
 }
 
-unsigned long HRD_GetMicros(void) {
+unsigned long HRD_GetMicros(void) 
+{
 	unsigned long m;
 	uint8_t oldSREG = SREG, t;
 	

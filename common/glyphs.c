@@ -2,7 +2,8 @@
 #include "glyphs.h"
 
 /* Alphanumeric 3x5 glyphs. Capital A-Z and 0-9 */
-unsigned char g_alphaNumGlyphs[36][2] = {
+unsigned char g_alphaNumGlyphs[36][2] = \
+{
 
 	/*      010
 		101

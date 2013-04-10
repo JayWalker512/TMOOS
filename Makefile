@@ -49,7 +49,7 @@ SRC =	$(TARGET).c \
 		display/display.c sound/sound.c time/time.c input/input.c console/console.c \
 		hardware/hardware.c disk/disk.c console/usb_serial.c menu.c \
 		common/glyphs.c common/profiling.c common/print.c \
-		games/game1.c games/gamelib.c gfx/gfx.c
+		games/demos.c games/gamelib.c gfx/gfx.c
 	
 #old hardware files : 
 	

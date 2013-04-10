@@ -2,7 +2,7 @@
 #include "../hardware/hardware.h"
 
 void 
-PRO_StartTimer(t_Timer *timer)
+PRO_StartTimer(Timer_t *timer)
 {
 	timer->endTime = 0;
 	timer->elapsedTime = 0;
@@ -10,7 +10,7 @@ PRO_StartTimer(t_Timer *timer)
 }
 
 unsigned long 
-PRO_StopTimer(t_Timer *timer)
+PRO_StopTimer(Timer_t *timer)
 {
 	timer->endTime = HRD_GetMicros();
 	timer->elapsedTime = timer->endTime - timer->startTime;

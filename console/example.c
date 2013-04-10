@@ -42,7 +42,8 @@ int main(void)
 {
 	CPU_PRESCALE(0);
 	usb_init();
-	while (1) {
+	while (1) 
+	{
 		int n = usb_serial_getchar();
 		if (n >= 0) usb_serial_putchar(n);
 	}
@@ -69,7 +70,8 @@ int main(void)
 	while (!usb_configured()) /* wait */ ;
 	_delay_ms(1000);
 
-	while (1) {
+	while (1) 
+	{
 		// wait for the user to run their terminal emulator program
 		// which sets DTR to indicate it is ready to receive.
 		while (!(usb_serial_get_control() & USB_SERIAL_DTR)) /* wait */ ;
@@ -88,7 +90,8 @@ int main(void)
 			"  D6=1  Write Port D, pin 6 HIGH  (D6 is LED pin)\r\n\r\n"));
 
 		// and then listen for commands and process them
-		while (1) {
+		while (1) 
+		{
 			send_str(PSTR("> "));
 			n = recv_str(buf, sizeof(buf));
 			if (n == 255) break;
@@ -105,7 +108,8 @@ int main(void)
 void send_str(const char *s)
 {
 	char c;
-	while (1) {
+	while (1) 
+	{
 		c = pgm_read_byte(s++);
 		if (!c) break;
 		usb_serial_putchar(c);

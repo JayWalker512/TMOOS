@@ -1,7 +1,8 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
-enum e_ConsoleParams {
+enum e_ConsoleParams 
+{
 	CONSOLE_USB_CONFIGURED = 0,
 	CONSOLE_CMD_DISPATCHED = 1,
 };

@@ -513,17 +513,20 @@
 #define B11111111 255
 
 inline void 
-SetBit(long *x, const char bitNum) {
+SetBit(long *x, const char bitNum) 
+{
 	*x |= (1 << bitNum);
 }
 
 inline void 
-ClearBit(long *x, const char bitNum) {
+ClearBit(long *x, const char bitNum) 
+{
 	*x &= ~(1 << bitNum);
 }
 
 inline char 
-GetBit(const long *x, const char bitNum) {
+GetBit(const long *x, const char bitNum) 
+{
 
 	//previous non working definition
 	//return !!((*x) & (1 << bitNum));

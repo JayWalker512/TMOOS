@@ -12,22 +12,25 @@ necessary files from sharedlib. */
 #include <stdint.h>
 
 //the enums below are used for accessing bitwise variables most efficiently.
-enum e_FATAL_ERRORS {
+enum e_FATAL_ERRORS 
+{
 	INIT_ERROR,
-	};
+};
 
-enum e_OSParameter {
+enum e_OSParameter 
+{
 	OS_CPU_SCALING_ENABLED = 0,
 	OS_SOUND_ENABLED = 1,
 	OS_DISPLAY_ENABLED = 2,
 	OS_INPUT_ENABLED = 3,
 	OS_STATE = 8,
 	OS_DEBUGLEVELS = 9,
-	};
+};
 	
 /* No global "debug enabled", each subsys just checks against its respective 
  bit so we can see only what we want. */
-enum e_OSDebugLevels {
+enum e_OSDebugLevels 
+{
 	DEBUG_OS,
 	DEBUG_DSP,
 	DEBUG_SND,
@@ -38,7 +41,8 @@ enum e_OSDebugLevels {
 	DEBUG_GAME,
 };
 
-enum e_TimerParams {
+enum e_TimerParams 
+{
 	TIMER_START = 0,
 	TIMER_STOP,
 };

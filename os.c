@@ -17,14 +17,11 @@ peripheral subsystems through their respective interfaces. */
 #include "common/binary.h"
 #include "common/glyphs.h"
 #include "common/print.h"
+#include "common/profiling.h"
 #include "avr_common.h"
 
 #ifdef DEBUG
 #include "debug/debug.h"
-#endif
-
-#ifdef PROFILING
-#include "common/profiling.h"
 #endif
 
 //may need this here... gonna leave it here for now.
@@ -34,7 +31,8 @@ peripheral subsystems through their respective interfaces. */
 #define LOAD_REFRESH_MS 1000
 #define LOAD_REFRESH_US 1000000
 
-enum e_OSConfigFileSystem {
+enum e_OSConfigFileSystem 
+{
     FILE_OS_STATE = 0x00, //1 byte
     FILE_OS_DEBUGLEVELS = 0x01, //1 byte
     
@@ -61,7 +59,7 @@ static char OS_RestoreSysConfig(void);
 unsigned long g_OSIdleLoopTimeMs;
 unsigned char g_OSState;
 unsigned char g_OSDebugLevels; /*each bit corresponds to a subsystem. If bit enabled,
-that subsystem will print it's debug info to terminal. Bits are above. */
+that subsystem will print it's debug info to terminal. See e_OSDebugLevels in os.h */
 
 static unsigned long m_endCycle;
 static unsigned char m_sysLoad;
@@ -70,12 +68,13 @@ static unsigned long m_idleTimeEnd;
 static unsigned long m_idleTime;
 
 //profiler variables
-t_Timer profilerTimer;
-t_Timer conTimer;
-t_Timer inpTimer;
-t_Timer dspTimer;
-t_Timer sndTimer;
-t_Timer gameTimer;
+//TODO should be Timer_t
+Timer_t profilerTimer;
+Timer_t conTimer;
+Timer_t inpTimer;
+Timer_t dspTimer;
+Timer_t sndTimer;
+Timer_t gameTimer;
 unsigned long conSum = 0;
 unsigned long inpSum = 0;
 unsigned long dspSum = 0;
@@ -99,7 +98,6 @@ main(void)
 
 
 	MENU_Init();
-	char bRunning = 0, progIndex = -1;
 	PRO_StartTimer(&profilerTimer);
 	while(1)
 	{
@@ -158,7 +156,7 @@ OS_Init(void)
 	OS_SetConfig(OS_INPUT_ENABLED, 1);
 
 	DSP_SetConfig(DSP_VSYNC, 0);
-	DSP_SetConfig(DSP_REFRESH_HZ, 60);
+	DSP_SetConfig(DSP_REFRESH_HZ, 60); //doesn't do anything with interrupt driven display
 	
 	return 1;
 }
@@ -355,17 +353,6 @@ OS_CPULoadCalc(enum e_TimerParams parameter)
 			m_sysLoad = 0;
 
 		m_idleTime = 0;
-		
-		#ifdef DEBUG 
-		/*if (GetBit(&g_OSDebugLevels, DEBUG_OS))
-		{
-			print("Cpu load: 0x");
-			phex16(m_sysLoad);
-			print(" @ 0x");
-			phex16(TME_GetCpuClockMhz());
-			print(" Mhz\n");
-		}*/
-		#endif
 		
 		if (GetBit(&g_OSState, OS_CPU_SCALING_ENABLED))
 			OS_CPUScaleByLoad();

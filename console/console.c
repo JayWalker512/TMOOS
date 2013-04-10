@@ -132,18 +132,24 @@ CON_RecieveString(char *buf, uint8_t size)
 	int16_t r;
 	uint8_t count=0;
 
-	while (count < size) {
+	while (count < size) 
+	{
 		r = usb_serial_getchar();
-		if (r != -1) {
+		if (r != -1) 
+		{
 			if (r == '\r' || r == '\n') return count;
-			if (r >= ' ' && r <= '~') {
+			if (r >= ' ' && r <= '~') 
+			{
 				*buf++ = r;
 				usb_serial_putchar(r);
 				count++;
 			}
-		} else {
+		} 
+		else 
+		{
 			if (!usb_configured() ||
-			  !(usb_serial_get_control() & USB_SERIAL_DTR)) {
+			  !(usb_serial_get_control() & USB_SERIAL_DTR)) 
+			{
 				// user no longer connected
 				return 255;
 			}

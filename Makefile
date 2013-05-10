@@ -47,7 +47,7 @@ TARGET = os
 #previously working build. revert to old_ard files if you cant make it work out
 SRC =	$(TARGET).c \
 		display/display.c sound/sound.c time/time.c input/input.c console/console.c \
-		hardware/hardware.c disk/disk.c console/usb_serial.c menu.c \
+		hardware/hardware.c disk/disk.c console/usb_serial.c menu.c battery.c \
 		common/glyphs.c common/profiling.c common/print.c \
 		games/demos.c games/gamelib.c gfx/gfx.c
 	

@@ -105,7 +105,7 @@ GFX_DrawLine(const char x1, const char y1,
 	char yS = y1;
 	char xD = x2;
 	char yD = y2;
-	char dX = abs(xD - xS);
+	char dX = abs(xD - xS); //TODO is there no abs function? maybe i'll implement one
 	char dY = abs(yD - yS);
 	char err = dX - dY;
 	

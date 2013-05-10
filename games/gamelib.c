@@ -8,7 +8,7 @@
 #include <math.h>
 #include <string.h>
 
-#define NUM_GAME_ITEMS 3
+#define NUM_GAME_ITEMS 4
 ProgData_t m_gameDataTable[NUM_GAME_ITEMS];
 
 char 
@@ -32,6 +32,10 @@ GLIB_Init(void)
 	strcpy(m_gameDataTable[2].name, "ST");
 	m_gameDataTable[2].initFunc = &InitGameScrollText;
 	m_gameDataTable[2].loopFunc = &GameScrollText;
+	
+	strcpy(m_gameDataTable[3].name, "BA");
+	m_gameDataTable[3].initFunc = &BatteryLevelTest;
+	m_gameDataTable[3].loopFunc = &BatteryLevelTest;
 	
 	return 1;
 }

@@ -5,12 +5,12 @@
 #include "../common/binary.h"
 #include "../common/print.h"
 
-unsigned char m_inputUpdateInterval; //max of 255ms which is ~4hz
-unsigned long m_timeToUpdate;
-unsigned int m_calibMin, m_calibMax;
-unsigned char m_wheelPos;
-unsigned char m_buttonStates;
-unsigned char m_inputPins[4]; 
+static unsigned char m_inputUpdateInterval; //max of 255ms which is ~4hz
+static unsigned long m_timeToUpdate;
+static unsigned int m_calibMin, m_calibMax;
+static unsigned char m_wheelPos;
+static unsigned char m_buttonStates;
+static unsigned char m_inputPins[4]; 
 
 /* TODO Maybe we should add functions to allow calibrating the input wheel via the
 interactive console, but for now it will be hardcoded. */

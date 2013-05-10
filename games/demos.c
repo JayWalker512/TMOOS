@@ -1,5 +1,6 @@
 #include "gamelib.h"
 #include "../os.h"
+#include "../battery.h"
 
 static unsigned long endTime = 0; //used multiple times
 
@@ -119,6 +120,16 @@ GameWheelRegionTest(void)
 	GFX_Clear(0);
 	char region = GLIB_GetWheelRegion(9);
 	GFX_BitBLT(&g_alphaNumGlyphs[26 + region], 3, 5, 0, 0);
+	GFX_SwapBuffers();
+	return 1;
+}
+
+char
+BatteryLevelTest(void)
+{
+	GFX_Clear(0);
+	char xDest = 8 * ((float)OS_GetBatteryLevel() / 1023);
+	GFX_DrawLine(0,0, xDest, 0);
 	GFX_SwapBuffers();
 	return 1;
 }

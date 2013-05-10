@@ -13,6 +13,7 @@ peripheral subsystems through their respective interfaces. */
 #include "time/time.h"
 #include "games/gamelib.h"
 #include "menu.h"
+#include "battery.h"
 
 #include "common/binary.h"
 #include "common/glyphs.h"
@@ -107,6 +108,11 @@ main(void)
 		MENU_LauncherLoop();
 		
 		OS_CalculateProfilerData();
+		
+		_delay_ms(10);
+		CON_SendString(PSTR("Batt level: "));
+		printInt(OS_GetBatteryLevel(), VAR_UNSIGNED);
+		CON_SendString(PSTR("\r\n"));
 	}
 	return 0;
 }
@@ -157,6 +163,8 @@ OS_Init(void)
 
 	DSP_SetConfig(DSP_VSYNC, 0);
 	DSP_SetConfig(DSP_REFRESH_HZ, 60); //doesn't do anything with interrupt driven display
+	
+	OS_BatteryInit();
 	
 	return 1;
 }

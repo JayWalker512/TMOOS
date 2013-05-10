@@ -54,4 +54,6 @@ char GameScrollText(void);
 
 char GameWheelRegionTest(void);
 
+char BatteryLevelTest(void);
+
 #endif

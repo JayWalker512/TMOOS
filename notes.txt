@@ -1,6 +1,6 @@
 Benchmarking my teensy OS @ current version. 1/30/2013 23:37
 Brandon Foltz
-************************************************************
+********************************************************************************
 
 OS_SetConfig(OS_CPU_SCALING_ENABLED, 0);
 OS_SetConfig(OS_SOUND_ENABLED, 0);
@@ -18,7 +18,7 @@ FPS: 0541
 
 ~1345 FPS
 
------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 OS_SetConfig(OS_SOUND_ENABLED, 1);
 OS_SetConfig(OS_DISPLAY_ENABLED, 0);
@@ -31,7 +31,7 @@ FPS: 0541
 
 ~1345 FPS. Guess there's not much overhead with no playing sounds...
 
--------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 OS_SetConfig(OS_SOUND_ENABLED, 1);
 OS_SetConfig(OS_DISPLAY_ENABLED, 1);
@@ -44,7 +44,7 @@ FPS: 04EC
 
 ~1260 FPS drawing a single glyph
 
--------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 OS_SetConfig(OS_SOUND_ENABLED, 1);
 OS_SetConfig(OS_DISPLAY_ENABLED, 1);

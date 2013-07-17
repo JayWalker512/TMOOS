@@ -16,6 +16,15 @@ enum e_VarType {
 	VAR_UNSIGNED,
 };
 
+
+/* Prints formatted text to the terminal connected via serial. Works just
+ like normal printf for the most part, with some different format chars.
+ %c = char, %s = RAM string, %z = PSTR string, %d = any integer. This
+ implementation doesn't support printing floats (yet). */
+void serialPrintf(const char *fmt, ...);
+
+
+
 void printv(const char *string, void *var, enum e_VarType type);
 void printInt(long input, enum e_VarType type);
 void printString(const char *string);

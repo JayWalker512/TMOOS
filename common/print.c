@@ -3,8 +3,16 @@
 #include "../avr_common.h"
 #include <string.h> //for working with strings in regular RAM
 
+#include <stdarg.h> //for variable parameters to functions like printf
+
 static void printFloat(float input, enum e_VarType type);
 static void printDouble(double input, enum e_VarType type);
+
+void 
+serialPrintf(const char *fmt, ...)
+{
+	
+}
 
 void
 printv(const char *string, void *var, enum e_VarType type)

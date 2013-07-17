@@ -95,7 +95,6 @@ CON_BufferInput(char *buffer, const unsigned char size)
 
 // Send a string to the USB serial port.  The string must be in
 // flash memory, using PSTR
-//
 void 
 CON_SendString(const char *s)
 {

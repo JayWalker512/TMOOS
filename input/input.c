@@ -4,6 +4,7 @@
 #include "../time/time.h"
 #include "../common/binary.h"
 #include "../common/print.h"
+#include "../common/pins.h"
 
 static unsigned char m_inputUpdateInterval; //max of 255ms which is ~4hz
 static unsigned long m_timeToUpdate;
@@ -23,10 +24,10 @@ INP_Init(void) //TODO init settings (poll rate, calib) should be passed here fro
 	m_buttonStates = 0;
 	m_wheelPos = 0;
 	
-	m_inputPins[INPUT_WHEEL] = 0; //== A2 Arduino analog pin # scheme
-	m_inputPins[INPUT_PB0] = 10;	//regular ard # scheme
-	m_inputPins[INPUT_PB1] = 9;
-	m_inputPins[INPUT_PB2] = 8;
+	m_inputPins[INPUT_WHEEL] = INPUT_WHEEL_PIN; //== A2 Arduino analog pin # scheme
+	m_inputPins[INPUT_PB0] = INPUT_PB0_PIN;	//regular ard # scheme
+	m_inputPins[INPUT_PB1] = INPUT_PB1_PIN;
+	m_inputPins[INPUT_PB2] = INPUT_PB2_PIN;
 	
 	/*TODO These values will need loaded from EEPROM eventually*/
 	m_calibMin = 100;

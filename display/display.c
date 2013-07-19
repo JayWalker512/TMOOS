@@ -100,9 +100,9 @@ DSP_Init(void) //TODO init settings (refresh rate, double buffer) should be pass
 	DSP_Power(1);
 	
 	//should these go in DSP_Power()?
-	HRD_SetPinDigital(ANODE_CLEAR, 1);
-	HRD_SetPinDigital(CATHODE_CLEAR, 1);
-	HRD_SetPinDigital(CATHODE_OE, 0);
+	HRD_SetPinDigital(ANODE_CLEAR_PIN, 1);
+	HRD_SetPinDigital(CATHODE_CLEAR_PIN, 1);
+	HRD_SetPinDigital(CATHODE_OE_PIN, 0);
 	
 	#ifdef DEBUG
 	CON_SendString(PSTR("Framebuffer size (BITS): "));
@@ -248,20 +248,20 @@ static void
 DSP_RefreshDriver1(void)
 {	
 	//firstly, disable anode output for now.
-	HRD_SetPinDigital(ANODE_OE, 1);
+	HRD_SetPinDigital(ANODE_OE_PIN, 1);
 	
 	if (m_curRow == 0)
 	{
-		HRD_SetPinDigital(ANODE_DATA, 1);
-		HRD_CycleClockPin(ANODE_CLOCK);
-		HRD_CycleClockPin(ANODE_LATCH);
-		HRD_SetPinDigital(ANODE_DATA, 0);
+		HRD_SetPinDigital(ANODE_DATA_PIN, 1);
+		HRD_CycleClockPin(ANODE_CLOCK_PIN);
+		HRD_CycleClockPin(ANODE_LATCH_PIN);
+		HRD_SetPinDigital(ANODE_DATA_PIN, 0);
 	}
 	else
 	{
 		//note above, we already set ANODE_DATA to 0 so we just shift it in
-		HRD_CycleClockPin(ANODE_CLOCK);
-		HRD_CycleClockPin(ANODE_LATCH);
+		HRD_CycleClockPin(ANODE_CLOCK_PIN);
+		HRD_CycleClockPin(ANODE_LATCH_PIN);
 	}
 
 	/* As a result of a design choice of mine on the display board
@@ -271,34 +271,34 @@ DSP_RefreshDriver1(void)
 	{				
 		if (DSP_GetPixel(x - 1, m_curRow)) //can inline this, using function now for clarity
 		{		
-			HRD_SetPinDigital(CATHODE_DATA, 0);
-			HRD_CycleClockPin(CATHODE_CLOCK);
+			HRD_SetPinDigital(CATHODE_DATA_PIN, 0);
+			HRD_CycleClockPin(CATHODE_CLOCK_PIN);
 		}
 		else
 		{
-			HRD_SetPinDigital(CATHODE_DATA, 1);
-			HRD_CycleClockPin(CATHODE_CLOCK);
+			HRD_SetPinDigital(CATHODE_DATA_PIN, 1);
+			HRD_CycleClockPin(CATHODE_CLOCK_PIN);
 		}
 	}
 	for (char x = DISPLAY_COLUMNS; x > (DISPLAY_COLUMNS / 2); x--)
 	{				
 		if (DSP_GetPixel(x - 1, m_curRow)) //can inline this, using function now for clarity
 		{		
-			HRD_SetPinDigital(CATHODE_DATA, 0);
-			HRD_CycleClockPin(CATHODE_CLOCK);
+			HRD_SetPinDigital(CATHODE_DATA_PIN, 0);
+			HRD_CycleClockPin(CATHODE_CLOCK_PIN);
 		}
 		else
 		{
-			HRD_SetPinDigital(CATHODE_DATA, 1);
-			HRD_CycleClockPin(CATHODE_CLOCK);
+			HRD_SetPinDigital(CATHODE_DATA_PIN, 1);
+			HRD_CycleClockPin(CATHODE_CLOCK_PIN);
 		}
 	}
 	
 	
 	
 	
-	HRD_CycleClockPin(CATHODE_LATCH);
-	HRD_SetPinDigital(ANODE_OE, 0);
+	HRD_CycleClockPin(CATHODE_LATCH_PIN);
+	HRD_SetPinDigital(ANODE_OE_PIN, 0);
 	
 	m_curRow++; 
 	if (m_curRow >= DISPLAY_ROWS)

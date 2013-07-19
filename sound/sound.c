@@ -4,6 +4,7 @@ optimize then this is a good place to start. */
 #include "sound.h"
 #include "../hardware/hardware.h"
 #include "../time/time.h"
+#include "../common/pins.h"
 
 #ifdef DEBUG
 #include "../debug/debug.h"
@@ -46,12 +47,12 @@ void SND_Update(void)
 			if (m_pinState == 0)
 			{
 				m_pinState = 1;
-				HRD_SetPinDigital(10, 1);
+				HRD_SetPinDigital(SOUND_PIN, 1);
 			}
 			else
 			{
 				m_pinState = 0;
-				HRD_SetPinDigital(10, 0);	
+				HRD_SetPinDigital(SOUND_PIN, 0);	
 			}
 		
 			m_cycleEndTime = curTime + m_cycleTime - offset;

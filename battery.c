@@ -1,8 +1,7 @@
 #include "battery.h"
 #include <hardware/hardware.h>
 #include <math.h>
-
-#define BATTERY_INPUT_PIN 1
+#include "../common/pins.h"
 
 static unsigned int m_calibMin, m_calibMax;
 

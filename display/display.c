@@ -16,6 +16,7 @@
 #include "../hardware/hardware.h"
 #include "../time/time.h"
 #include "../common/binary.h"
+#include "../common/pins.h"
 #include <math.h>
 
 #define DEFAULT_REFRESH_RATE 60
@@ -29,8 +30,8 @@
 #endif
 
 #define FRAMEBUFFER_ROWS 9 //TODO change this to FRAMEBUFFER_SIZE_BYTES and test
-#define DISPLAY_COLUMNS 8
-#define DISPLAY_ROWS 8
+#define DISPLAY_COLUMNS 16
+#define DISPLAY_ROWS 16
 
 
 static void DSP_ConfigureDriver(const unsigned char refreshRate);
@@ -65,20 +66,6 @@ static unsigned char m_DSPState;
 //shouldnt initialize here, but doing it anyway for now
 //static unsigned char m_anodePins[DISPLAY_ROWS] = { 16, 20, 8, 17, 2, 7, 4, 9 };
 //static unsigned char m_cathodePins[DISPLAY_COLUMNS] = { 3, 14, 15, 21, 13, 24, 1, 0 };
-
-#define DSP_POWER_PIN 12
-
-#define ANODE_DATA 1
-#define ANODE_OE 2
-#define ANODE_LATCH 3
-#define ANODE_CLOCK 4
-#define ANODE_CLEAR 5
-
-#define CATHODE_DATA 16
-#define CATHODE_OE 15
-#define CATHODE_LATCH 17
-#define CATHODE_CLOCK 14
-#define CATHODE_CLEAR 13
 
 int 
 DSP_Init(void) //TODO init settings (refresh rate, double buffer) should be passed here from OS
@@ -277,7 +264,10 @@ DSP_RefreshDriver1(void)
 		HRD_CycleClockPin(ANODE_LATCH);
 	}
 
-	for (char x = DISPLAY_COLUMNS; x > 0; x--)
+	/* As a result of a design choice of mine on the display board
+	 that simplified wiring, data for the right-side panels has to
+	 be sent out before data for the left-side panels. */
+	for (char x = (DISPLAY_COLUMNS / 2); x > 0; x--)
 	{				
 		if (DSP_GetPixel(x - 1, m_curRow)) //can inline this, using function now for clarity
 		{		
@@ -290,6 +280,23 @@ DSP_RefreshDriver1(void)
 			HRD_CycleClockPin(CATHODE_CLOCK);
 		}
 	}
+	for (char x = DISPLAY_COLUMNS; x > (DISPLAY_COLUMNS / 2); x--)
+	{				
+		if (DSP_GetPixel(x - 1, m_curRow)) //can inline this, using function now for clarity
+		{		
+			HRD_SetPinDigital(CATHODE_DATA, 0);
+			HRD_CycleClockPin(CATHODE_CLOCK);
+		}
+		else
+		{
+			HRD_SetPinDigital(CATHODE_DATA, 1);
+			HRD_CycleClockPin(CATHODE_CLOCK);
+		}
+	}
+	
+	
+	
+	
 	HRD_CycleClockPin(CATHODE_LATCH);
 	HRD_SetPinDigital(ANODE_OE, 0);
 	

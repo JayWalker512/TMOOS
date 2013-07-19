@@ -65,7 +65,7 @@ volatile unsigned long m_timer0Millis;
 static unsigned char m_timer0Fract;
 
 volatile unsigned char m_displayCounter;
-#define DISPLAY_DIVISOR 3
+#define DISPLAY_DIVISOR 2
 
 static unsigned int HRD_ADCRead(unsigned char mux);
 static void HRD_InterruptInit(void);

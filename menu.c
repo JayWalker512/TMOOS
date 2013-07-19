@@ -72,6 +72,14 @@ MENU_Loop(ProgData_t *dataTable, size_t numElements)
 	//menu rendering
 	GFX_Clear(0);
 	GFX_DrawText(dataTable[menuIndex].name, 0, 0);
+	
+	//remove me, just drawing a pixel for testing.
+	GFX_PutPixel(10, 3, 1);
+	GFX_PutPixel(7, 8, 1);
+	GFX_PutPixel(8, 8, 1);
+	GFX_PutPixel(15, 15, 1);
+	GFX_PutPixel(7, 15, 1);
+	
 	GFX_SwapBuffers();
 	
 	return -1; //return -1 unless a program was run. Return its index otherwise.

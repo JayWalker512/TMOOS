@@ -159,7 +159,7 @@ OS_Init(void)
 	OS_SetConfig(OS_CPU_SCALING_ENABLED, 0);
 	OS_SetConfig(OS_SOUND_ENABLED, 0);
 	OS_SetConfig(OS_DISPLAY_ENABLED, 1);
-	OS_SetConfig(OS_INPUT_ENABLED, 1);
+	OS_SetConfig(OS_INPUT_ENABLED, 0);
 
 	DSP_SetConfig(DSP_VSYNC, 0);
 	DSP_SetConfig(DSP_REFRESH_HZ, 60); //doesn't do anything with interrupt driven display

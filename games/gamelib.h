@@ -38,7 +38,7 @@ unsigned char (*GLIB_GetInput)(enum e_GLIBenums device);
 unsigned char (*GLIB_GetWheelRegion)(unsigned char regions);
 
 unsigned long GLIB_GetGameMillis(void);
-unsigned char GLIB_GetDeltaMillis(void)
+unsigned char GLIB_GetDeltaMillis(void);
 
 void (*GLIB_Beep)(unsigned int Hz, unsigned long ms);
 

@@ -8,7 +8,7 @@
 #include <math.h>
 #include <string.h>
 
-#define NUM_GAME_ITEMS 9
+#define NUM_GAME_ITEMS 6
 ProgData_t m_gameDataTable[NUM_GAME_ITEMS];
 
 char 
@@ -41,9 +41,9 @@ GLIB_Init(void)
 	m_gameDataTable[4].initFunc = &GameWheelRegionTest;
 	m_gameDataTable[4].loopFunc = &GameWheelRegionTest;
 	
-	strcpy(m_gameDataTable[4].name, "WEEL");
-	m_gameDataTable[4].initFunc = &GameWheelRegionTest;
-	m_gameDataTable[4].loopFunc = &GameWheelRegionTest;
+	strcpy(m_gameDataTable[5].name, "PONG");
+	m_gameDataTable[5].initFunc = &InitPongGame;
+	m_gameDataTable[5].loopFunc = &PongGameLoop;
 	
 	return 1;
 }
@@ -69,3 +69,6 @@ GLIB_GetGameMillis(void)
 {
 	return g_OSIdleLoopTimeMs;
 }
+
+//unsigned char //if we drop below ~4 fps, this will roll over. 
+//GLIB_GetDeltaMillis(void)

@@ -56,4 +56,8 @@ char GameWheelRegionTest(void);
 
 char BatteryLevelTest(void);
 
+//pong.c
+char InitPongGame(void);
+char PongGameLoop(void);
+
 #endif

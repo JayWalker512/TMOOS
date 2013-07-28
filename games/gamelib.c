@@ -70,5 +70,11 @@ GLIB_GetGameMillis(void)
 	return g_OSIdleLoopTimeMs;
 }
 
-//unsigned char //if we drop below ~4 fps, this will roll over. 
-//GLIB_GetDeltaMillis(void)
+/* Returns the number of millis that have passed since this function was 
+ last called. Useful for frame delta time. */
+unsigned char //if we drop below ~4 fps, this will roll over. 
+GLIB_GetDeltaMillis(void)
+{
+	//going to wait to implement this... see if its really needed
+	//or even a good idea.
+}

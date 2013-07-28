@@ -2,8 +2,8 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-#define DISPLAY_WIDTH 8
-#define DISPLAY_HEIGHT 8
+#define DISPLAY_WIDTH 16
+#define DISPLAY_HEIGHT 16
 
 
 /* Parameters 0-7 are stored bitwise in static m_DSPState */

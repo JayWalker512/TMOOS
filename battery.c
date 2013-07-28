@@ -1,7 +1,7 @@
 #include "battery.h"
-#include <hardware/hardware.h>
+#include "hardware/hardware.h"
 #include <math.h>
-#include "../common/pins.h"
+#include "common/pins.h"make
 
 static unsigned int m_calibMin, m_calibMax;
 

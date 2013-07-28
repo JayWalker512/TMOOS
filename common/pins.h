@@ -1,26 +1,27 @@
 //display pins
-#define DSP_POWER_PIN 11
+#define DSP_POWER_PIN 0
 
-#define ANODE_DATA_PIN 12
-#define ANODE_OE_PIN 13
-#define ANODE_LATCH_PIN 14
-#define ANODE_CLOCK_PIN 15
-#define ANODE_CLEAR_PIN 16
+#define ANODE_DATA_PIN 1
+#define ANODE_OE_PIN 2
+#define ANODE_LATCH_PIN 3
+#define ANODE_CLOCK_PIN 4
+#define ANODE_CLEAR_PIN 5
 
-#define CATHODE_DATA_PIN 17
-#define CATHODE_OE_PIN 18
-#define CATHODE_LATCH_PIN 19
-#define CATHODE_CLOCK_PIN 20
-#define CATHODE_CLEAR_PIN 21
+#define CATHODE_DATA_PIN 6
+#define CATHODE_OE_PIN 7
+#define CATHODE_LATCH_PIN 8
+#define CATHODE_CLOCK_PIN 9
+#define CATHODE_CLEAR_PIN 10
 
 //input pins
-#define INPUT_WHEEL_PIN 0 //follows Arduino "analog pin" scheme
-#define INPUT_PB0_PIN 10
-#define INPUT_PB1_PIN 9
-#define INPUT_PB2_PIN 8
+#define INPUT_WHEEL_PIN 4 //follows Arduino "analog pin" scheme
+#define INPUT_PB0_PIN 20
+#define INPUT_PB1_PIN 19
+#define INPUT_PB2_PIN 18
 
 //sound
-#define SOUND_PIN 7 //super elaborate name, I know.
+#define SOUND_PIN 16 //super elaborate name, I know.
 
 //other
-#define STATUS_LED_PIN 6 //not implemented yet
+#define STATUS_LED_PIN 11 //not implemented yet
+#define BATTERY_INPUT_PIN 0 //Ardino "analog pin" scheme

@@ -8,7 +8,7 @@
 #include <math.h>
 #include <string.h>
 
-#define NUM_GAME_ITEMS 4
+#define NUM_GAME_ITEMS 9
 ProgData_t m_gameDataTable[NUM_GAME_ITEMS];
 
 char 
@@ -21,21 +21,29 @@ GLIB_Init(void)
 	GLIB_GetWheelRegion = &INP_GetWheelRegion;
 	
 	//next set up game data table
-	strcpy(m_gameDataTable[0].name, "IN");
+	strcpy(m_gameDataTable[0].name, "INP");
 	m_gameDataTable[0].initFunc = &GameInputTest;
 	m_gameDataTable[0].loopFunc = &GameInputTest;
 	
-	strcpy(m_gameDataTable[1].name, "SM");
+	strcpy(m_gameDataTable[1].name, "SMLY");
 	m_gameDataTable[1].initFunc = &GameSmiley;
 	m_gameDataTable[1].loopFunc = &GameSmiley;
 	
-	strcpy(m_gameDataTable[2].name, "ST");
+	strcpy(m_gameDataTable[2].name, "STXT");
 	m_gameDataTable[2].initFunc = &InitGameScrollText;
 	m_gameDataTable[2].loopFunc = &GameScrollText;
 	
-	strcpy(m_gameDataTable[3].name, "BA");
+	strcpy(m_gameDataTable[3].name, "BATT");
 	m_gameDataTable[3].initFunc = &BatteryLevelTest;
 	m_gameDataTable[3].loopFunc = &BatteryLevelTest;
+	
+	strcpy(m_gameDataTable[4].name, "WEEL");
+	m_gameDataTable[4].initFunc = &GameWheelRegionTest;
+	m_gameDataTable[4].loopFunc = &GameWheelRegionTest;
+	
+	strcpy(m_gameDataTable[4].name, "WEEL");
+	m_gameDataTable[4].initFunc = &GameWheelRegionTest;
+	m_gameDataTable[4].loopFunc = &GameWheelRegionTest;
 	
 	return 1;
 }

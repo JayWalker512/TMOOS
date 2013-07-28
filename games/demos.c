@@ -9,14 +9,17 @@ GameSmiley(void)
 {
 	GFX_Clear(0);
 	
-	//draw face
-	GFX_PutPixel(2,2,1);
-	GFX_PutPixel(5,2,1);
+	//eyes
+	GFX_DrawRect(2,2,4,4,GFX_BORDERED_RECT);
+	GFX_DrawRect(10,2,4,4,GFX_BORDERED_RECT);
 	
-	GFX_DrawLine(2,5,5,5);
+	//nose
+	GFX_DrawRect(7,7,2,2,GFX_BORDERED_RECT);
 	
-	GFX_PutPixel(1,4,1);
-	GFX_PutPixel(6,4,1);
+	//mouth
+	GFX_DrawLine(2,12,13,12);
+	GFX_DrawLine(1,10,1,11);
+	GFX_DrawLine(14,10,14,11);
 	
 	GFX_SwapBuffers();
 	return 1;
@@ -86,7 +89,7 @@ unsigned char m_scrollRate;
 char 
 InitGameScrollText(void)
 {
-	m_textX = 8;
+	m_textX = 16;
 	m_scrollTime = 0;
 	m_scrollRate = GLIB_GetInput(GLIB_WHEEL);
 }
@@ -97,8 +100,8 @@ GameScrollText(void)
 	GFX_Clear(0);
 	
 	GFX_DrawText("HELLO", m_textX, 0);
-	GFX_DrawLine(0, 7, 3, 5);
-	GFX_DrawLine(7, 7, 4, 5);
+	GFX_DrawLine(7, 7, 0, 15);
+	GFX_DrawLine(8, 7, 15, 15);
 		
 	GFX_SwapBuffers();
 	
@@ -106,7 +109,7 @@ GameScrollText(void)
 	{
 		m_textX--;
 		if (m_textX == -20)
-			m_textX = 8;
+			m_textX = 16;
 		
 		m_scrollRate = GLIB_GetInput(GLIB_WHEEL);
 		m_scrollTime = GLIB_GetGameMillis() + m_scrollRate;
@@ -128,7 +131,7 @@ char
 BatteryLevelTest(void)
 {
 	GFX_Clear(0);
-	char xDest = 8 * ((float)OS_GetBatteryLevel() / 1023);
+	char xDest = 16 * ((float)OS_GetBatteryLevel() / 1023);
 	GFX_DrawLine(0,0, xDest, 0);
 	GFX_SwapBuffers();
 	return 1;

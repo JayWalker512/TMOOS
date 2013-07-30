@@ -110,7 +110,8 @@ void CheckForCollisions(void)
 		pongBall.xSpeed = -pongBall.xSpeed;
 	}
 	
-	if (pongBall.y >= DISPLAY_HEIGHT)
+	//This block bounces ball off the goals
+	/*if (pongBall.y >= DISPLAY_HEIGHT)
 	{
 		pongBall.y = DISPLAY_HEIGHT;
 		pongBall.ySpeed = -pongBall.ySpeed; 
@@ -120,7 +121,7 @@ void CheckForCollisions(void)
 	{
 		pongBall.y = 0;
 		pongBall.ySpeed = -pongBall.ySpeed;
-	}
+	}*/
 	
 	//bounce ball off paddles
 	if (pongBall.y >= 15 && pongBall.y <= DISPLAY_HEIGHT)
@@ -153,6 +154,22 @@ void CheckForCollisions(void)
 			pongBall.y = 1;
 		}	
 	}
+	
+	/* below here we're checking for goals. */
+	
+	if (pongBall.y < 0) //score for player
+	{
+		player.score++;
+		ClearBit(&pongState, PONG_WHOSTURN); //players turn
+		ClearBit(&pongState, PONG_BALLLAUNCHED);
+	}
+	else if (pongBall.y > DISPLAY_HEIGHT)
+	{
+		comp.score++;
+		SetBit(&pongState, PONG_WHOSTURN); //comps turn
+		ClearBit(&pongState, PONG_BALLLAUNCHED);
+	}
+	
 }
 
 void UpdateBall(unsigned long dt)

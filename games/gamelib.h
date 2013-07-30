@@ -4,6 +4,7 @@
 #include "../gfx/gfx.h"
 #include "../common/glyphs.h"
 #include "../sound/sound.h"
+#include "../common/binary.h"
 #include <math.h>
 
 typedef struct ProgData_s 

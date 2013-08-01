@@ -18,10 +18,10 @@ typedef struct s_PongBall {
 	float ySpeed;
 } t_PongBall;
 
-t_PongBall pongBall;
-t_PongPlayer player, comp;
+t_PongBall g_pongBall;
+t_PongPlayer g_player, g_comp;
 
-unsigned long lastTime;
+unsigned long g_lastTime;
 
 enum e_GameState  
 {
@@ -32,30 +32,30 @@ enum e_GameState
 	PONG_COMPDECIDED, //comp decided where to launch ball from
 };
 
-unsigned char pongState; //variable for storing bitwise states above
+unsigned char g_pongState; //variable for storing bitwise states above
 
 void RenderPong(void);
 void CheckForCollisions(void);
-void UpdateBall(unsigned long dt);
-void UpdatePlayerPaddle(unsigned long dt);
-void UpdateCompPaddle(unsigned long dt);
+void UpdateBall(t_PongBall *ball, unsigned long dt);
+void UpdatePlayerPaddle(t_PongPlayer *playerPaddle, unsigned long dt);
+void UpdateCompPaddle(t_PongPlayer *compPaddle, unsigned long dt);
 void HandleInput(void);
 float GetRandFloat(float min, float max);
 
 char 
 InitPongGame(void)
 {
-	player.x = 6;
-	player.score = 0;
-	comp.x = 6;
-	comp.score = 0;
+	g_player.x = 6;
+	g_player.score = 0;
+	g_comp.x = 6;
+	g_comp.score = 0;
 	
-	pongState = 0; 
-	SetBit(&pongState, PONG_PLAYING); //start a regular game
+	g_pongState = 0; 
+	SetBit(&g_pongState, PONG_PLAYING); //start a regular game
 	/* ball isn't launched, it's players turn. */
 	
-	lastTime = GLIB_GetGameMillis();
-	srand(lastTime);
+	g_lastTime = GLIB_GetGameMillis();
+	srand(g_lastTime);
 }
 
 char 
@@ -64,12 +64,12 @@ PongGameLoop(void)
 	unsigned long dt;
 	unsigned long thisTime;
 	thisTime = GLIB_GetGameMillis();
-	dt = thisTime - lastTime;
-	lastTime = thisTime;
+	dt = thisTime - g_lastTime;
+	g_lastTime = thisTime;
 	
-	UpdateBall(dt);
-	UpdatePlayerPaddle(dt);
-	UpdateCompPaddle(dt);
+	UpdateBall(&g_pongBall, dt);
+	UpdatePlayerPaddle(&g_player, dt);
+	UpdateCompPaddle(&g_comp, dt);
 	HandleInput();
 	CheckForCollisions();
 	RenderPong();
@@ -81,14 +81,14 @@ RenderPong(void)
 	GFX_Clear(0);
 	
 	//draw ball
-	GFX_PutPixel(floor(pongBall.x), floor(pongBall.y), 1);
+	GFX_PutPixel(floor(g_pongBall.x), floor(g_pongBall.y), 1);
 	
 	//draw player paddle
-	GFX_DrawLine(player.x, DISPLAY_HEIGHT - 1, 
-		player.x + PADDLE_WIDTH, DISPLAY_HEIGHT - 1);
+	GFX_DrawLine(g_player.x, DISPLAY_HEIGHT - 1, 
+		g_player.x + PADDLE_WIDTH, DISPLAY_HEIGHT - 1);
 	
 	//draw comp paddle
-	GFX_DrawLine(comp.x, 0, comp.x + PADDLE_WIDTH, 0);
+	GFX_DrawLine(g_comp.x, 0, g_comp.x + PADDLE_WIDTH, 0);
 	
 	GFX_SwapBuffers();
 }
@@ -97,92 +97,93 @@ void
 CheckForCollisions(void)
 {
 	//bounce off walls
-	if (pongBall.x >= DISPLAY_WIDTH)
+	if (g_pongBall.x >= DISPLAY_WIDTH)
 	{
-		pongBall.x = DISPLAY_WIDTH;
-		pongBall.xSpeed = -pongBall.xSpeed;
+		g_pongBall.x = DISPLAY_WIDTH;
+		g_pongBall.xSpeed = -g_pongBall.xSpeed;
 	}
 	
-	if (pongBall.x <= 0)
+	if (g_pongBall.x <= 0)
 	{
-		pongBall.x = 0;
-		pongBall.xSpeed = -pongBall.xSpeed;
+		g_pongBall.x = 0;
+		g_pongBall.xSpeed = -g_pongBall.xSpeed;
 	}
 	
 	//bounce ball off paddles
-	if (pongBall.y >= 15 && pongBall.y <= DISPLAY_HEIGHT)
+	if (g_pongBall.y >= 15 && g_pongBall.y <= DISPLAY_HEIGHT)
 	{
-		if (pongBall.x >= player.x && 
-			pongBall.x <= player.x + PADDLE_WIDTH)
+		if (g_pongBall.x >= g_player.x && 
+			g_pongBall.x <= g_player.x + PADDLE_WIDTH)
 		{
-			pongBall.ySpeed = -pongBall.ySpeed;
-			pongBall.y = 15;
+			g_pongBall.ySpeed = -g_pongBall.ySpeed;
+			g_pongBall.y = 15;
 		}
 	}
-	else if (pongBall.y <= 1 && pongBall.y >= 0)
+	else if (g_pongBall.y <= 1 && g_pongBall.y >= 0)
 	{
-		if (pongBall.x >= comp.x && 
-			pongBall.x <= comp.x + PADDLE_WIDTH)
+		if (g_pongBall.x >= g_comp.x && 
+			g_pongBall.x <= g_comp.x + PADDLE_WIDTH)
 		{
-			pongBall.ySpeed = -pongBall.ySpeed;
-			pongBall.y = 1;
+			g_pongBall.ySpeed = -g_pongBall.ySpeed;
+			g_pongBall.y = 1;
 		}	
 	}
 	
 	/* below here we're checking for goals. */
 	
-	if (pongBall.y < 0) //score for player
+	if (g_pongBall.y < 0) //score for player
 	{
-		player.score++;
-		ClearBit(&pongState, PONG_WHOSTURN); //players turn
-		ClearBit(&pongState, PONG_BALLLAUNCHED);
+		g_player.score++;
+		ClearBit(&g_pongState, PONG_WHOSTURN); //players turn
+		ClearBit(&g_pongState, PONG_BALLLAUNCHED);
 	}
-	else if (pongBall.y > DISPLAY_HEIGHT)
+	else if (g_pongBall.y > DISPLAY_HEIGHT)
 	{
-		comp.score++;
-		SetBit(&pongState, PONG_WHOSTURN); //comps turn
-		ClearBit(&pongState, PONG_BALLLAUNCHED);
-		ClearBit(&pongState, PONG_COMPDECIDED);
+		g_comp.score++;
+		SetBit(&g_pongState, PONG_WHOSTURN); //comps turn
+		ClearBit(&g_pongState, PONG_BALLLAUNCHED);
+		ClearBit(&g_pongState, PONG_COMPDECIDED);
 	}
 	
 }
 
 void 
-UpdateBall(unsigned long dt)
+UpdateBall(t_PongBall *ball, unsigned long dt)
 {
-	if (GetBit(&pongState, PONG_PLAYING))
+	if (GetBit(&g_pongState, PONG_PLAYING))
 	{
-		if (GetBit(&pongState, PONG_BALLLAUNCHED))
+		if (GetBit(&g_pongState, PONG_BALLLAUNCHED))
 		{
-			pongBall.x += pongBall.xSpeed * dt;
-			pongBall.y += pongBall.ySpeed * dt;
+			ball->x += ball->xSpeed * dt;
+			ball->y += ball->ySpeed * dt;
 		}
 		else
 		{
-			if (GetBit(&pongState, PONG_WHOSTURN))
+			if (GetBit(&g_pongState, PONG_WHOSTURN))
 			{
 				//comps turn
-				pongBall.x = comp.x + (PADDLE_WIDTH / 2);
-				pongBall.y = 2;
+				ball->x = g_comp.x + (PADDLE_WIDTH / 2);
+				ball->y = 2;
 			}
 			else
 			{
 				//players turn
-				pongBall.x = player.x + (PADDLE_WIDTH / 2);
-				pongBall.y = 13;
+				ball->x = g_player.x + (PADDLE_WIDTH / 2);
+				ball->y = 13;
 			}
 		}
 	}
 }
 
 void 
-UpdatePlayerPaddle(unsigned long dt)
+UpdatePlayerPaddle(t_PongPlayer *playerPaddle, unsigned long dt)
 {
-	player.x = GLIB_GetWheelRegion(DISPLAY_HEIGHT - PADDLE_WIDTH);
+	playerPaddle->x = GLIB_GetWheelRegion(DISPLAY_HEIGHT - PADDLE_WIDTH);
 }
 
+//This is the computer players AI essentially.
 void 
-UpdateCompPaddle(unsigned long dt)
+UpdateCompPaddle(t_PongPlayer *compPaddle, unsigned long dt)
 {
 	static unsigned char launchDestX = 0;
 	static unsigned char elapsed = 0;
@@ -193,51 +194,51 @@ UpdateCompPaddle(unsigned long dt)
 	
 	elapsed = 0;
 	
-	if (GetBit(&pongState, PONG_BALLLAUNCHED))
+	if (GetBit(&g_pongState, PONG_BALLLAUNCHED))
 	{
-		if (pongBall.x < comp.x)
+		if (g_pongBall.x < compPaddle->x)
 		{
-			if (comp.x > 0)
-				comp.x--;
+			if (compPaddle->x > 0)
+				compPaddle->x--;
 		}
-		else if (pongBall.x > comp.x + PADDLE_WIDTH)
+		else if (g_pongBall.x > compPaddle->x + PADDLE_WIDTH)
 		{
-			if (comp.x + PADDLE_WIDTH < DISPLAY_WIDTH - 1)
-				comp.x++;
+			if (compPaddle->x + PADDLE_WIDTH < DISPLAY_WIDTH - 1)
+				compPaddle->x++;
 		}
 	}
 	
 	//it's comps turn, decide where to launch ball (and launch it)
-	if (GetBit(&pongState, PONG_WHOSTURN) && 
-		!GetBit(&pongState, PONG_COMPDECIDED)) //comps turn, undecided
+	if (GetBit(&g_pongState, PONG_WHOSTURN) && 
+		!GetBit(&g_pongState, PONG_COMPDECIDED)) //comps turn, undecided
 	{
 		launchDestX = floor(GetRandFloat(0, 
 			DISPLAY_WIDTH - PADDLE_WIDTH - 1));
-		SetBit(&pongState, PONG_COMPDECIDED);
+		SetBit(&g_pongState, PONG_COMPDECIDED);
 	}
 	
-	if (GetBit(&pongState, PONG_COMPDECIDED) && //comp has decided 
-		!GetBit(&pongState, PONG_BALLLAUNCHED) && //ball isn't launched
-		GetBit(&pongState, PONG_WHOSTURN)) //comps turn
+	if (GetBit(&g_pongState, PONG_COMPDECIDED) && //comp has decided 
+		!GetBit(&g_pongState, PONG_BALLLAUNCHED) && //ball isn't launched
+		GetBit(&g_pongState, PONG_WHOSTURN)) //comps turn
 	{
-		if (comp.x > launchDestX)
-			comp.x--;
-		else if (comp.x < launchDestX)
-			comp.x++;
+		if (compPaddle->x > launchDestX)
+			compPaddle->x--;
+		else if (compPaddle->x < launchDestX)
+			compPaddle->x++;
 			
-		if (comp.x == launchDestX)
+		if (compPaddle->x == launchDestX)
 		{
 			//launch ball (duplicate code, could be function
-			SetBit(&pongState, PONG_BALLLAUNCHED);
+			SetBit(&g_pongState, PONG_BALLLAUNCHED);
 			char direction = GLIB_GetGameMillis() % 2;
-			pongBall.xSpeed = GetRandFloat(PONGBALL_MINSPEED,
+			g_pongBall.xSpeed = GetRandFloat(PONGBALL_MINSPEED,
 					PONGBALL_MAXSPEED);
 			
 			if (direction == 0) //left
-				pongBall.xSpeed = -pongBall.xSpeed;
+				g_pongBall.xSpeed = -g_pongBall.xSpeed;
 			//otherwise, change nothing.
 				
-			pongBall.ySpeed = GetRandFloat(PONGBALL_MINSPEED,
+			g_pongBall.ySpeed = GetRandFloat(PONGBALL_MINSPEED,
 				PONGBALL_MAXSPEED);
 		}
 	}
@@ -246,21 +247,21 @@ UpdateCompPaddle(unsigned long dt)
 void 
 HandleInput(void)
 {
-	if (GetBit(&pongState, PONG_BALLLAUNCHED) == 0 &&
-		GetBit(&pongState, PONG_WHOSTURN) == 0)
+	if (GetBit(&g_pongState, PONG_BALLLAUNCHED) == 0 &&
+		GetBit(&g_pongState, PONG_WHOSTURN) == 0)
 	{
 		if (GLIB_GetInput(GLIB_PB2))
 		{
-			SetBit(&pongState, PONG_BALLLAUNCHED);
+			SetBit(&g_pongState, PONG_BALLLAUNCHED);
 			char direction = GLIB_GetGameMillis() % 2;
-			pongBall.xSpeed = GetRandFloat(PONGBALL_MINSPEED,
+			g_pongBall.xSpeed = GetRandFloat(PONGBALL_MINSPEED,
 					PONGBALL_MAXSPEED);
 			
 			if (direction == 0) //left
-				pongBall.xSpeed = -pongBall.xSpeed;
+				g_pongBall.xSpeed = -g_pongBall.xSpeed;
 			//otherwise, change nothing.
 				
-			pongBall.ySpeed = -GetRandFloat(PONGBALL_MINSPEED,
+			g_pongBall.ySpeed = -GetRandFloat(PONGBALL_MINSPEED,
 				PONGBALL_MAXSPEED);
 		}
 	}

@@ -34,7 +34,8 @@ enum e_GameState
 
 unsigned char g_pongState; //variable for storing bitwise states above
 
-void RenderPong(void);
+void RenderPong(unsigned long dt);
+void DrawScoreScreen(t_PongPlayer *top, t_PongPlayer *bottom);
 void CheckForCollisions(void);
 void UpdateBall(t_PongBall *ball, unsigned long dt);
 void UpdatePlayerPaddle(t_PongPlayer *playerPaddle, unsigned long dt);
@@ -72,11 +73,12 @@ PongGameLoop(void)
 	UpdateCompPaddle(&g_comp, dt);
 	HandleInput();
 	CheckForCollisions();
-	RenderPong();
+	//RenderPong(dt);
+	DrawScoreScreen(&g_comp, &g_player);
 }
 
 void 
-RenderPong(void)
+RenderPong(unsigned long dt)
 {
 	GFX_Clear(0);
 	
@@ -89,6 +91,29 @@ RenderPong(void)
 	
 	//draw comp paddle
 	GFX_DrawLine(g_comp.x, 0, g_comp.x + PADDLE_WIDTH, 0);
+	
+	GFX_SwapBuffers();
+}
+
+void DrawScoreScreen(t_PongPlayer *top, t_PongPlayer *bottom)
+{
+	GFX_Clear(0);
+	
+	
+	GFX_DrawLine(0,7,15,7);
+	GFX_DrawLine(0,8,15,8);
+	
+	/* Maybe have a "DrawChar" func for single chars so we don't 
+	 have to use this little trick to deal with the omitted null
+	 terminator? */
+	char scoreText[1];
+	scoreText[1] = 0;
+	scoreText[0] = (top->score)+48;
+	GFX_DrawText(scoreText, 8, 1);
+	
+	scoreText[0] = (bottom->score)+48;
+	GFX_DrawText(scoreText, 8, 10);
+	
 	
 	GFX_SwapBuffers();
 }

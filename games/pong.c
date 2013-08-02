@@ -5,6 +5,7 @@
 #define PADDLE_WIDTH 3
 #define PONGBALL_MINSPEED 0.003
 #define PONGBALL_MAXSPEED 0.012
+#define SCORE_SCREEN_DELAY 3000
 
 typedef struct s_PongPlayer {
 	char x;
@@ -35,8 +36,9 @@ enum e_GameState
 unsigned char g_pongState; //variable for storing bitwise states above
 
 void RenderPong(unsigned long dt);
-void DrawScoreScreen(t_PongPlayer *top, t_PongPlayer *bottom);
+void DrawScoreScreen(t_PongPlayer *top, t_PongPlayer *bottom, unsigned long dt);
 void CheckForCollisions(void);
+void PlayerScore(t_PongPlayer *player, char isAI);
 void UpdateBall(t_PongBall *ball, unsigned long dt);
 void UpdatePlayerPaddle(t_PongPlayer *playerPaddle, unsigned long dt);
 void UpdateCompPaddle(t_PongPlayer *compPaddle, unsigned long dt);
@@ -68,13 +70,15 @@ PongGameLoop(void)
 	dt = thisTime - g_lastTime;
 	g_lastTime = thisTime;
 	
-	UpdateBall(&g_pongBall, dt);
-	UpdatePlayerPaddle(&g_player, dt);
-	UpdateCompPaddle(&g_comp, dt);
-	HandleInput();
-	CheckForCollisions();
-	//RenderPong(dt);
-	DrawScoreScreen(&g_comp, &g_player);
+	if (GetBit(&g_pongState, PONG_PLAYING))
+	{
+		UpdateBall(&g_pongBall, dt);
+		UpdatePlayerPaddle(&g_player, dt);
+		UpdateCompPaddle(&g_comp, dt);
+		HandleInput();
+		CheckForCollisions();
+	}
+	RenderPong(dt);
 }
 
 void 
@@ -92,11 +96,33 @@ RenderPong(unsigned long dt)
 	//draw comp paddle
 	GFX_DrawLine(g_comp.x, 0, g_comp.x + PADDLE_WIDTH, 0);
 	
+	//decides for itself if it needs to be drawn.
+	DrawScoreScreen(&g_comp, &g_player, dt); 
+	
 	GFX_SwapBuffers();
 }
 
-void DrawScoreScreen(t_PongPlayer *top, t_PongPlayer *bottom)
+void 
+DrawScoreScreen(t_PongPlayer *top, t_PongPlayer *bottom, unsigned long dt)
 {
+	static unsigned long elapsed = SCORE_SCREEN_DELAY + 1;
+	
+	if (GetBit(&g_pongState, PONG_SCORESCREEN))
+	{
+		elapsed = 0;
+		ClearBit(&g_pongState, PONG_SCORESCREEN);
+	}
+	
+	if (elapsed >= SCORE_SCREEN_DELAY)
+		return;
+	
+	elapsed += dt;
+
+	/* This way we don't set the bit EVERY time we test whether to
+	 display the score screen above. */
+	if (elapsed >= SCORE_SCREEN_DELAY) 
+		SetBit(&g_pongState, PONG_PLAYING);
+	
 	GFX_Clear(0);
 	
 	
@@ -113,9 +139,6 @@ void DrawScoreScreen(t_PongPlayer *top, t_PongPlayer *bottom)
 	
 	scoreText[0] = (bottom->score)+48;
 	GFX_DrawText(scoreText, 8, 10);
-	
-	
-	GFX_SwapBuffers();
 }
 
 void 
@@ -158,44 +181,58 @@ CheckForCollisions(void)
 	
 	if (g_pongBall.y < 0) //score for player
 	{
-		g_player.score++;
-		ClearBit(&g_pongState, PONG_WHOSTURN); //players turn
-		ClearBit(&g_pongState, PONG_BALLLAUNCHED);
+		PlayerScore(&g_player, 0);
 	}
 	else if (g_pongBall.y > DISPLAY_HEIGHT)
 	{
-		g_comp.score++;
-		SetBit(&g_pongState, PONG_WHOSTURN); //comps turn
-		ClearBit(&g_pongState, PONG_BALLLAUNCHED);
-		ClearBit(&g_pongState, PONG_COMPDECIDED);
+		PlayerScore(&g_comp, 1);
 	}
 	
 }
 
 void 
+PlayerScore(t_PongPlayer *player, char isAI)
+{
+	if (isAI)
+	{
+		player->score++;
+		SetBit(&g_pongState, PONG_WHOSTURN); //comps turn
+		ClearBit(&g_pongState, PONG_BALLLAUNCHED);
+	}
+	else
+	{
+		player->score++;
+		ClearBit(&g_pongState, PONG_WHOSTURN); //players turn
+		ClearBit(&g_pongState, PONG_BALLLAUNCHED);
+		ClearBit(&g_pongState, PONG_COMPDECIDED);
+	}
+	
+	//everybody now!
+	SetBit(&g_pongState, PONG_SCORESCREEN);
+	ClearBit(&g_pongState, PONG_PLAYING);
+}
+
+void 
 UpdateBall(t_PongBall *ball, unsigned long dt)
 {
-	if (GetBit(&g_pongState, PONG_PLAYING))
+	if (GetBit(&g_pongState, PONG_BALLLAUNCHED))
 	{
-		if (GetBit(&g_pongState, PONG_BALLLAUNCHED))
+		ball->x += ball->xSpeed * dt;
+		ball->y += ball->ySpeed * dt;
+	}
+	else
+	{
+		if (GetBit(&g_pongState, PONG_WHOSTURN))
 		{
-			ball->x += ball->xSpeed * dt;
-			ball->y += ball->ySpeed * dt;
+			//comps turn
+			ball->x = g_comp.x + (PADDLE_WIDTH / 2);
+			ball->y = 2;
 		}
 		else
 		{
-			if (GetBit(&g_pongState, PONG_WHOSTURN))
-			{
-				//comps turn
-				ball->x = g_comp.x + (PADDLE_WIDTH / 2);
-				ball->y = 2;
-			}
-			else
-			{
-				//players turn
-				ball->x = g_player.x + (PADDLE_WIDTH / 2);
-				ball->y = 13;
-			}
+			//players turn
+			ball->x = g_player.x + (PADDLE_WIDTH / 2);
+			ball->y = 13;
 		}
 	}
 }

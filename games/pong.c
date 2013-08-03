@@ -134,10 +134,22 @@ DrawScoreScreen(t_PongPlayer *top, t_PongPlayer *bottom, unsigned long dt)
 	 terminator? */
 	char scoreText[1];
 	scoreText[1] = 0;
-	scoreText[0] = (top->score)+48;
+	
+	if (GetBit(&g_pongState, PONG_WHOSTURN) == 1 &&
+		elapsed <= (SCORE_SCREEN_DELAY / 2) )
+		scoreText[0] = (top->score)+48-1;
+	else
+		scoreText[0] = (top->score)+48;
+	
 	GFX_DrawText(scoreText, 8, 1);
 	
-	scoreText[0] = (bottom->score)+48;
+	
+	if (GetBit(&g_pongState, PONG_WHOSTURN) == 0 &&
+		elapsed <= (SCORE_SCREEN_DELAY / 2) )
+		scoreText[0] = (bottom->score)+48-1;
+	else
+		scoreText[0] = (bottom->score)+48;
+	
 	GFX_DrawText(scoreText, 8, 10);
 }
 

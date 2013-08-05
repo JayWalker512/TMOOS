@@ -8,6 +8,7 @@
 #define SCORE_SCREEN_DELAY 3000
 #define ACCELERATION_COEFFICIENT 1.0005f
 #define NUDGE_MAX 0.001f
+#define SCORELIMIT 10
 
 typedef struct s_PongPlayer {
 	char x;
@@ -118,7 +119,12 @@ DrawScoreScreen(t_PongPlayer *top, t_PongPlayer *bottom, unsigned long dt)
 	}
 	
 	if (elapsed >= SCORE_SCREEN_DELAY)
+	{
+		if (top->score >= SCORELIMIT || bottom->score >= SCORELIMIT)
+			InitPongGame();
+		
 		return;
+	}
 	
 	elapsed += dt;
 
@@ -127,34 +133,50 @@ DrawScoreScreen(t_PongPlayer *top, t_PongPlayer *bottom, unsigned long dt)
 	if (elapsed >= SCORE_SCREEN_DELAY) 
 		SetBit(&g_pongState, PONG_PLAYING);
 	
+	
 	GFX_Clear(0);
 	
-	
-	GFX_DrawLine(0,7,15,7);
-	GFX_DrawLine(0,8,15,8);
-	
-	/* Maybe have a "DrawChar" func for single chars so we don't 
-	 have to use this little trick to deal with the omitted null
-	 terminator? */
-	char scoreText[1];
-	scoreText[1] = 0;
-	
-	if (GetBit(&g_pongState, PONG_WHOSTURN) == 1 &&
-		elapsed <= (SCORE_SCREEN_DELAY / 2) )
-		scoreText[0] = (top->score)+48-1;
+	if (top->score < SCORELIMIT && bottom->score < SCORELIMIT)
+	{
+		GFX_DrawLine(0,7,15,7);
+		GFX_DrawLine(0,8,15,8);
+
+		/* Maybe have a "DrawChar" func for single chars so we don't 
+		 have to use this little trick to deal with the omitted null
+		 terminator? */
+		char scoreText[1];
+		scoreText[1] = 0;
+
+		if (GetBit(&g_pongState, PONG_WHOSTURN) == 1 &&
+			elapsed <= (SCORE_SCREEN_DELAY / 2) )
+			scoreText[0] = (top->score)+48-1;
+		else
+			scoreText[0] = (top->score)+48;
+
+		GFX_DrawText(scoreText, 8, 1);
+
+
+		if (GetBit(&g_pongState, PONG_WHOSTURN) == 0 &&
+			elapsed <= (SCORE_SCREEN_DELAY / 2) )
+			scoreText[0] = (bottom->score)+48-1;
+		else
+			scoreText[0] = (bottom->score)+48;
+
+		GFX_DrawText(scoreText, 8, 10);
+	}
 	else
-		scoreText[0] = (top->score)+48;
-	
-	GFX_DrawText(scoreText, 8, 1);
-	
-	
-	if (GetBit(&g_pongState, PONG_WHOSTURN) == 0 &&
-		elapsed <= (SCORE_SCREEN_DELAY / 2) )
-		scoreText[0] = (bottom->score)+48-1;
-	else
-		scoreText[0] = (bottom->score)+48;
-	
-	GFX_DrawText(scoreText, 8, 10);
+	{
+		if (top->score >= SCORELIMIT)
+		{
+			GFX_DrawText("COMP", 0,0);
+			GFX_DrawText("WINS", 0,8);
+		}
+		else if (bottom->score >= SCORELIMIT)
+		{
+			GFX_DrawText("YOU", 0,0);
+			GFX_DrawText("WIN", 0,8);
+		}
+	}		
 }
 
 void 

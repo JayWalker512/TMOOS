@@ -3,9 +3,11 @@
 #include "../display/display.h"
 
 #define PADDLE_WIDTH 3
-#define PONGBALL_MINSPEED 0.003
-#define PONGBALL_MAXSPEED 0.012
+#define PONGBALL_MINSPEED 0.003f
+#define PONGBALL_MAXSPEED 0.012f
 #define SCORE_SCREEN_DELAY 3000
+#define ACCELERATION_COEFFICIENT 1.0005f
+#define NUDGE_MAX 0.001f
 
 typedef struct s_PongPlayer {
 	char x;
@@ -43,7 +45,9 @@ void UpdateBall(t_PongBall *ball, unsigned long dt);
 void UpdatePlayerPaddle(t_PongPlayer *playerPaddle, unsigned long dt);
 void UpdateCompPaddle(t_PongPlayer *compPaddle, unsigned long dt);
 void HandleInput(void);
-float GetRandFloat(float min, float max);
+float RandFloat(float min, float max);
+void AccelerateBall(t_PongBall *ball);
+void NudgeBall(t_PongBall *ball);
 
 char 
 InitPongGame(void)
@@ -87,7 +91,7 @@ RenderPong(unsigned long dt)
 	GFX_Clear(0);
 	
 	//draw ball
-	GFX_PutPixel(floor(g_pongBall.x), floor(g_pongBall.y), 1);
+	GFX_PutPixel(roundf(g_pongBall.x), roundf(g_pongBall.y), 1);
 	
 	//draw player paddle
 	GFX_DrawLine(g_player.x, DISPLAY_HEIGHT - 1, 
@@ -157,35 +161,39 @@ void
 CheckForCollisions(void)
 {
 	//bounce off walls
-	if (g_pongBall.x >= DISPLAY_WIDTH)
+	if (roundf(g_pongBall.x) > DISPLAY_WIDTH - 1)
 	{
-		g_pongBall.x = DISPLAY_WIDTH;
+		g_pongBall.x = DISPLAY_WIDTH - 1;
 		g_pongBall.xSpeed = -g_pongBall.xSpeed;
 	}
 	
-	if (g_pongBall.x <= 0)
+	if (roundf(g_pongBall.x) < 0)
 	{
 		g_pongBall.x = 0;
 		g_pongBall.xSpeed = -g_pongBall.xSpeed;
 	}
 	
 	//bounce ball off paddles
-	if (g_pongBall.y >= 15 && g_pongBall.y <= DISPLAY_HEIGHT)
+	if (g_pongBall.y > 14 && g_pongBall.y < DISPLAY_HEIGHT - 1)
 	{
 		if (g_pongBall.x >= g_player.x && 
 			g_pongBall.x <= g_player.x + PADDLE_WIDTH)
 		{
 			g_pongBall.ySpeed = -g_pongBall.ySpeed;
-			g_pongBall.y = 15;
+			g_pongBall.y = 14;
+			AccelerateBall(&g_pongBall);
+			NudgeBall(&g_pongBall);
 		}
 	}
-	else if (g_pongBall.y <= 1 && g_pongBall.y >= 0)
+	else if (g_pongBall.y < 1 && g_pongBall.y > 0)
 	{
 		if (g_pongBall.x >= g_comp.x && 
 			g_pongBall.x <= g_comp.x + PADDLE_WIDTH)
 		{
 			g_pongBall.ySpeed = -g_pongBall.ySpeed;
 			g_pongBall.y = 1;
+			AccelerateBall(&g_pongBall);
+			NudgeBall(&g_pongBall);
 		}	
 	}
 	
@@ -286,7 +294,7 @@ UpdateCompPaddle(t_PongPlayer *compPaddle, unsigned long dt)
 	if (GetBit(&g_pongState, PONG_WHOSTURN) && 
 		!GetBit(&g_pongState, PONG_COMPDECIDED)) //comps turn, undecided
 	{
-		launchDestX = floor(GetRandFloat(0, 
+		launchDestX = floor(RandFloat(0, 
 			DISPLAY_WIDTH - PADDLE_WIDTH - 1));
 		SetBit(&g_pongState, PONG_COMPDECIDED);
 	}
@@ -305,14 +313,14 @@ UpdateCompPaddle(t_PongPlayer *compPaddle, unsigned long dt)
 			//launch ball (duplicate code, could be function
 			SetBit(&g_pongState, PONG_BALLLAUNCHED);
 			char direction = GLIB_GetGameMillis() % 2;
-			g_pongBall.xSpeed = GetRandFloat(PONGBALL_MINSPEED,
+			g_pongBall.xSpeed = RandFloat(PONGBALL_MINSPEED,
 					PONGBALL_MAXSPEED);
 			
 			if (direction == 0) //left
 				g_pongBall.xSpeed = -g_pongBall.xSpeed;
 			//otherwise, change nothing.
 				
-			g_pongBall.ySpeed = GetRandFloat(PONGBALL_MINSPEED,
+			g_pongBall.ySpeed = RandFloat(PONGBALL_MINSPEED,
 				PONGBALL_MAXSPEED);
 		}
 	}
@@ -328,14 +336,14 @@ HandleInput(void)
 		{
 			SetBit(&g_pongState, PONG_BALLLAUNCHED);
 			char direction = GLIB_GetGameMillis() % 2;
-			g_pongBall.xSpeed = GetRandFloat(PONGBALL_MINSPEED,
+			g_pongBall.xSpeed = RandFloat(PONGBALL_MINSPEED,
 					PONGBALL_MAXSPEED);
 			
 			if (direction == 0) //left
 				g_pongBall.xSpeed = -g_pongBall.xSpeed;
 			//otherwise, change nothing.
 				
-			g_pongBall.ySpeed = -GetRandFloat(PONGBALL_MINSPEED,
+			g_pongBall.ySpeed = -RandFloat(PONGBALL_MINSPEED,
 				PONGBALL_MAXSPEED);
 		}
 	}
@@ -343,7 +351,19 @@ HandleInput(void)
 
 /* TODO put me in gamelib */
 float 
-GetRandFloat(float min, float max)
+RandFloat(float min, float max)
 {
 	return min + (float)rand()/((float)RAND_MAX/max);
+}
+
+void AccelerateBall(t_PongBall *ball)
+{
+	ball->xSpeed = ball->xSpeed * ACCELERATION_COEFFICIENT;
+	ball->ySpeed = ball->ySpeed * ACCELERATION_COEFFICIENT;
+}
+
+void NudgeBall(t_PongBall *ball)
+{
+	ball->xSpeed += RandFloat(-NUDGE_MAX, NUDGE_MAX);
+	ball->ySpeed += RandFloat(-NUDGE_MAX, NUDGE_MAX);
 }

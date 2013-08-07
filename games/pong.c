@@ -378,13 +378,15 @@ RandFloat(float min, float max)
 	return min + (float)rand()/((float)RAND_MAX/max);
 }
 
-void AccelerateBall(t_PongBall *ball)
+void 
+AccelerateBall(t_PongBall *ball)
 {
 	ball->xSpeed = ball->xSpeed * ACCELERATION_COEFFICIENT;
 	ball->ySpeed = ball->ySpeed * ACCELERATION_COEFFICIENT;
 }
 
-void NudgeBall(t_PongBall *ball)
+void 
+NudgeBall(t_PongBall *ball)
 {
 	ball->xSpeed += RandFloat(-NUDGE_MAX, NUDGE_MAX);
 	ball->ySpeed += RandFloat(-NUDGE_MAX, NUDGE_MAX);

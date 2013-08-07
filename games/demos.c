@@ -1,11 +1,87 @@
 #include "gamelib.h"
 #include "../os.h"
 #include "../battery.h"
+#include <stdlib.h>
 
 static unsigned long endTime = 0; //used multiple times
 
+#define SMILEY_WINK_DELAY_MAX 480000
+#define SMILEY_WINK_DELAY_MIN 300000
+#define SMILEY_WINK_LENGTH 500
+
+unsigned long int nextWinkTime;
+unsigned long int elapsed;
+unsigned long int g_lastTime;
+
+void SmileyWink(void);
+void SmileyFace(void);
+long RandLong(long min, long max);
+
+long 
+RandLong(long min, long max)
+{
+	return min + (long)rand()/((long)RAND_MAX/max);
+}
+
+char 
+InitSmiley()
+{
+	nextWinkTime = GLIB_GetGameMillis();
+	elapsed = 0;
+}
+
 char
 GameSmiley(void)
+{
+	unsigned long int dt;
+	unsigned long int thisTime;
+	thisTime = GLIB_GetGameMillis();
+	dt = thisTime - g_lastTime;
+	g_lastTime = thisTime;
+	
+	if (nextWinkTime < GLIB_GetGameMillis())
+	{
+		nextWinkTime += RandLong(SMILEY_WINK_DELAY_MIN, SMILEY_WINK_DELAY_MAX);
+		elapsed = 0;	
+	}
+	
+	if (elapsed < SMILEY_WINK_LENGTH)
+	{
+		SmileyWink();
+		elapsed += dt;
+	}
+	else
+		SmileyFace();
+	
+	return 1;
+}
+
+void 
+SmileyWink()
+{
+	
+	GFX_Clear(0);
+	
+	GFX_Clear(0);
+	
+	//eyes
+	//GFX_DrawRect(2,2,4,4,GFX_BORDERED_RECT);
+	GFX_DrawLine(2,3,4,3);
+	GFX_DrawRect(10,2,4,4,GFX_BORDERED_RECT);
+	
+	//nose
+	GFX_DrawRect(7,7,2,2,GFX_BORDERED_RECT);
+	
+	//mouth
+	GFX_DrawLine(2,12,13,12);
+	GFX_DrawLine(1,10,1,11);
+	GFX_DrawLine(14,10,14,11);
+	
+	GFX_SwapBuffers();
+}
+
+void 
+SmileyFace(void)
 {
 	GFX_Clear(0);
 	
@@ -22,7 +98,6 @@ GameSmiley(void)
 	GFX_DrawLine(14,10,14,11);
 	
 	GFX_SwapBuffers();
-	return 1;
 }
 
 static char lastChar = 0;

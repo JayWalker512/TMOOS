@@ -26,7 +26,7 @@ GLIB_Init(void)
 	m_gameDataTable[0].loopFunc = &GameInputTest;
 	
 	strcpy(m_gameDataTable[1].name, "SMLY");
-	m_gameDataTable[1].initFunc = &GameSmiley;
+	m_gameDataTable[1].initFunc = &InitSmiley;
 	m_gameDataTable[1].loopFunc = &GameSmiley;
 	
 	strcpy(m_gameDataTable[2].name, "STXT");

@@ -46,6 +46,7 @@ void (*GLIB_Beep)(unsigned int Hz, unsigned long ms);
 /* Everything below will need refactored... not sure how im handling multiple 
 games yet. Play around with it. */
 
+char InitSmiley(void);
 char GameSmiley(void);
 
 char GameInputTest(void);

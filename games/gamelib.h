@@ -63,4 +63,7 @@ char BatteryLevelTest(void);
 char InitPongGame(void);
 char PongGameLoop(void);
 
+//memviewer.c
+char MemViewer(void);
+
 #endif

@@ -102,6 +102,9 @@ RenderPong(unsigned long dt)
 	GFX_DrawLine(g_comp.x, 0, g_comp.x + PADDLE_WIDTH, 0);
 	
 	//decides for itself if it needs to be drawn.
+	/* Glitchy screen bug introduced a while ago coming from here.
+	 No fucking clue why. Heap corruption? Don't even know how to test
+	 for that. */
 	DrawScoreScreen(&g_comp, &g_player, dt); 
 	
 	GFX_SwapBuffers();
@@ -110,7 +113,7 @@ RenderPong(unsigned long dt)
 void 
 DrawScoreScreen(t_PongPlayer *top, t_PongPlayer *bottom, unsigned long dt)
 {
-	static unsigned long elapsed = SCORE_SCREEN_DELAY + 1;
+	static unsigned long elapsed = SCORE_SCREEN_DELAY + 100;
 	
 	if (GetBit(&g_pongState, PONG_SCORESCREEN))
 	{
@@ -118,7 +121,7 @@ DrawScoreScreen(t_PongPlayer *top, t_PongPlayer *bottom, unsigned long dt)
 		ClearBit(&g_pongState, PONG_SCORESCREEN);
 	}
 	
-	if (elapsed >= SCORE_SCREEN_DELAY)
+	if (elapsed > SCORE_SCREEN_DELAY)
 	{
 		if (top->score >= SCORELIMIT || bottom->score >= SCORELIMIT)
 			InitPongGame();
@@ -126,18 +129,10 @@ DrawScoreScreen(t_PongPlayer *top, t_PongPlayer *bottom, unsigned long dt)
 		return;
 	}
 	
-	elapsed += dt;
-
-	/* This way we don't set the bit EVERY time we test whether to
-	 display the score screen above. */
-	if (elapsed >= SCORE_SCREEN_DELAY) 
-		SetBit(&g_pongState, PONG_PLAYING);
-	
-	
-	GFX_Clear(0);
-	
 	if (top->score < SCORELIMIT && bottom->score < SCORELIMIT)
 	{
+		GFX_Clear(0);
+		
 		GFX_DrawLine(0,7,15,7);
 		GFX_DrawLine(0,8,15,8);
 
@@ -166,6 +161,8 @@ DrawScoreScreen(t_PongPlayer *top, t_PongPlayer *bottom, unsigned long dt)
 	}
 	else
 	{
+		GFX_Clear(0);
+		
 		if (top->score >= SCORELIMIT)
 		{
 			GFX_DrawText("COMP", 0,0);
@@ -176,7 +173,14 @@ DrawScoreScreen(t_PongPlayer *top, t_PongPlayer *bottom, unsigned long dt)
 			GFX_DrawText("YOU", 0,0);
 			GFX_DrawText("WIN", 0,8);
 		}
-	}		
+	}	
+
+	elapsed += dt;
+
+	/* This way we don't set the bit EVERY time we test whether to
+	 display the score screen above. */
+	if (elapsed > SCORE_SCREEN_DELAY) 
+		SetBit(&g_pongState, PONG_PLAYING);
 }
 
 void 
@@ -378,13 +382,15 @@ RandFloat(float min, float max)
 	return min + (float)rand()/((float)RAND_MAX/max);
 }
 
-void AccelerateBall(t_PongBall *ball)
+void 
+AccelerateBall(t_PongBall *ball)
 {
 	ball->xSpeed = ball->xSpeed * ACCELERATION_COEFFICIENT;
 	ball->ySpeed = ball->ySpeed * ACCELERATION_COEFFICIENT;
 }
 
-void NudgeBall(t_PongBall *ball)
+void 
+NudgeBall(t_PongBall *ball)
 {
 	ball->xSpeed += RandFloat(-NUDGE_MAX, NUDGE_MAX);
 	ball->ySpeed += RandFloat(-NUDGE_MAX, NUDGE_MAX);

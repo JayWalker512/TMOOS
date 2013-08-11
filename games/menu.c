@@ -1,5 +1,5 @@
 #include "menu.h"
-#include "gfx/gfx.h"
+#include "../gfx/gfx.h"
 #include <string.h>
 
 #define ESCAPE_SEQUENCE_DELAY 1500

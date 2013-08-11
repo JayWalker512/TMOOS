@@ -1,7 +1,7 @@
 #ifndef MENU_H
 #define MENU_H
 
-#include "games/gamelib.h"
+#include "gamelib.h"
 
 char MENU_Init(void);
 void MENU_LauncherLoop(void);

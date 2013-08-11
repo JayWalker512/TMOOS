@@ -12,7 +12,7 @@ peripheral subsystems through their respective interfaces. */
 #include "sound/sound.h"
 #include "time/time.h"
 #include "games/gamelib.h"
-#include "menu.h"
+#include "games/menu.h"
 #include "battery.h"
 
 #include "common/binary.h"

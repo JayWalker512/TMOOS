@@ -179,7 +179,11 @@ DSP_RefreshDriver0(void)
 	clocked up or down. May need to profile how much time is spent calling
 	OS_Update, and subtract that from the delay for continuing to the next 
 	row. Or maybe add a delay. This needs more research, because we need to
-	keep refresh rate consisten and accurate with settings. */
+	keep refresh rate consistent and accurate with settings. */
+	
+	/* The above is now out-of-date because we're using an interrupt driven
+	 display rather than cooperative-multitasking style. Maybe I should
+	 still have some way to do VSYNC? */
 
 	if (GetBit(&m_DSPState, DSP_CURRENTLY_REFRESHING))
 		return;

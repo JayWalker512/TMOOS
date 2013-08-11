@@ -164,6 +164,5 @@ void GFX_DrawText(const char *text, const char x, const char y)
 			DSP_BitBLT(&g_testGlyph, 2, 3, xLoc + (step * spacingMp), y);
 		
 		step++;
-		OS_Update(); //calling this here because this function is SLOOOWWW
 	}
 }

@@ -3,7 +3,7 @@
 #include "display.h"
 #include "../time/time.h"
 #include "../hardware/hardware.h"
-#include "../avr_common.h"
+#include "../common/avr.h"
 #include "../debug/usb_debug_only.h"
 #include "../debug/print.h"
 #include "../sharedlib/binary.h"

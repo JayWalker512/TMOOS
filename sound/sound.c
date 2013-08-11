@@ -8,7 +8,7 @@ optimize then this is a good place to start. */
 
 #ifdef DEBUG
 #include "../debug/debug.h"
-#include "../avr_common.h"
+#include "../common/avr.h"
 #endif
 
 unsigned int m_cycleTime;

@@ -1,6 +1,6 @@
 #include "print.h"
 #include "../console/console.h"
-#include "../avr_common.h"
+#include "../common/avr.h"
 #include <string.h> //for working with strings in regular RAM
 
 #include <stdarg.h> //for variable parameters to functions like printf

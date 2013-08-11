@@ -2,13 +2,13 @@
 #ifndef TESTCASE
 #include "../os.h"
 #else
-#include "../avr_common.h"
+#include "../common/avr.h"
 #include "../debug/print.h"
 #endif
 
 #ifdef DEBUG
 #include "../debug/debug.h"
-#include "../avr_common.h"
+#include "../common/avr.h"
 #include "../console/console.h"
 #endif
 

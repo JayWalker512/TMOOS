@@ -1,7 +1,7 @@
 #include "console.h"
 #include "usb_serial.h"
 #include "../common/binary.h"
-#include "../avr_common.h"
+#include "../common/avr.h"
 #include <string.h> //for working with strings in regular RAM
 
 static uint8_t CON_RecieveString(char *buf, uint8_t size);

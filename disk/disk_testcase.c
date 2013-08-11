@@ -1,5 +1,5 @@
 #include "../debug/debug.h"
-#include "../avr_common.h"
+#include "../common/avr.h"
 #include "disk.h"
 
 int main()

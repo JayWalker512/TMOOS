@@ -6,11 +6,11 @@ for it here. */
 
 #include "time.h"
 #include "../hardware/hardware.h"
-#include "../avr_common.h"
+#include "../common/avr.h"
 
 #ifdef DEBUG
 #include "../debug/debug.h"
-#include "../avr_common.h"
+#include "../common/avr.h"
 #endif
 
 #define CPU_SET_FREQ(n) (CLKPR = 0x80, CLKPR = (n))

@@ -1,7 +1,7 @@
 #include <avr/io.h>
 #include <avr/pgmspace.h>
 #include <stdint.h>
-#include "../avr_common.h"
+#include "../common/avr.h"
 
 #include "hardware.h"
 #include "../common/binary.h"

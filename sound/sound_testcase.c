@@ -1,7 +1,7 @@
 #include "sound.h"
 #include "../hardware/hardware.h"
 #include "../time/time.h"
-#include "../avr_common.h"
+#include "../common/avr.h"
 #include "../debug/debug.h"
 #include "../sharedlib/binary.h"
 

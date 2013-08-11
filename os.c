@@ -19,7 +19,7 @@ peripheral subsystems through their respective interfaces. */
 #include "common/glyphs.h"
 #include "common/print.h"
 #include "common/profiling.h"
-#include "avr_common.h"
+#include "common/avr.h"
 
 #ifdef DEBUG
 #include "debug/debug.h"

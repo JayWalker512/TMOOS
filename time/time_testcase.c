@@ -1,6 +1,6 @@
 #include "time.h"
 #include "../hardware/hardware.h"
-#include "../avr_common.h"
+#include "../common/avr.h"
 #include "../debug/debug.h"
 
 int main()

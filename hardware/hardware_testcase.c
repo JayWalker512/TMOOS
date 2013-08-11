@@ -1,4 +1,4 @@
-#include "../avr_common.h"
+#include "../common/avr.h"
 #include "libarduino/Arduino.h"
 #include "hardware.h"
 #include "../sharedlib/binary.h"

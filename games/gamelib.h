@@ -4,6 +4,7 @@
 #include "../gfx/gfx.h"
 #include "../common/glyphs.h"
 #include "../sound/sound.h"
+#include "../common/binary.h"
 #include <math.h>
 
 typedef struct ProgData_s 
@@ -38,13 +39,14 @@ unsigned char (*GLIB_GetInput)(enum e_GLIBenums device);
 unsigned char (*GLIB_GetWheelRegion)(unsigned char regions);
 
 unsigned long GLIB_GetGameMillis(void);
-unsigned char GLIB_GetDeltaMillis(void)
+unsigned char GLIB_GetDeltaMillis(void);
 
 void (*GLIB_Beep)(unsigned int Hz, unsigned long ms);
 
 /* Everything below will need refactored... not sure how im handling multiple 
 games yet. Play around with it. */
 
+char InitSmiley(void);
 char GameSmiley(void);
 
 char GameInputTest(void);
@@ -61,5 +63,8 @@ char BatteryLevelTest(void);
 //pong.c
 char InitPongGame(void);
 char PongGameLoop(void);
+
+//memviewer.c
+char MemViewer(void);
 
 #endif

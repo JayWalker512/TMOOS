@@ -49,7 +49,7 @@ SRC =	$(TARGET).c \
 		display/display.c sound/sound.c time/time.c input/input.c console/console.c \
 		hardware/hardware.c disk/disk.c console/usb_serial.c menu.c battery.c \
 		common/glyphs.c common/profiling.c common/print.c \
-		games/demos.c games/gamelib.c games/pong.c gfx/gfx.c 
+		games/demos.c games/gamelib.c games/pong.c games/memviewer.c gfx/gfx.c 
 	
 #old hardware files : 
 	
@@ -123,7 +123,7 @@ CSTANDARD = -std=gnu99
 
 
 # Place -D or -U options here for C sources
-CDEFS = -DF_CPU=$(F_CPU)UL -DPROFILING
+CDEFS = -DF_CPU=$(F_CPU)UL
 #-DNO_DOUBLE_BUFFER_SAVE_MEMORY
 #-DDEBUG
 #-DPROFILING

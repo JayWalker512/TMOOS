@@ -109,10 +109,10 @@ main(void)
 		
 		OS_CalculateProfilerData();
 		
-		_delay_ms(10);
-		CON_SendString(PSTR("Batt level: "));
-		printInt(OS_GetBatteryLevel(), VAR_UNSIGNED);
-		CON_SendString(PSTR("\r\n"));
+		//_delay_ms(10);
+		//CON_SendString(PSTR("Batt level: "));
+		//printInt(OS_GetBatteryLevel(), VAR_UNSIGNED);
+		//CON_SendString(PSTR("\r\n"));
 	}
 	return 0;
 }

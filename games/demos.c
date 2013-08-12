@@ -1,6 +1,7 @@
 #include "gamelib.h"
 #include "../os.h"
 #include "../battery.h"
+#include "../common/avr.h"
 #include <stdlib.h>
 
 static unsigned long endTime = 0; //used multiple times
@@ -198,6 +199,15 @@ GameWheelRegionTest(void)
 	GFX_Clear(0);
 	char region = GLIB_GetWheelRegion(9);
 	GFX_BitBLT(&g_alphaNumGlyphs[26 + region], 3, 5, 0, 0);
+	GFX_SwapBuffers();
+	return 1;
+}
+
+char
+ProgMemTest(void)
+{
+	GFX_Clear(0);
+	GFX_DrawTextF(PSTR("TEXT"), 0, 0);
 	GFX_SwapBuffers();
 	return 1;
 }

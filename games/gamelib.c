@@ -37,9 +37,9 @@ GLIB_Init(void)
 	m_gameDataTable[3].initFunc = &BatteryLevelTest;
 	m_gameDataTable[3].loopFunc = &BatteryLevelTest;
 	
-	strcpy(m_gameDataTable[4].name, "WEEL");
-	m_gameDataTable[4].initFunc = &GameWheelRegionTest;
-	m_gameDataTable[4].loopFunc = &GameWheelRegionTest;
+	strcpy(m_gameDataTable[4].name, "PMEM");
+	m_gameDataTable[4].initFunc = &ProgMemTest;
+	m_gameDataTable[4].loopFunc = &ProgMemTest;
 	
 	strcpy(m_gameDataTable[5].name, "PONG");
 	m_gameDataTable[5].initFunc = &InitPongGame;

@@ -1,10 +1,12 @@
-#include "../os.h"
 #include "gfx.h"
+#include "../os.h"
 #include "../display/display.h"
 #include "../common/binary.h"
+#include "../common/glyphs.h"
+#include "../common/avr.h"
+
 #include <math.h>
 #include <string.h>
-#include "../common/glyphs.h"
 
 unsigned char m_GFXState;
 
@@ -157,6 +159,34 @@ void GFX_DrawText(const char *text, const char x, const char y)
 		else if (*(text+step) >= '0' && *(text+step) <= '9')
 		{
 			DSP_BitBLT(&g_alphaNumGlyphs[*(text+step) - '0' + 26],
+				3, 5, 
+				xLoc + (step * spacingMp), y);
+		}
+		else
+			DSP_BitBLT(&g_testGlyph, 2, 3, xLoc + (step * spacingMp), y);
+		
+		step++;
+	}
+}
+
+//Same purpose as above, but gets input string from flash memory. 
+void GFX_DrawTextF(const char *text, const char x, const char y)
+{
+	char len = strnlen_P(text, 255) - 1; //minus one to omit the NULL char
+	char spacingMp = 3; //spacing multiplier
+	char step = 0;
+	for (char xLoc = x; step <= len; xLoc++)
+	{
+		//double parenthesis necessary?
+		if (pgm_read_byte((text+step)) >= 'A' && pgm_read_byte((text+step)) <= 'Z')
+		{
+			DSP_BitBLT(&g_alphaNumGlyphs[pgm_read_byte((text+step)) - 'A'],
+				3, 5, 
+				xLoc + (step * spacingMp), y);
+		}
+		else if (pgm_read_byte((text+step)) >= '0' && pgm_read_byte((text+step)) <= '9')
+		{
+			DSP_BitBLT(&g_alphaNumGlyphs[pgm_read_byte((text+step)) - '0' + 26],
 				3, 5, 
 				xLoc + (step * spacingMp), y);
 		}

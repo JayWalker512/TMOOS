@@ -58,6 +58,8 @@ char GameScrollText(void);
 
 char GameWheelRegionTest(void);
 
+char ProgMemTest(void);
+
 char BatteryLevelTest(void);
 
 //pong.c

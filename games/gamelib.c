@@ -4,6 +4,7 @@
 #include "../sound/sound.h"
 #include "../disk/disk.h"
 #include "../os.h"
+#include "../common/avr.h"
 #include "gamelib.h"
 #include <math.h>
 #include <string.h>
@@ -21,31 +22,31 @@ GLIB_Init(void)
 	GLIB_GetWheelRegion = &INP_GetWheelRegion;
 	
 	//next set up game data table
-	strcpy(m_gameDataTable[0].name, "INP");
+	m_gameDataTable[0].name = PSTR("INP");
 	m_gameDataTable[0].initFunc = &GameInputTest;
 	m_gameDataTable[0].loopFunc = &GameInputTest;
 	
-	strcpy(m_gameDataTable[1].name, "SMLY");
+	m_gameDataTable[1].name = PSTR("SMLY");
 	m_gameDataTable[1].initFunc = &InitSmiley;
 	m_gameDataTable[1].loopFunc = &GameSmiley;
 	
-	strcpy(m_gameDataTable[2].name, "STXT");
+	m_gameDataTable[2].name = PSTR("STXT");
 	m_gameDataTable[2].initFunc = &InitGameScrollText;
 	m_gameDataTable[2].loopFunc = &GameScrollText;
-	
-	strcpy(m_gameDataTable[3].name, "BATT");
+
+	m_gameDataTable[3].name = PSTR("BATT");
 	m_gameDataTable[3].initFunc = &BatteryLevelTest;
 	m_gameDataTable[3].loopFunc = &BatteryLevelTest;
 	
-	strcpy(m_gameDataTable[4].name, "PMEM");
+	m_gameDataTable[4].name = PSTR("PMEM");
 	m_gameDataTable[4].initFunc = &ProgMemTest;
 	m_gameDataTable[4].loopFunc = &ProgMemTest;
 	
-	strcpy(m_gameDataTable[5].name, "PONG");
+	m_gameDataTable[5].name = PSTR("PONG");
 	m_gameDataTable[5].initFunc = &InitPongGame;
 	m_gameDataTable[5].loopFunc = &PongGameLoop;
 	
-	strcpy(m_gameDataTable[6].name, "MEMV");
+	m_gameDataTable[6].name = PSTR("MEMV");
 	m_gameDataTable[6].initFunc = &MemViewer;
 	m_gameDataTable[6].loopFunc = &MemViewer;
 	

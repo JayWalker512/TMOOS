@@ -71,7 +71,7 @@ MENU_Loop(ProgData_t *dataTable, size_t numElements)
 	
 	//menu rendering
 	GFX_Clear(0);
-	GFX_DrawText(dataTable[menuIndex].name, 0, 0);
+	GFX_DrawTextF(dataTable[menuIndex].name, 0, 0);
 	
 	GFX_SwapBuffers();
 	

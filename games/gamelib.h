@@ -5,11 +5,12 @@
 #include "../common/glyphs.h"
 #include "../sound/sound.h"
 #include "../common/binary.h"
+#include "../common/avr.h"
 #include <math.h>
 
 typedef struct ProgData_s 
 {
-	char name[8]; //TODO this should point to a string in flash memory
+	char *name; //TODO this should point to a string in flash memory
 	char (*initFunc)(void);
 	char (*loopFunc)(void);
 } ProgData_t;

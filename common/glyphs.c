@@ -1,8 +1,9 @@
 #include "binary.h"
 #include "glyphs.h"
+#include "avr.h"
 
 /* Alphanumeric 3x5 glyphs. Capital A-Z and 0-9 */
-unsigned char g_alphaNumGlyphs[36][2] = \
+PROGMEM unsigned char g_alphaNumGlyphs[36][2] = \
 {
 
 	/*      010
@@ -60,7 +61,7 @@ unsigned char g_alphaNumGlyphs[36][2] = \
 		011 G*/
 	{ B01110010,
 	  B11010110 },
-	  
+	  /home/jaywalker/gitsources/TMOOS
 	/*	101
 		101
 		111
@@ -294,4 +295,4 @@ unsigned char g_alphaNumGlyphs[36][2] = \
 	   B10010010 }
 };
 
-unsigned char g_testGlyph = B11010100;
+PROGMEM unsigned char g_testGlyph = B11010100;

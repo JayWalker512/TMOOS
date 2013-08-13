@@ -17,6 +17,7 @@ GFX_Init(void)
 	GFX_PutPixel = &DSP_PutPixel;
 	GFX_GetPixel = &DSP_GetPixel;
 	GFX_BitBLT = &DSP_BitBLT;
+	GFX_BitBLTF = &DSP_BitBLTF;
 	GFX_Clear = &DSP_Clear;
 	GFX_SwapBuffers = &DSP_SwapBuffers;
 }
@@ -152,18 +153,18 @@ void GFX_DrawText(const char *text, const char x, const char y)
 	{
 		if (*(text+step) >= 'A' && *(text+step) <= 'Z')
 		{
-			DSP_BitBLT(&g_alphaNumGlyphs[*(text+step) - 'A'],
+			DSP_BitBLTF(&g_alphaNumGlyphs[*(text+step) - 'A'],
 				3, 5, 
 				xLoc + (step * spacingMp), y);
 		}
 		else if (*(text+step) >= '0' && *(text+step) <= '9')
 		{
-			DSP_BitBLT(&g_alphaNumGlyphs[*(text+step) - '0' + 26],
+			DSP_BitBLTF(&g_alphaNumGlyphs[*(text+step) - '0' + 26],
 				3, 5, 
 				xLoc + (step * spacingMp), y);
 		}
 		else
-			DSP_BitBLT(&g_testGlyph, 2, 3, xLoc + (step * spacingMp), y);
+			DSP_BitBLTF(&g_testGlyph, 2, 3, xLoc + (step * spacingMp), y);
 		
 		step++;
 	}
@@ -180,18 +181,18 @@ void GFX_DrawTextF(const char *text, const char x, const char y)
 		//double parenthesis necessary?
 		if (pgm_read_byte((text+step)) >= 'A' && pgm_read_byte((text+step)) <= 'Z')
 		{
-			DSP_BitBLT(&g_alphaNumGlyphs[pgm_read_byte((text+step)) - 'A'],
+			DSP_BitBLTF(&g_alphaNumGlyphs[pgm_read_byte((text+step)) - 'A'],
 				3, 5, 
 				xLoc + (step * spacingMp), y);
 		}
 		else if (pgm_read_byte((text+step)) >= '0' && pgm_read_byte((text+step)) <= '9')
 		{
-			DSP_BitBLT(&g_alphaNumGlyphs[pgm_read_byte((text+step)) - '0' + 26],
+			DSP_BitBLTF(&g_alphaNumGlyphs[pgm_read_byte((text+step)) - '0' + 26],
 				3, 5, 
 				xLoc + (step * spacingMp), y);
 		}
 		else
-			DSP_BitBLT(&g_testGlyph, 2, 3, xLoc + (step * spacingMp), y);
+			DSP_BitBLTF(&g_testGlyph, 2, 3, xLoc + (step * spacingMp), y);
 		
 		step++;
 	}

@@ -17,6 +17,7 @@
 #include "../time/time.h"
 #include "../common/binary.h"
 #include "../common/pins.h"
+#include "../common/avr.h"
 #include <math.h>
 
 #define DEFAULT_REFRESH_RATE 60
@@ -363,6 +364,24 @@ DSP_GetPixelMem(const char * const src,
 }
 
 char 
+DSP_GetPixelMemF(const char * const src,
+		const unsigned char srcWidth,
+		const unsigned char srcHeight,
+		const unsigned char srcX,
+		const unsigned char srcY)
+{
+	/* Don't need any special bounds checking because this function will only
+	be called from inside this file, where we hope it will be properly used. */
+
+	unsigned char srcBits = 8;
+	unsigned char accessedBit = (srcY * srcWidth) + srcX;
+	unsigned char offset = floor(accessedBit / srcBits);
+	
+	char inByte = pgm_read_byte((src+offset));
+	return GetBit(&inByte, srcBits - (accessedBit % srcBits) - 1);
+}
+
+char 
 DSP_BitBLT(const char * const src, 
 	const unsigned char srcWidth, 
 	const unsigned char srcHeight,
@@ -393,6 +412,49 @@ DSP_BitBLT(const char * const src,
 			for (char iX = 0; iX < srcWidth; iX++)
 			{
 				char pixSet = DSP_GetPixelMem(src, srcWidth, srcHeight, iX, iY);
+				
+				if (pixSet)
+					DSP_PutPixel(dstX + iX, dstY + iY, pixSet);
+			}
+		}
+	}
+	
+	//maybe write so that 1 is only returned if anything was actually copied to frameBuffer
+	return 1;
+}
+
+//only thing that's different here is the call to GetPixelMemF
+char 
+DSP_BitBLTF(const char * const src, 
+	const unsigned char srcWidth, 
+	const unsigned char srcHeight,
+	const char dstX,
+	const char dstY)
+{
+	/* TODO Add some checks so that if drawing destination is outside display
+	area (dst < 0), only area inside is looped through. Also check that if the display 
+	destination is > DISPLAY_WIDTH or DISPLAY_HEIGHT, we just return because
+	nothing will be drawn anyway. */
+	
+	if (!!((m_DSPState) & (1 << DSP_DESTRUCTIVE_BITBLT) ))
+	{
+		for (char iY = 0; iY < srcHeight; iY++)
+		{
+			for (char iX = 0; iX < srcWidth; iX++)
+			{
+				DSP_PutPixel(dstX + iX, dstY + iY, 
+					DSP_GetPixelMemF(src, srcWidth, srcHeight, iX, iY)
+					);
+			}
+		}
+	}
+	else
+	{	
+		for (char iY = 0; iY < srcHeight; iY++)
+		{
+			for (char iX = 0; iX < srcWidth; iX++)
+			{
+				char pixSet = DSP_GetPixelMemF(src, srcWidth, srcHeight, iX, iY);
 				
 				if (pixSet)
 					DSP_PutPixel(dstX + iX, dstY + iY, pixSet);

@@ -7,9 +7,7 @@ This file should contain extern prototypes of all system functions that may
 need to be accessed from a game. Games should ONLY include this file and any
 necessary files from sharedlib. */
 
-#include <avr/io.h>
-#include <avr/pgmspace.h>
-#include <stdint.h>
+#include "common/avr.h"
 
 //the enums below are used for accessing bitwise variables most efficiently.
 enum e_FATAL_ERRORS 

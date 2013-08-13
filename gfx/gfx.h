@@ -37,4 +37,10 @@ unsigned char (*GFX_BitBLT)(const char * const src,
 			const char dstX,
 			const char dstY);
 
+unsigned char (*GFX_BitBLTF)(const char * const src, 
+			const unsigned char srcWidth, 
+			const unsigned char srcHeight,
+			const char dstX,
+			const char dstY);
+
 #endif

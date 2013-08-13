@@ -36,6 +36,12 @@ char DSP_GetPixelMem(const char * const src,
 			const unsigned char srcX,
 			const unsigned char srcY);
 
+char DSP_GetPixelMemF(const char * const src,
+			const unsigned char srcWidth,
+			const unsigned char srcHeight,
+			const unsigned char srcX,
+			const unsigned char srcY);
+
 /* This form of BitBLT won't allow partial copies of src from arbitrary x/y, nor 
 will it allow blitting to memory that is not the framebuffer. Maybe implement 
 another function for these duties, but for now I don't see them as necessary. */
@@ -44,6 +50,14 @@ char DSP_BitBLT(const char * const src,
 		const unsigned char srcHeight,
 		const char dstX,
 		const char dstY);
+
+char DSP_BitBLTF(const char * const src, 
+		const unsigned char srcWidth, 
+		const unsigned char srcHeight,
+		const char dstX,
+		const char dstY);
+
+
 
 void DSP_Clear(const char state);
 

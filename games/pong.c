@@ -6,8 +6,8 @@
 #define PONGBALL_MINSPEED 0.003f
 #define PONGBALL_MAXSPEED 0.012f
 #define SCORE_SCREEN_DELAY 3000
-#define ACCELERATION_COEFFICIENT 1.0005f
-#define NUDGE_MAX 0.001f
+#define ACCELERATION_COEFFICIENT 1.001f
+#define NUDGE_MAX 0.003f
 #define SCORELIMIT 10
 
 typedef struct s_PongPlayer {
@@ -48,7 +48,7 @@ void UpdateCompPaddle(t_PongPlayer *compPaddle, unsigned long dt);
 void HandleInput(void);
 float RandFloat(float min, float max);
 void AccelerateBall(t_PongBall *ball);
-void NudgeBall(t_PongBall *ball);
+void NudgeBall(t_PongBall *ball, char upOrDown); //0 down 1 up
 
 char 
 InitPongGame(void)
@@ -208,7 +208,7 @@ CheckForCollisions(void)
 			g_pongBall.ySpeed = -g_pongBall.ySpeed;
 			g_pongBall.y = 14;
 			AccelerateBall(&g_pongBall);
-			NudgeBall(&g_pongBall);
+			NudgeBall(&g_pongBall, 1);
 		}
 	}
 	else if (g_pongBall.y < 1 && g_pongBall.y > 0)
@@ -219,7 +219,7 @@ CheckForCollisions(void)
 			g_pongBall.ySpeed = -g_pongBall.ySpeed;
 			g_pongBall.y = 1;
 			AccelerateBall(&g_pongBall);
-			NudgeBall(&g_pongBall);
+			NudgeBall(&g_pongBall, 0);
 		}	
 	}
 	
@@ -390,8 +390,12 @@ AccelerateBall(t_PongBall *ball)
 }
 
 void 
-NudgeBall(t_PongBall *ball)
+NudgeBall(t_PongBall *ball, char upOrDown)
 {
 	ball->xSpeed += RandFloat(-NUDGE_MAX, NUDGE_MAX);
-	ball->ySpeed += RandFloat(-NUDGE_MAX, NUDGE_MAX);
+	
+	if (upOrDown) // nudge up
+		ball->ySpeed -= RandFloat(0, NUDGE_MAX);
+	else // nudge down
+		ball->ySpeed += RandFloat(0, NUDGE_MAX);
 }

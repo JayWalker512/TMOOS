@@ -175,7 +175,7 @@ GameScrollText(void)
 {
 	GFX_Clear(0);
 	
-	GFX_DrawText("HELLO", m_textX, 0);
+	GFX_DrawTextF(PSTR("HELLO"), m_textX, 0);
 	GFX_DrawLine(7, 7, 0, 15);
 	GFX_DrawLine(8, 7, 15, 15);
 		

@@ -165,13 +165,13 @@ DrawScoreScreen(t_PongPlayer *top, t_PongPlayer *bottom, unsigned long dt)
 		
 		if (top->score >= SCORELIMIT)
 		{
-			GFX_DrawText("COMP", 0,0);
-			GFX_DrawText("WINS", 0,8);
+			GFX_DrawTextF(PSTR("COMP"), 0,0);
+			GFX_DrawTextF(PSTR("WINS"), 0,8);
 		}
 		else if (bottom->score >= SCORELIMIT)
 		{
-			GFX_DrawText("YOU", 0,0);
-			GFX_DrawText("WIN", 0,8);
+			GFX_DrawTextF(PSTR("YOU"), 0,0);
+			GFX_DrawTextF(PSTR("WIN"), 0,8);
 		}
 	}	
 

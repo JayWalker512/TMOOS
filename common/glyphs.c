@@ -61,7 +61,6 @@ PROGMEM unsigned char g_alphaNumGlyphs[36][2] = \
 		011 G*/
 	{ B01110010,
 	  B11010110 },
-	  /home/jaywalker/gitsources/TMOOS
 	/*	101
 		101
 		111

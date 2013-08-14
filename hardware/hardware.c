@@ -13,7 +13,7 @@
 
 //#if defined(__AVR_ATmega32U4__)
 
-const unsigned char m_arduinoPinsTable[] = \
+PROGMEM unsigned char m_arduinoPinsTable[] = \
 {'B',0, 'B',1, 'B',2, 'B',3, 'B', 7,
 'D',0, 'D',1, 'D',2, 'D',3, 'C',6, 'C',7, 'D',6, 'D',7, 'B',4, 'B',5, 'B',6,
 'F',7, 'F',6, 'F',5, 'F',4, 'F',1, 'F',0, 'D',4, 'D',5, 'E',6};
@@ -170,9 +170,9 @@ HRD_SetPinDigital(const unsigned char ardPin, unsigned char value)
 		return 0;
 
 	unsigned char port, pin;
-	port = m_arduinoPinsTable[ardPin * 2];
+	port = pgm_read_byte(m_arduinoPinsTable+(ardPin * 2));
 	port = port - 'A';
-	pin = m_arduinoPinsTable[ardPin * 2 + 1];
+	pin = pgm_read_byte(m_arduinoPinsTable+(ardPin * 2 + 1));
 	
 	unsigned char offset = port * 3;
 	//set the pin
@@ -201,9 +201,9 @@ HRD_GetPinDigital(const unsigned char ardPin)
 		return 0;
 
 	unsigned char port, pin;
-	port = m_arduinoPinsTable[ardPin * 2];
+	port = pgm_read_byte(m_arduinoPinsTable+(ardPin * 2));
 	port = port - 'A';
-	pin = m_arduinoPinsTable[ardPin * 2 + 1];
+	pin = pgm_read_byte(m_arduinoPinsTable+(ardPin * 2 + 1));
 	
 	//set pin to input mode
 	*(uint8_t *)(0x21 + port * 3) &= ~(1 << pin);

@@ -107,7 +107,7 @@ main(void)
 		PRO_StartTimer(&gameTimer);
 		MENU_LauncherLoop();
 		
-		OS_CalculateProfilerData();
+		//OS_CalculateProfilerData();
 		
 		//_delay_ms(10);
 		//CON_SendString(PSTR("Batt level: "));

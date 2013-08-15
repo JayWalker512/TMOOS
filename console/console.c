@@ -8,17 +8,22 @@ static uint8_t CON_RecieveString(char *buf, uint8_t size);
 static char CON_BufferInput(char *buffer, const unsigned char size);
 static char CON_ParseArgcArgv(char **argv, const char bufSize, const char *cmdString);
 
-#define CMD_BUFFER_SIZE 32
+#define CMD_BUFFER_SIZE 16
 
 static char m_consoleState;
-static char m_cmdBufferString[CMD_BUFFER_SIZE];
 static char m_cmdBufferIndex;
+static char m_cmdBufferString[CMD_BUFFER_SIZE];
 
 int 
 CON_Init(void)
 {
 	m_consoleState = 0;
 	m_cmdBufferIndex = 0;
+	
+	unsigned char i = 0;
+	for (i = 0; i < CMD_BUFFER_SIZE; i++)
+		m_cmdBufferString[i] = 0;
+	
 	usb_init();
 	return 1;
 }
@@ -77,6 +82,16 @@ CON_BufferInput(char *buffer, const unsigned char size)
 			usb_serial_putchar(input);
 		}
 	}
+	
+	if (input == 8) //backspace
+	{
+		*(buffer+m_cmdBufferIndex) = 0;
+		
+		m_cmdBufferIndex--;
+		*(buffer+m_cmdBufferIndex) = 0;
+		usb_serial_putchar(input);
+	}
+	
 	if (input == '\r' || input == '\n')
 	{
 		*(buffer+m_cmdBufferIndex) = '\0'; //dat null terminator

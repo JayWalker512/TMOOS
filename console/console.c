@@ -1,3 +1,4 @@
+#include "../os.h"
 #include "console.h"
 #include "usb_serial.h"
 #include "../common/binary.h"
@@ -13,6 +14,10 @@ static char CON_ParseArgcArgv(char **argv, const char bufSize, const char *cmdSt
 static char m_consoleState;
 static char m_cmdBufferIndex;
 static char m_cmdBufferString[CMD_BUFFER_SIZE];
+
+//console command strings
+PROGMEM char cmd_version[] = "version";
+PROGMEM char cmd_displaypower[] = "dsppow";
 
 int 
 CON_Init(void)
@@ -62,6 +67,9 @@ CON_Update(void)
 		{
 			//TODO parse argc, argv
 			
+			//quick 'n dirty
+			if (0 == strncmp_P(m_cmdBufferString, cmd_version, m_cmdBufferIndex))
+				CON_SendString(PSTR("TMOOS Alpha v0\r\n>"));
 			
 			
 			m_cmdBufferIndex = 0; //only after parse/dispatch
@@ -194,7 +202,7 @@ CON_ParseArgcArgv(char **argv, const char bufSize, const char *cmdString)
 				curSpace = i;
 			}
 			//TODO bufsize not taken into account!
-			strncpy(&argv[argc], cmdString, curSpace - prevSpace);
+			strncpy(&argv[argc], (cmdString+prevSpace), curSpace - prevSpace);
 			argc++;
 		}
 		i++;

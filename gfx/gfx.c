@@ -8,6 +8,8 @@
 #include <math.h>
 #include <string.h>
 
+#define PI 3.14159f
+
 unsigned char m_GFXState;
 
 void 
@@ -22,7 +24,6 @@ GFX_Init(void)
 	GFX_SwapBuffers = &DSP_SwapBuffers;
 }
 
-void 
 GFX_Enable(enum e_GFXState parameter)
 {
 	SetBit(&m_GFXState, parameter);
@@ -141,6 +142,25 @@ GFX_DrawLine(const char x1, const char y1,
 			err = err + dX;
 			yS = yS + stepY;
 		}
+	}
+}
+
+void GFX_DrawCircle(const char x, const char y, float radius, const unsigned char divisions)
+{
+	float step = PI*2 / (float)divisions;
+	
+	char i = 0;
+	for (i = 0; i < divisions; i++)
+	{
+		/*GFX_DrawLine(x + cos((PI*2) / (float)i) * radius, 
+			y + sin((PI*2) / (float)i) * radius, 
+			x + cos((PI*2) / (float)(i+1)) * radius, 
+			y + sin((PI*2) / (float)(i+1)) * radius);*/
+		
+		GFX_DrawLine(roundf(radius * cos(step * i)) + x, 
+			roundf(radius * sin(step * i)) + y,
+			roundf(radius * cos(step * (i+1))) + x,
+			roundf(radius * sin(step * (i+1))) + y);
 	}
 }
 

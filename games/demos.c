@@ -207,7 +207,8 @@ char
 ProgMemTest(void)
 {
 	GFX_Clear(0);
-	GFX_DrawTextF(PSTR("TEXT"), 0, 0);
+	//GFX_DrawTextF(PSTR("TEXT"), 0, 0);
+	GFX_DrawCircle(7,7,7,GLIB_GetWheelRegion(16));
 	GFX_SwapBuffers();
 	return 1;
 }

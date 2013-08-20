@@ -24,6 +24,8 @@ void GFX_DrawRect(char x, char y,
 void GFX_DrawLine(const char x1, const char y1,
 		  const char x2, const char y2);
 
+void GFX_DrawCircle(const char x, const char y, float radius, const unsigned char divisions);
+
 void GFX_DrawText(const char *text, const char x, const char y);
 
 void GFX_DrawTextF(const char *text, const char x, const char y);

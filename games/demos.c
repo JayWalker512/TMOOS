@@ -16,13 +16,6 @@ unsigned long int g_lastTime;
 
 void SmileyWink(void);
 void SmileyFace(void);
-long RandLong(long min, long max);
-
-long 
-RandLong(long min, long max)
-{
-	return min + (long)rand()/((long)RAND_MAX/max);
-}
 
 char 
 InitSmiley()
@@ -208,7 +201,7 @@ ProgMemTest(void)
 {
 	GFX_Clear(0);
 	//GFX_DrawTextF(PSTR("TEXT"), 0, 0);
-	GFX_DrawCircle(7,7,7,GLIB_GetWheelRegion(16));
+	GFX_DrawCircle(7,7,7,GLIB_GetWheelRegion(9));
 	GFX_SwapBuffers();
 	return 1;
 }

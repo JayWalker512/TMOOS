@@ -1,4 +1,5 @@
 #include "gamelib.h"
+#include "gamemath.h"
 #include <stdlib.h>
 #include "../display/display.h"
 
@@ -46,7 +47,6 @@ void UpdateBall(t_PongBall *ball, unsigned long dt);
 void UpdatePlayerPaddle(t_PongPlayer *playerPaddle, unsigned long dt);
 void UpdateCompPaddle(t_PongPlayer *compPaddle, unsigned long dt);
 void HandleInput(void);
-float RandFloat(float min, float max);
 void AccelerateBall(t_PongBall *ball);
 void NudgeBall(t_PongBall *ball, char upOrDown); //0 down 1 up
 
@@ -375,12 +375,6 @@ HandleInput(void)
 	}
 }
 
-/* TODO put me in gamelib */
-float 
-RandFloat(float min, float max)
-{
-	return min + (float)rand()/((float)RAND_MAX/max);
-}
 
 void 
 AccelerateBall(t_PongBall *ball)

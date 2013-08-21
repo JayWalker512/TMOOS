@@ -1,3 +1,4 @@
+#include "../os.h"
 #include "console.h"
 #include "usb_serial.h"
 #include "../common/binary.h"
@@ -8,17 +9,26 @@ static uint8_t CON_RecieveString(char *buf, uint8_t size);
 static char CON_BufferInput(char *buffer, const unsigned char size);
 static char CON_ParseArgcArgv(char **argv, const char bufSize, const char *cmdString);
 
-#define CMD_BUFFER_SIZE 32
+#define CMD_BUFFER_SIZE 16
 
 static char m_consoleState;
-static char m_cmdBufferString[CMD_BUFFER_SIZE];
 static char m_cmdBufferIndex;
+static char m_cmdBufferString[CMD_BUFFER_SIZE];
+
+//console command strings
+PROGMEM char cmd_version[] = "version";
+PROGMEM char cmd_displaypower[] = "dsppow";
 
 int 
 CON_Init(void)
 {
 	m_consoleState = 0;
 	m_cmdBufferIndex = 0;
+	
+	unsigned char i = 0;
+	for (i = 0; i < CMD_BUFFER_SIZE; i++)
+		m_cmdBufferString[i] = 0;
+	
 	usb_init();
 	return 1;
 }
@@ -57,6 +67,9 @@ CON_Update(void)
 		{
 			//TODO parse argc, argv
 			
+			//quick 'n dirty
+			if (0 == strncmp_P(m_cmdBufferString, cmd_version, m_cmdBufferIndex))
+				CON_SendString(PSTR("TMOOS Alpha v0\r\n>"));
 			
 			
 			m_cmdBufferIndex = 0; //only after parse/dispatch
@@ -77,6 +90,16 @@ CON_BufferInput(char *buffer, const unsigned char size)
 			usb_serial_putchar(input);
 		}
 	}
+	
+	if (input == 8) //backspace
+	{
+		*(buffer+m_cmdBufferIndex) = 0;
+		
+		m_cmdBufferIndex--;
+		*(buffer+m_cmdBufferIndex) = 0;
+		usb_serial_putchar(input);
+	}
+	
 	if (input == '\r' || input == '\n')
 	{
 		*(buffer+m_cmdBufferIndex) = '\0'; //dat null terminator
@@ -179,7 +202,7 @@ CON_ParseArgcArgv(char **argv, const char bufSize, const char *cmdString)
 				curSpace = i;
 			}
 			//TODO bufsize not taken into account!
-			strncpy(&argv[argc], cmdString, curSpace - prevSpace);
+			strncpy(&argv[argc], (cmdString+prevSpace), curSpace - prevSpace);
 			argc++;
 		}
 		i++;

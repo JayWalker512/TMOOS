@@ -9,7 +9,7 @@
 #include <math.h>
 #include <string.h>
 
-#define NUM_GAME_ITEMS 7
+#define NUM_GAME_ITEMS 8
 ProgData_t m_gameDataTable[NUM_GAME_ITEMS];
 
 char 
@@ -49,6 +49,10 @@ GLIB_Init(void)
 	m_gameDataTable[6].name = PSTR("MEMV");
 	m_gameDataTable[6].initFunc = &MemViewer;
 	m_gameDataTable[6].loopFunc = &MemViewer;
+	
+	m_gameDataTable[7].name = PSTR("INVA");
+	m_gameDataTable[7].initFunc = &InitInvaders;
+	m_gameDataTable[7].loopFunc = &InvadersLoop;
 	
 	return 1;
 }

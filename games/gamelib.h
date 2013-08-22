@@ -49,18 +49,12 @@ games yet. Play around with it. */
 
 char InitSmiley(void);
 char GameSmiley(void);
-
 char GameInputTest(void);
-
 char GameSlidingWheelChar(void);
-
 char InitGameScrollText(void);
 char GameScrollText(void);
-
 char GameWheelRegionTest(void);
-
 char ProgMemTest(void);
-
 char BatteryLevelTest(void);
 
 //pong.c
@@ -69,5 +63,9 @@ char PongGameLoop(void);
 
 //memviewer.c
 char MemViewer(void);
+
+//invaders.c
+char InitInvaders(void);
+char InvadersLoop(void);
 
 #endif

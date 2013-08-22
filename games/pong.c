@@ -64,6 +64,8 @@ InitPongGame(void)
 	
 	g_lastTime = GLIB_GetGameMillis();
 	srand(g_lastTime);
+	
+	return 1;
 }
 
 char 
@@ -84,6 +86,8 @@ PongGameLoop(void)
 		CheckForCollisions();
 	}
 	RenderPong(dt);
+	
+	return 1;
 }
 
 void 

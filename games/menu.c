@@ -48,7 +48,7 @@ MENU_LauncherLoop(void)
 
 	if (m_progIndex != -1 && !m_bRunning)
 	{
-		//prog index just changed from MENU_Loop(), need to run
+		//prog index just changed froif m MENU_Loop(), need to run
 		m_bRunning = 1;
 		gameDataTable[m_progIndex].initFunc();
 	}

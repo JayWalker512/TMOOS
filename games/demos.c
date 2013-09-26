@@ -131,7 +131,7 @@ GameInputTest(void)
 		GFX_PutPixel(5,0,1);
 	}
 	
-	GFX_BitBLT(&g_alphaNumGlyphs[characterSelect], 3, 5, 0, 0);
+	GFX_BitBLTF(&g_alphaNumGlyphs[characterSelect], 3, 5, 0, 0);
 
 	GFX_SwapBuffers();
 	return 1;

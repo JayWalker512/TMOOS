@@ -2,6 +2,9 @@
 #include "../os.h"
 #include "../battery.h"
 #include "../common/avr.h"
+#include "console/console.h"
+#include "input/input.h"
+#include "time/time.h"
 #include <stdlib.h>
 
 static unsigned long endTime = 0; //used multiple times
@@ -132,7 +135,34 @@ GameInputTest(void)
 	}
 	
 	GFX_BitBLTF(&g_alphaNumGlyphs[characterSelect], 3, 5, 0, 0);
-
+	
+	/*char string[2];
+	string[0] = INP_PollEvents() + 48;
+	string[1] = 0;
+	CON_SendRAMString(string);
+	CON_SendString(PSTR("\r\n"));*/
+	
+	unsigned char events = INP_PollEvents();
+	if (GetBit(&events, INPUT_PB0_DOWN))
+		CON_SendString(PSTR("b0.d\r\n"));
+	
+	if (GetBit(&events, INPUT_PB0_UP))
+		CON_SendString(PSTR("b0.u\r\n"));	
+	
+	if (GetBit(&events, INPUT_PB1_DOWN))
+		CON_SendString(PSTR("b1.d\r\n"));
+	
+	if (GetBit(&events, INPUT_PB1_UP))
+		CON_SendString(PSTR("b1.u\r\n"));
+	
+	if (GetBit(&events, INPUT_PB2_DOWN))
+		CON_SendString(PSTR("b2.d\r\n"));
+	
+	if (GetBit(&events, INPUT_PB2_UP))
+		CON_SendString(PSTR("b2.u\r\n"));
+	
+	TME_DelayRealMillis(100);
+	
 	GFX_SwapBuffers();
 	return 1;
 }

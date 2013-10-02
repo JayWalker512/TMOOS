@@ -22,9 +22,22 @@ enum e_InputParameters
 	INPUT_POLLINTERVALMS,
 };
 
+enum e_InputEvents
+{
+	INPUT_PB0_DOWN = 0,
+	INPUT_PB1_DOWN = 1,
+	INPUT_PB2_DOWN = 2,
+	INPUT_PB0_UP = 3,
+	INPUT_PB1_UP = 4,
+	INPUT_PB2_UP = 5,
+};
+
 char INP_Init(void);
 
 void INP_Update(void);
+
+//returns a uchar with event list
+unsigned char INP_PollEvents(void);
 
 unsigned char INP_GetInputState(enum e_InputDevice device);
 

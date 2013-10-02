@@ -3,13 +3,15 @@
 #include "../common/avr.h"
 #include "../common/binary.h"
 #include "display/display.h"
+#include "input/input.h"
+#include "console/console.h"
 
 #define SHIP_WIDTH 3
 #define SHIP_HEIGHT 2
 #define WEAPON_COOLDOWN_MS 800
 #define MAX_PLAYER_PROJECTILES 2 /*The enum will need updated if we change this.
 	Very sloppy way to save a few bytes. */
-#define PLAYER_PROJECTILE_YSPEED 0.025f;
+#define PLAYER_PROJECTILE_YSPEED 0.020f;
 
 enum e_InvadersStates 
 {
@@ -74,7 +76,8 @@ void
 HandleInvadersInput(void)
 {
 	g_shipX = GLIB_GetWheelRegion(13);
-	if (GLIB_GetInput(GLIB_PB0))
+	unsigned char events = INP_PollEvents();
+	if (GetBit(&events, INPUT_PB0_DOWN))
 		FirePlayerProjectile(g_shipX + 1, g_playerBullets, MAX_PLAYER_PROJECTILES);
 }
 
@@ -106,9 +109,11 @@ FirePlayerProjectile(char x, Projectile_t *projectileList, unsigned char num)
 		
 		if (cProj->pos.y < 0) //we can use it!
 		{
+			CON_SendString(PSTR("Firing!"));
 			cProj->pos.y = DISPLAY_HEIGHT - SHIP_HEIGHT;
 			cProj->pos.x = x;
 			cProj->ySpeed = PLAYER_PROJECTILE_YSPEED;
+			return; //found a bullet and fired. Leave now!
 		}
 	}
 }

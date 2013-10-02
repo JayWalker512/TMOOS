@@ -13,6 +13,10 @@ static unsigned char m_wheelPos;
 static unsigned char m_buttonStates;
 static unsigned char m_inputPins[4]; 
 
+//for event list
+static unsigned char m_inputEvents;
+static unsigned char m_oldButtonStates;
+
 /* TODO Maybe we should add functions to allow calibrating the input wheel via the
 interactive console, but for now it will be hardcoded. */
 char 
@@ -32,6 +36,9 @@ INP_Init(void) //TODO init settings (poll rate, calib) should be passed here fro
 	/*TODO These values will need loaded from EEPROM eventually*/
 	m_calibMin = 100;
 	m_calibMax = 900;
+	
+	//init events list
+	m_inputEvents = 0;
 	
 	return 1;
 }
@@ -58,21 +65,51 @@ INP_Update(void)
 	m_wheelPos = (unsigned long)(tempState - m_calibMin) * 255 / (m_calibMax - m_calibMin);
 	
 	//update buttons
-	if (HRD_GetPinDigital(m_inputPins[INPUT_PB0]) == 0) //active low, remember!
+	if (!HRD_GetPinDigital(m_inputPins[INPUT_PB0])) //active low, remember!
 		SetBit(&m_buttonStates, INPUT_PB0);
 	else
 		ClearBit(&m_buttonStates, INPUT_PB0);
 		
-	if (HRD_GetPinDigital(m_inputPins[INPUT_PB1]) == 0)
+	if (!HRD_GetPinDigital(m_inputPins[INPUT_PB1]))
 		SetBit(&m_buttonStates, INPUT_PB1);
 	else
 		ClearBit(&m_buttonStates, INPUT_PB1);
 	
-	if (HRD_GetPinDigital(m_inputPins[INPUT_PB2]) == 0)
+	if (!HRD_GetPinDigital(m_inputPins[INPUT_PB2]))
 		SetBit(&m_buttonStates, INPUT_PB2);
 	else
 		ClearBit(&m_buttonStates, INPUT_PB2);
 }
+
+unsigned char INP_PollEvents(void)
+{
+	if (m_oldButtonStates == m_buttonStates)
+	{
+		m_inputEvents = 0;
+		return m_inputEvents; //nothing has changed!
+	}
+	
+	m_inputEvents = 0; //reset events
+		
+	if (GetBit(&m_buttonStates, INPUT_PB0) > GetBit(&m_oldButtonStates, INPUT_PB0))
+		SetBit(&m_inputEvents, INPUT_PB0_DOWN);
+	else if (GetBit(&m_buttonStates, INPUT_PB0) < GetBit(&m_oldButtonStates, INPUT_PB0))
+		SetBit(&m_inputEvents, INPUT_PB0_UP);
+	
+	if (GetBit(&m_buttonStates, INPUT_PB1) > GetBit(&m_oldButtonStates, INPUT_PB1))
+		SetBit(&m_inputEvents, INPUT_PB1_DOWN);
+	else if (GetBit(&m_buttonStates, INPUT_PB1) < GetBit(&m_oldButtonStates, INPUT_PB1))
+		SetBit(&m_inputEvents, INPUT_PB1_UP);
+	
+	if (GetBit(&m_buttonStates, INPUT_PB2) > GetBit(&m_oldButtonStates, INPUT_PB2))
+		SetBit(&m_inputEvents, INPUT_PB2_DOWN);
+	else if (GetBit(&m_buttonStates, INPUT_PB2) < GetBit(&m_oldButtonStates, INPUT_PB2))
+		SetBit(&m_inputEvents, INPUT_PB2_UP);
+	
+	m_oldButtonStates = m_buttonStates;
+	return m_inputEvents;
+}
+
 
 
 unsigned char

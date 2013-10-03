@@ -13,7 +13,7 @@ char
 GameOfLifeInit(void)
 {
 	GFX_Clear(0);
-	srand(GLIB_GetGameMillis());
+	srand(GLIB_GetGameMillis()); 
 	GFX_BitBLT(RandLong(0,2304),16,16,0,0);
 	GFX_SwapBuffers();
 }
@@ -89,7 +89,7 @@ Wrap4BitUInt(char fourBitInt)
 	char outInt = fourBitInt;
 	while (outInt > 15)
 	{
-		outInt -= 15;
+		outInt -= 16;
 	}
 	while (outInt < 0)
 	{

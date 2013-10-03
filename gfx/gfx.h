@@ -31,7 +31,7 @@ void GFX_DrawText(const char *text, const char x, const char y);
 void GFX_DrawTextF(const char *text, const char x, const char y);
 		  
 void (*GFX_PutPixel)(const char x, const char y, const char state);
-void (*GFX_GetPixel)(const char x, const char y);
+char (*GFX_GetPixel)(const char x, const char y);
 
 unsigned char (*GFX_BitBLT)(const char * const src, 
 			const unsigned char srcWidth, 

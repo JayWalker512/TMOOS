@@ -70,4 +70,8 @@ char PongGameLoop(void);
 //memviewer.c
 char MemViewer(void);
 
+//gameoflife.c
+char GameOfLifeInit(void);
+char GameOfLifeLoop(void);
+
 #endif

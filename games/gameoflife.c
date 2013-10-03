@@ -5,6 +5,7 @@
 #include "time/time.h"
 #include "console/console.h"
 #include "common/print.h"
+#include "input/input.h"
 
 char NumLivingNeighbors(char x, char y);
 char Wrap4BitUInt(char fourBitInt);
@@ -56,6 +57,15 @@ GameOfLifeLoop(void)
 				GFX_PutPixel(x,y,1); //living cell is born
 			}
 		}
+	}
+	
+	//if 3rd button is pressed, reset the game
+	char events = INP_PollEvents();
+	if (GetBit(&events, INPUT_PB2_DOWN))
+	{
+		GFX_Clear(0);
+		srand(GLIB_GetGameMillis()); 
+		GFX_BitBLT(RandLong(0,2304),16,16,0,0);	
 	}
 	
 	//TME_DelayRealMillis(16);

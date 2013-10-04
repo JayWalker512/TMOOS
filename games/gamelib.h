@@ -68,4 +68,8 @@ char MemViewer(void);
 char InitInvaders(void);
 char InvadersLoop(void);
 
+//gameoflife.c
+char GameOfLifeInit(void);
+char GameOfLifeLoop(void);
+
 #endif

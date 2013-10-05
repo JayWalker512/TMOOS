@@ -1,6 +1,7 @@
 #include "gamelib.h"
 #include "gamemath.h"
 #include <stdlib.h>
+#include <stdint.h>
 #include "../display/display.h"
 #include "time/time.h"
 #include "console/console.h"
@@ -15,8 +16,9 @@ GameOfLifeInit(void)
 {
 	GFX_Clear(0);
 	srand(GLIB_GetGameMillis()); 
-	GFX_BitBLT(RandLong(0,2304),16,16,0,0);
+	GFX_BitBLT((const char * const)(intptr_t)RandLong(0,2304),16,16,0,0);
 	GFX_SwapBuffers();
+	return 1;
 }
 
 char 
@@ -60,16 +62,17 @@ GameOfLifeLoop(void)
 	}
 	
 	//if 3rd button is pressed, reset the game
-	char events = INP_PollEvents();
+	unsigned char events = INP_PollEvents();
 	if (GetBitUInt8(&events, INPUT_PB2_DOWN))
 	{
 		GFX_Clear(0);
 		srand(GLIB_GetGameMillis()); 
-		GFX_BitBLT(RandLong(0,2304),16,16,0,0);	
+		GFX_BitBLT((const char * const)(intptr_t)RandLong(0,2304),16,16,0,0);	
 	}
 	
 	//TME_DelayRealMillis(16);
 	GFX_SwapBuffers();
+	return 1;
 }
 
 char 

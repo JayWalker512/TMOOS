@@ -36,7 +36,6 @@ size_t GLIB_GetProgDataTableSize(enum e_ProgDataTableEnums table);
 
 void (*GLIB_Idle)(void);
 
-//This could be handled function pointer style...
 unsigned char (*GLIB_GetInput)(enum e_GLIBenums device);
 unsigned char (*GLIB_GetWheelRegion)(unsigned char regions);
 

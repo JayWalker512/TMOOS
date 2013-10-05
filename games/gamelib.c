@@ -18,7 +18,7 @@ GLIB_Init(void)
 	GFX_Init();
 	GLIB_Idle = &OS_Update;
 	GLIB_Beep = &SND_Beep;
-	GLIB_GetInput = &INP_GetInputState;
+	GLIB_GetInput = &INP_GetInputState; //compiler doesn't like that these two take dif parameters?
 	GLIB_GetWheelRegion = &INP_GetWheelRegion;
 	
 	//next set up game data table

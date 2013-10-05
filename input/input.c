@@ -6,6 +6,8 @@
 #include "../common/print.h"
 #include "../common/pins.h"
 
+#include <math.h>
+
 static unsigned char m_inputUpdateInterval; //max of 255ms which is ~4hz
 static unsigned long m_timeToUpdate;
 static unsigned int m_calibMin, m_calibMax;
@@ -139,7 +141,7 @@ unsigned char
 INP_GetWheelRegion(unsigned char regions)
 {
 	unsigned char wheelPos = INP_GetInputState(INPUT_WHEEL);
-	unsigned char compliment = INPUT_WHEEL_RANGE - wheelPos;
+	//unsigned char compliment = INPUT_WHEEL_RANGE - wheelPos;
 	unsigned char regionSize = INPUT_WHEEL_RANGE / regions;
 	if (wheelPos < INPUT_WHEEL_RANGE)
 		return floor( wheelPos / regionSize);
@@ -154,8 +156,6 @@ INP_Calibrate(enum e_InputParameters parameter)
 		m_calibMin = HRD_GetPinAnalog(m_inputPins[INPUT_WHEEL]);
 	else if (parameter == INPUT_UBOUND)
 		m_calibMax = HRD_GetPinAnalog(m_inputPins[INPUT_WHEEL]);
-	
-	return 1;
 }
 
 void 

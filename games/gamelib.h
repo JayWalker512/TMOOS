@@ -32,6 +32,7 @@ enum e_GLIBenums
 char GLIB_Init(void);
 
 ProgData_t *GLIB_GetProgDataTable(enum e_ProgDataTableEnums table);
+size_t GLIB_GetProgDataTableSize(enum e_ProgDataTableEnums table);
 
 void (*GLIB_Idle)(void);
 

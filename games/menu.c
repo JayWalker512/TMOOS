@@ -1,5 +1,6 @@
 #include "menu.h"
 #include "../gfx/gfx.h"
+#include "gamelib.h"
 #include <string.h>
 
 #define ESCAPE_SEQUENCE_DELAY 1500
@@ -11,7 +12,7 @@
 static char m_escapeKeyState;
 static unsigned long m_escapeKeyTime;
 static char m_bRunning;
-static char m_progIndex;
+static unsigned char m_progIndex;
 
 static char MENU_Loop(ProgData_t *dataTable, size_t numElements);
 static char MENU_CheckEscapeSequence(void);
@@ -23,7 +24,7 @@ MENU_Init(void)
         m_escapeKeyTime = 0;
 	
 	m_bRunning = 0;
-	m_progIndex = -1;
+	m_progIndex = 255;
 	
 	return 1;
 }
@@ -42,11 +43,11 @@ MENU_LauncherLoop(void)
 		{
 			//game returns 0, we quit
 			m_bRunning = 0;
-			m_progIndex = -1;
+			m_progIndex = 255;
 		}
 	}
 
-	if (m_progIndex != -1 && !m_bRunning)
+	if (m_progIndex != 255 && !m_bRunning)
 	{
 		//prog index just changed froif m MENU_Loop(), need to run
 		m_bRunning = 1;
@@ -56,7 +57,7 @@ MENU_LauncherLoop(void)
 	if (MENU_CheckEscapeSequence())
 	{
 		m_bRunning = 0; 
-		m_progIndex = -1;
+		m_progIndex = 255;
 	}
 }
 
@@ -75,7 +76,7 @@ MENU_Loop(ProgData_t *dataTable, size_t numElements)
 	
 	GFX_SwapBuffers();
 	
-	return -1; //return -1 unless a program was run. Return its index otherwise.
+	return 255; //return 255 unless a program was run. Return its index otherwise.
 }
 
 char

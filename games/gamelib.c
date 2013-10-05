@@ -92,4 +92,6 @@ GLIB_GetDeltaMillis(void)
 {
 	//going to wait to implement this... see if its really needed
 	//or even a good idea.
+	
+	return 1;
 }

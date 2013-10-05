@@ -33,7 +33,7 @@ Projectile_t g_playerBullets[MAX_PLAYER_PROJECTILES];
 
 unsigned char g_InvadersState;
 char g_shipX;
-PROGMEM unsigned char g_shipGlyph = B01011100;
+PROGMEM const char g_shipGlyph = B01011100;
 
 int g_playerWeaponCooldown;
 

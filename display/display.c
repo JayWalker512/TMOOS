@@ -126,9 +126,9 @@ DSP_Power(const char state)
 	if (state == 1)
 	{
 		HRD_SetPinDigital(DSP_POWER_PIN, 1);
-		SetBit(&m_DSPState, DSP_POWERED);
+		SetBitUInt8(&m_DSPState, DSP_POWERED);
 		
-		ClearBit(&m_DSPState, DSP_CURRENTLY_REFRESHING);
+		ClearBitUInt8(&m_DSPState, DSP_CURRENTLY_REFRESHING);
 		m_curRow = 0;
 		m_nextScanlineTime = 0;
 		return 1;
@@ -136,9 +136,9 @@ DSP_Power(const char state)
 	else if (state == 0)
 	{
 		HRD_SetPinDigital(DSP_POWER_PIN, 0);
-		ClearBit(&m_DSPState, DSP_POWERED);
+		ClearBitUInt8(&m_DSPState, DSP_POWERED);
 		
-		ClearBit(&m_DSPState, DSP_CURRENTLY_REFRESHING);
+		ClearBitUInt8(&m_DSPState, DSP_CURRENTLY_REFRESHING);
 		return 0;
 	}
 	return -1;
@@ -153,7 +153,7 @@ DSP_ConfigureDriver(const unsigned char refreshRate)
 void 
 DSP_SwapBuffers(void)
 {
-	if (0 == GetBit(&m_DSPState, DSP_DOUBLE_BUFFER))
+	if (0 == GetBitUInt8(&m_DSPState, DSP_DOUBLE_BUFFER))
 		return;
 	
 	#ifndef NO_DOUBLE_BUFFER_SAVE_MEMORY
@@ -186,10 +186,10 @@ DSP_RefreshDriver0(void)
 	 display rather than cooperative-multitasking style. Maybe I should
 	 still have some way to do VSYNC? */
 
-	if (GetBit(&m_DSPState, DSP_CURRENTLY_REFRESHING))
+	if (GetBitUInt8(&m_DSPState, DSP_CURRENTLY_REFRESHING))
 		return;
 	
-	SetBit(&m_DSPState, DSP_CURRENTLY_REFRESHING);
+	SetBitUInt8(&m_DSPState, DSP_CURRENTLY_REFRESHING);
 	
 	unsigned long endTime = TME_GetAccurateMicros();
 	char curRow = 0;
@@ -245,7 +245,7 @@ DSP_RefreshDriver0(void)
 		OS_Update();
 	#endif
 	
-	ClearBit(&m_DSPState, DSP_CURRENTLY_REFRESHING);
+	ClearBitUInt8(&m_DSPState, DSP_CURRENTLY_REFRESHING);
 #endif
 }
 
@@ -322,9 +322,9 @@ DSP_PutPixel(const char x, const char y, const char state)
 			unsigned char offset = floor(accessedBit / FRAMEBUFFER_TYPE_BITS);
 	
 			if (state)
-				SetBit( (m_backBuffer+offset), FRAMEBUFFER_TYPE_BITS - (accessedBit % FRAMEBUFFER_TYPE_BITS) - 1);
+				SetBitUInt8( (m_backBuffer+offset), FRAMEBUFFER_TYPE_BITS - (accessedBit % FRAMEBUFFER_TYPE_BITS) - 1);
 			else
-				ClearBit( (m_backBuffer+offset), FRAMEBUFFER_TYPE_BITS - (accessedBit % FRAMEBUFFER_TYPE_BITS) - 1);
+				ClearBitUInt8( (m_backBuffer+offset), FRAMEBUFFER_TYPE_BITS - (accessedBit % FRAMEBUFFER_TYPE_BITS) - 1);
 		}
 	}
 }
@@ -339,7 +339,7 @@ DSP_GetPixel(const char x, const char y)
 			unsigned char accessedBit = (y * DISPLAY_COLUMNS) + x;
 			unsigned char offset = floor(accessedBit / FRAMEBUFFER_TYPE_BITS);
 		
-			return GetBit((m_frontBuffer+offset), FRAMEBUFFER_TYPE_BITS - (accessedBit % FRAMEBUFFER_TYPE_BITS) - 1);
+			return GetBitUInt8((m_frontBuffer+offset), FRAMEBUFFER_TYPE_BITS - (accessedBit % FRAMEBUFFER_TYPE_BITS) - 1);
 		}
 	}
 	return 0;
@@ -360,7 +360,7 @@ DSP_GetPixelMem(const char * const src,
 	unsigned char accessedBit = (srcY * srcWidth) + srcX;
 	unsigned char offset = floor(accessedBit / srcBits);
 	
-	return GetBit((src+offset), srcBits - (accessedBit % srcBits) - 1);
+	return GetBitUInt8((src+offset), srcBits - (accessedBit % srcBits) - 1);
 }
 
 char 
@@ -378,7 +378,7 @@ DSP_GetPixelMemF(const char * const src,
 	unsigned char offset = floor(accessedBit / srcBits);
 	
 	char inByte = pgm_read_byte((src+offset));
-	return GetBit(&inByte, srcBits - (accessedBit % srcBits) - 1);
+	return GetBitUInt8(&inByte, srcBits - (accessedBit % srcBits) - 1);
 }
 
 char 
@@ -490,33 +490,33 @@ DSP_SetConfig(enum e_DSPParameter parameter, const unsigned char newValue)
 			if (newValue == 1)
                         {
 				DSP_Refresh = &DSP_RefreshDriver0;
-                                SetBit(&m_DSPState, DSP_VSYNC);
+                                SetBitUInt8(&m_DSPState, DSP_VSYNC);
                         }
 			else if (newValue == 0)
                         {
 				DSP_Refresh = &DSP_RefreshDriver1;	
-                                ClearBit(&m_DSPState, DSP_VSYNC);
+                                ClearBitUInt8(&m_DSPState, DSP_VSYNC);
                         }
 			break;
 		case DSP_DESTRUCTIVE_BITBLT:
 			if (newValue == 0)
-				ClearBit(m_DSPState, DSP_DESTRUCTIVE_BITBLT);
+				ClearBitUInt8(m_DSPState, DSP_DESTRUCTIVE_BITBLT);
 			else if (newValue == 1)
-				SetBit(&m_DSPState, DSP_DESTRUCTIVE_BITBLT);
+				SetBitUInt8(&m_DSPState, DSP_DESTRUCTIVE_BITBLT);
 			break;
 		case DSP_DOUBLE_BUFFER:
 			if (newValue == 0)
 			{
-				ClearBit(m_DSPState, DSP_DOUBLE_BUFFER);
+				ClearBitUInt8(m_DSPState, DSP_DOUBLE_BUFFER);
 				m_frontBuffer = m_backBuffer = &m_frameBuffer[0];
 			}
 			else if (newValue == 1)
-				SetBit(&m_DSPState, DSP_DOUBLE_BUFFER);
+				SetBitUInt8(&m_DSPState, DSP_DOUBLE_BUFFER);
 			break;
 		case DSP_STATE_BITS:
 			m_DSPState = newValue;
-			ClearBit(&m_DSPState, DSP_DESTRUCTIVE_BITBLT);
-			ClearBit(&m_DSPState, DSP_CURRENTLY_REFRESHING);
+			ClearBitUInt8(&m_DSPState, DSP_DESTRUCTIVE_BITBLT);
+			ClearBitUInt8(&m_DSPState, DSP_CURRENTLY_REFRESHING);
 			break;
 		default:
 			return 0;
@@ -541,10 +541,10 @@ DSP_GetConfig(enum e_DSPParameter parameter)
 				return 0;
 			break;
 		case DSP_DESTRUCTIVE_BITBLT:
-			return GetBit(&m_DSPState, DSP_DESTRUCTIVE_BITBLT);
+			return GetBitUInt8(&m_DSPState, DSP_DESTRUCTIVE_BITBLT);
 			break;
 		case DSP_DOUBLE_BUFFER:
-			return GetBit(&m_DSPState, DSP_DOUBLE_BUFFER);
+			return GetBitUInt8(&m_DSPState, DSP_DOUBLE_BUFFER);
 			break;
 		case DSP_STATE_BITS:
 			return m_DSPState;

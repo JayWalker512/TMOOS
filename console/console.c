@@ -36,7 +36,7 @@ CON_Init(void)
 void
 CON_Update(void)
 {
-	if (!GetBit(&m_consoleState, CONSOLE_USB_CONFIGURED))
+	if (!GetBitUInt8(&m_consoleState, CONSOLE_USB_CONFIGURED))
 	{
 		if(!usb_configured())
 			return;
@@ -45,7 +45,7 @@ CON_Update(void)
 			return;
 	
 		usb_serial_flush_input();
-		SetBit(&m_consoleState, CONSOLE_USB_CONFIGURED);
+		SetBitUInt8(&m_consoleState, CONSOLE_USB_CONFIGURED);
 		CON_SendString(PSTR("\r\nTMOOS Terminal\r\n"
 			"Format is: command arg1 arg2 arg3\r\n>"));
 	}
@@ -62,7 +62,7 @@ CON_Update(void)
 		in = CON_BufferInput(&m_cmdBufferString, CMD_BUFFER_SIZE);
 		
 		if (in == 0)
-			ClearBit(&m_consoleState, CONSOLE_USB_CONFIGURED);
+			ClearBitUInt8(&m_consoleState, CONSOLE_USB_CONFIGURED);
 		else if (in == 4)
 		{
 			//TODO parse argc, argv

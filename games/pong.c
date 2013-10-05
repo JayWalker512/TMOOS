@@ -59,7 +59,7 @@ InitPongGame(void)
 	g_comp.score = 0;
 	
 	g_pongState = 0; 
-	SetBit(&g_pongState, PONG_PLAYING); //start a regular game
+	SetBitUInt8(&g_pongState, PONG_PLAYING); //start a regular game
 	/* ball isn't launched, it's players turn. */
 	
 	g_lastTime = GLIB_GetGameMillis();
@@ -77,7 +77,7 @@ PongGameLoop(void)
 	dt = thisTime - g_lastTime;
 	g_lastTime = thisTime;
 	
-	if (GetBit(&g_pongState, PONG_PLAYING))
+	if (GetBitUInt8(&g_pongState, PONG_PLAYING))
 	{
 		UpdateBall(&g_pongBall, dt);
 		UpdatePlayerPaddle(&g_player, dt);
@@ -119,10 +119,10 @@ DrawScoreScreen(t_PongPlayer *top, t_PongPlayer *bottom, unsigned long dt)
 {
 	static unsigned long elapsed = SCORE_SCREEN_DELAY + 100;
 	
-	if (GetBit(&g_pongState, PONG_SCORESCREEN))
+	if (GetBitUInt8(&g_pongState, PONG_SCORESCREEN))
 	{
 		elapsed = 0;
-		ClearBit(&g_pongState, PONG_SCORESCREEN);
+		ClearBitUInt8(&g_pongState, PONG_SCORESCREEN);
 	}
 	
 	if (elapsed > SCORE_SCREEN_DELAY)
@@ -146,7 +146,7 @@ DrawScoreScreen(t_PongPlayer *top, t_PongPlayer *bottom, unsigned long dt)
 		char scoreText[1];
 		scoreText[1] = 0;
 
-		if (GetBit(&g_pongState, PONG_WHOSTURN) == 1 &&
+		if (GetBitUInt8(&g_pongState, PONG_WHOSTURN) == 1 &&
 			elapsed <= (SCORE_SCREEN_DELAY / 2) )
 			scoreText[0] = (top->score)+48-1;
 		else
@@ -155,7 +155,7 @@ DrawScoreScreen(t_PongPlayer *top, t_PongPlayer *bottom, unsigned long dt)
 		GFX_DrawText(scoreText, 8, 1);
 
 
-		if (GetBit(&g_pongState, PONG_WHOSTURN) == 0 &&
+		if (GetBitUInt8(&g_pongState, PONG_WHOSTURN) == 0 &&
 			elapsed <= (SCORE_SCREEN_DELAY / 2) )
 			scoreText[0] = (bottom->score)+48-1;
 		else
@@ -184,7 +184,7 @@ DrawScoreScreen(t_PongPlayer *top, t_PongPlayer *bottom, unsigned long dt)
 	/* This way we don't set the bit EVERY time we test whether to
 	 display the score screen above. */
 	if (elapsed > SCORE_SCREEN_DELAY) 
-		SetBit(&g_pongState, PONG_PLAYING);
+		SetBitUInt8(&g_pongState, PONG_PLAYING);
 }
 
 void 
@@ -246,33 +246,33 @@ PlayerScore(t_PongPlayer *player, char isAI)
 	if (isAI)
 	{
 		player->score++;
-		SetBit(&g_pongState, PONG_WHOSTURN); //comps turn
-		ClearBit(&g_pongState, PONG_BALLLAUNCHED);
+		SetBitUInt8(&g_pongState, PONG_WHOSTURN); //comps turn
+		ClearBitUInt8(&g_pongState, PONG_BALLLAUNCHED);
 	}
 	else
 	{
 		player->score++;
-		ClearBit(&g_pongState, PONG_WHOSTURN); //players turn
-		ClearBit(&g_pongState, PONG_BALLLAUNCHED);
-		ClearBit(&g_pongState, PONG_COMPDECIDED);
+		ClearBitUInt8(&g_pongState, PONG_WHOSTURN); //players turn
+		ClearBitUInt8(&g_pongState, PONG_BALLLAUNCHED);
+		ClearBitUInt8(&g_pongState, PONG_COMPDECIDED);
 	}
 	
 	//everybody now!
-	SetBit(&g_pongState, PONG_SCORESCREEN);
-	ClearBit(&g_pongState, PONG_PLAYING);
+	SetBitUInt8(&g_pongState, PONG_SCORESCREEN);
+	ClearBitUInt8(&g_pongState, PONG_PLAYING);
 }
 
 void 
 UpdateBall(t_PongBall *ball, unsigned long dt)
 {
-	if (GetBit(&g_pongState, PONG_BALLLAUNCHED))
+	if (GetBitUInt8(&g_pongState, PONG_BALLLAUNCHED))
 	{
 		ball->x += ball->xSpeed * dt;
 		ball->y += ball->ySpeed * dt;
 	}
 	else
 	{
-		if (GetBit(&g_pongState, PONG_WHOSTURN))
+		if (GetBitUInt8(&g_pongState, PONG_WHOSTURN))
 		{
 			//comps turn
 			ball->x = g_comp.x + (PADDLE_WIDTH / 2);
@@ -306,7 +306,7 @@ UpdateCompPaddle(t_PongPlayer *compPaddle, unsigned long dt)
 	
 	elapsed = 0;
 	
-	if (GetBit(&g_pongState, PONG_BALLLAUNCHED))
+	if (GetBitUInt8(&g_pongState, PONG_BALLLAUNCHED))
 	{
 		if (g_pongBall.x < compPaddle->x)
 		{
@@ -321,17 +321,17 @@ UpdateCompPaddle(t_PongPlayer *compPaddle, unsigned long dt)
 	}
 	
 	//it's comps turn, decide where to launch ball (and launch it)
-	if (GetBit(&g_pongState, PONG_WHOSTURN) && 
-		!GetBit(&g_pongState, PONG_COMPDECIDED)) //comps turn, undecided
+	if (GetBitUInt8(&g_pongState, PONG_WHOSTURN) && 
+		!GetBitUInt8(&g_pongState, PONG_COMPDECIDED)) //comps turn, undecided
 	{
 		launchDestX = floor(RandFloat(0, 
 			DISPLAY_WIDTH - PADDLE_WIDTH - 1));
-		SetBit(&g_pongState, PONG_COMPDECIDED);
+		SetBitUInt8(&g_pongState, PONG_COMPDECIDED);
 	}
 	
-	if (GetBit(&g_pongState, PONG_COMPDECIDED) && //comp has decided 
-		!GetBit(&g_pongState, PONG_BALLLAUNCHED) && //ball isn't launched
-		GetBit(&g_pongState, PONG_WHOSTURN)) //comps turn
+	if (GetBitUInt8(&g_pongState, PONG_COMPDECIDED) && //comp has decided 
+		!GetBitUInt8(&g_pongState, PONG_BALLLAUNCHED) && //ball isn't launched
+		GetBitUInt8(&g_pongState, PONG_WHOSTURN)) //comps turn
 	{
 		if (compPaddle->x > launchDestX)
 			compPaddle->x--;
@@ -341,7 +341,7 @@ UpdateCompPaddle(t_PongPlayer *compPaddle, unsigned long dt)
 		if (compPaddle->x == launchDestX)
 		{
 			//launch ball (duplicate code, could be function
-			SetBit(&g_pongState, PONG_BALLLAUNCHED);
+			SetBitUInt8(&g_pongState, PONG_BALLLAUNCHED);
 			char direction = GLIB_GetGameMillis() % 2;
 			g_pongBall.xSpeed = RandFloat(PONGBALL_MINSPEED,
 					PONGBALL_MAXSPEED);
@@ -359,12 +359,12 @@ UpdateCompPaddle(t_PongPlayer *compPaddle, unsigned long dt)
 void 
 HandleInput(void)
 {
-	if (GetBit(&g_pongState, PONG_BALLLAUNCHED) == 0 &&
-		GetBit(&g_pongState, PONG_WHOSTURN) == 0)
+	if (GetBitUInt8(&g_pongState, PONG_BALLLAUNCHED) == 0 &&
+		GetBitUInt8(&g_pongState, PONG_WHOSTURN) == 0)
 	{
 		if (GLIB_GetInput(GLIB_PB2))
 		{
-			SetBit(&g_pongState, PONG_BALLLAUNCHED);
+			SetBitUInt8(&g_pongState, PONG_BALLLAUNCHED);
 			char direction = GLIB_GetGameMillis() % 2;
 			g_pongBall.xSpeed = RandFloat(PONGBALL_MINSPEED,
 					PONGBALL_MAXSPEED);

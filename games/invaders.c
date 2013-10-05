@@ -77,7 +77,7 @@ HandleInvadersInput(void)
 {
 	g_shipX = GLIB_GetWheelRegion(13);
 	unsigned char events = INP_PollEvents();
-	if (GetBit(&events, INPUT_PB0_DOWN))
+	if (GetBitUInt8(&events, INPUT_PB0_DOWN))
 		FirePlayerProjectile(g_shipX + 1, g_playerBullets, MAX_PLAYER_PROJECTILES);
 }
 

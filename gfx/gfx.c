@@ -26,13 +26,13 @@ GFX_Init(void)
 
 GFX_Enable(enum e_GFXState parameter)
 {
-	SetBit(&m_GFXState, parameter);
+	SetBitUInt8(&m_GFXState, parameter);
 }
 
 void 
 GFX_Disable(enum e_GFXState parameter)
 {
-	ClearBit(&m_GFXState, parameter);
+	ClearBitUInt8(&m_GFXState, parameter);
 }
 
 void 

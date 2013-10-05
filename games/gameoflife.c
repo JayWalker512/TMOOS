@@ -61,7 +61,7 @@ GameOfLifeLoop(void)
 	
 	//if 3rd button is pressed, reset the game
 	char events = INP_PollEvents();
-	if (GetBit(&events, INPUT_PB2_DOWN))
+	if (GetBitUInt8(&events, INPUT_PB2_DOWN))
 	{
 		GFX_Clear(0);
 		srand(GLIB_GetGameMillis()); 

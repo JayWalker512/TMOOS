@@ -66,19 +66,19 @@ INP_Update(void)
 	
 	//update buttons
 	if (!HRD_GetPinDigital(m_inputPins[INPUT_PB0])) //active low, remember!
-		SetBit(&m_buttonStates, INPUT_PB0);
+		SetBitUInt8(&m_buttonStates, INPUT_PB0);
 	else
-		ClearBit(&m_buttonStates, INPUT_PB0);
+		ClearBitUInt8(&m_buttonStates, INPUT_PB0);
 		
 	if (!HRD_GetPinDigital(m_inputPins[INPUT_PB1]))
-		SetBit(&m_buttonStates, INPUT_PB1);
+		SetBitUInt8(&m_buttonStates, INPUT_PB1);
 	else
-		ClearBit(&m_buttonStates, INPUT_PB1);
+		ClearBitUInt8(&m_buttonStates, INPUT_PB1);
 	
 	if (!HRD_GetPinDigital(m_inputPins[INPUT_PB2]))
-		SetBit(&m_buttonStates, INPUT_PB2);
+		SetBitUInt8(&m_buttonStates, INPUT_PB2);
 	else
-		ClearBit(&m_buttonStates, INPUT_PB2);
+		ClearBitUInt8(&m_buttonStates, INPUT_PB2);
 }
 
 unsigned char INP_PollEvents(void)
@@ -91,20 +91,20 @@ unsigned char INP_PollEvents(void)
 	
 	m_inputEvents = 0; //reset events
 		
-	if (GetBit(&m_buttonStates, INPUT_PB0) > GetBit(&m_oldButtonStates, INPUT_PB0))
-		SetBit(&m_inputEvents, INPUT_PB0_DOWN);
-	else if (GetBit(&m_buttonStates, INPUT_PB0) < GetBit(&m_oldButtonStates, INPUT_PB0))
-		SetBit(&m_inputEvents, INPUT_PB0_UP);
+	if (GetBitUInt8(&m_buttonStates, INPUT_PB0) > GetBitUInt8(&m_oldButtonStates, INPUT_PB0))
+		SetBitUInt8(&m_inputEvents, INPUT_PB0_DOWN);
+	else if (GetBitUInt8(&m_buttonStates, INPUT_PB0) < GetBitUInt8(&m_oldButtonStates, INPUT_PB0))
+		SetBitUInt8(&m_inputEvents, INPUT_PB0_UP);
 	
-	if (GetBit(&m_buttonStates, INPUT_PB1) > GetBit(&m_oldButtonStates, INPUT_PB1))
-		SetBit(&m_inputEvents, INPUT_PB1_DOWN);
-	else if (GetBit(&m_buttonStates, INPUT_PB1) < GetBit(&m_oldButtonStates, INPUT_PB1))
-		SetBit(&m_inputEvents, INPUT_PB1_UP);
+	if (GetBitUInt8(&m_buttonStates, INPUT_PB1) > GetBitUInt8(&m_oldButtonStates, INPUT_PB1))
+		SetBitUInt8(&m_inputEvents, INPUT_PB1_DOWN);
+	else if (GetBitUInt8(&m_buttonStates, INPUT_PB1) < GetBitUInt8(&m_oldButtonStates, INPUT_PB1))
+		SetBitUInt8(&m_inputEvents, INPUT_PB1_UP);
 	
-	if (GetBit(&m_buttonStates, INPUT_PB2) > GetBit(&m_oldButtonStates, INPUT_PB2))
-		SetBit(&m_inputEvents, INPUT_PB2_DOWN);
-	else if (GetBit(&m_buttonStates, INPUT_PB2) < GetBit(&m_oldButtonStates, INPUT_PB2))
-		SetBit(&m_inputEvents, INPUT_PB2_UP);
+	if (GetBitUInt8(&m_buttonStates, INPUT_PB2) > GetBitUInt8(&m_oldButtonStates, INPUT_PB2))
+		SetBitUInt8(&m_inputEvents, INPUT_PB2_DOWN);
+	else if (GetBitUInt8(&m_buttonStates, INPUT_PB2) < GetBitUInt8(&m_oldButtonStates, INPUT_PB2))
+		SetBitUInt8(&m_inputEvents, INPUT_PB2_UP);
 	
 	m_oldButtonStates = m_buttonStates;
 	return m_inputEvents;
@@ -121,13 +121,13 @@ INP_GetInputState(enum e_InputDevice device)
 			return m_wheelPos;
 			break;
 		case INPUT_PB0:
-			return GetBit(&m_buttonStates, INPUT_PB0);
+			return GetBitUInt8(&m_buttonStates, INPUT_PB0);
 			break;
 		case INPUT_PB1:
-			return GetBit(&m_buttonStates, INPUT_PB1);
+			return GetBitUInt8(&m_buttonStates, INPUT_PB1);
 			break;
 		case INPUT_PB2:
-			return GetBit(&m_buttonStates, INPUT_PB2);
+			return GetBitUInt8(&m_buttonStates, INPUT_PB2);
 			break;
 		default:
 			return 0;

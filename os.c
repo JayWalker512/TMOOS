@@ -182,14 +182,14 @@ OS_Update(void)
 	CON_Update();
 	conSum += PRO_StopTimer(&conTimer);
 
-	if (GetBit(&g_OSState, OS_INPUT_ENABLED))
+	if (GetBitUInt8(&g_OSState, OS_INPUT_ENABLED))
 	{
 		PRO_StartTimer(&inpTimer);
 		INP_Update();
 		inpSum += PRO_StopTimer(&inpTimer);
 	}
 		
-	if (GetBit(&g_OSState, OS_DISPLAY_ENABLED))
+	if (GetBitUInt8(&g_OSState, OS_DISPLAY_ENABLED))
 	{
 		PRO_StartTimer(&dspTimer);
 		//DSP_Refresh();
@@ -200,7 +200,7 @@ OS_Update(void)
 		dspSum += PRO_StopTimer(&dspTimer);
 	}
 	
-	if (GetBit(&g_OSState, OS_SOUND_ENABLED))
+	if (GetBitUInt8(&g_OSState, OS_SOUND_ENABLED))
 	{
 		PRO_StartTimer(&sndTimer);
 		SND_Update();
@@ -240,27 +240,27 @@ OS_SetConfig(enum e_OSParameter parameter, const char newValue)
 	{
 		case OS_CPU_SCALING_ENABLED:
 			if (newValue)
-				SetBit(&g_OSState, OS_CPU_SCALING_ENABLED);
+				SetBitUInt8(&g_OSState, OS_CPU_SCALING_ENABLED);
 			else
-				ClearBit(&g_OSState, OS_CPU_SCALING_ENABLED);
+				ClearBitUInt8(&g_OSState, OS_CPU_SCALING_ENABLED);
 			break;
 		case OS_SOUND_ENABLED:
 			if (newValue)
-				SetBit(&g_OSState, OS_SOUND_ENABLED);
+				SetBitUInt8(&g_OSState, OS_SOUND_ENABLED);
 			else
-				ClearBit(&g_OSState, OS_SOUND_ENABLED);
+				ClearBitUInt8(&g_OSState, OS_SOUND_ENABLED);
 			break;
 		case OS_DISPLAY_ENABLED:
 			if (newValue)
-				SetBit(&g_OSState, OS_DISPLAY_ENABLED);
+				SetBitUInt8(&g_OSState, OS_DISPLAY_ENABLED);
 			else
-				ClearBit(&g_OSState, OS_DISPLAY_ENABLED);
+				ClearBitUInt8(&g_OSState, OS_DISPLAY_ENABLED);
 			break;
 		case OS_INPUT_ENABLED:
 			if (newValue)
-				SetBit(&g_OSState, OS_INPUT_ENABLED);
+				SetBitUInt8(&g_OSState, OS_INPUT_ENABLED);
 			else
-				ClearBit(&g_OSState, OS_INPUT_ENABLED);
+				ClearBitUInt8(&g_OSState, OS_INPUT_ENABLED);
 			break;
 		case OS_STATE:
 			g_OSState = newValue;
@@ -281,16 +281,16 @@ OS_GetConfig(enum e_OSParameter parameter)
 	switch ( parameter )
 	{
 		case OS_CPU_SCALING_ENABLED:
-			return GetBit(&g_OSState, OS_CPU_SCALING_ENABLED);
+			return GetBitUInt8(&g_OSState, OS_CPU_SCALING_ENABLED);
 			break;
 		case OS_SOUND_ENABLED:
-			return GetBit(&g_OSState, OS_SOUND_ENABLED);
+			return GetBitUInt8(&g_OSState, OS_SOUND_ENABLED);
 			break;
 		case OS_DISPLAY_ENABLED:
-			return GetBit(&g_OSState, OS_DISPLAY_ENABLED);
+			return GetBitUInt8(&g_OSState, OS_DISPLAY_ENABLED);
 			break;
 		case OS_INPUT_ENABLED:
-			return GetBit(&g_OSState, OS_INPUT_ENABLED);
+			return GetBitUInt8(&g_OSState, OS_INPUT_ENABLED);
 			break;
 		case OS_STATE:
 			return g_OSState;
@@ -362,7 +362,7 @@ OS_CPULoadCalc(enum e_TimerParams parameter)
 
 		m_idleTime = 0;
 		
-		if (GetBit(&g_OSState, OS_CPU_SCALING_ENABLED))
+		if (GetBitUInt8(&g_OSState, OS_CPU_SCALING_ENABLED))
 			OS_CPUScaleByLoad();
 	}		
 }

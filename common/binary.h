@@ -513,19 +513,19 @@
 #define B11111111 255
 
 inline void 
-SetBit(long *x, const char bitNum) 
+SetBitUInt8(unsigned char *x, const char bitNum) 
 {
 	*x |= (1 << bitNum);
 }
 
 inline void 
-ClearBit(long *x, const char bitNum) 
+ClearBitUInt8(unsigned char *x, const char bitNum) 
 {
 	*x &= ~(1 << bitNum);
 }
 
 inline char 
-GetBit(const long *x, const char bitNum) 
+GetBitUInt8(const unsigned char *x, const char bitNum) 
 {
 
 	//previous non working definition

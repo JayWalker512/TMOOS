@@ -143,22 +143,22 @@ GameInputTest(void)
 	CON_SendString(PSTR("\r\n"));*/
 	
 	unsigned char events = INP_PollEvents();
-	if (GetBit(&events, INPUT_PB0_DOWN))
+	if (GetBitUInt8(&events, INPUT_PB0_DOWN))
 		CON_SendString(PSTR("b0.d\r\n"));
 	
-	if (GetBit(&events, INPUT_PB0_UP))
+	if (GetBitUInt8(&events, INPUT_PB0_UP))
 		CON_SendString(PSTR("b0.u\r\n"));	
 	
-	if (GetBit(&events, INPUT_PB1_DOWN))
+	if (GetBitUInt8(&events, INPUT_PB1_DOWN))
 		CON_SendString(PSTR("b1.d\r\n"));
 	
-	if (GetBit(&events, INPUT_PB1_UP))
+	if (GetBitUInt8(&events, INPUT_PB1_UP))
 		CON_SendString(PSTR("b1.u\r\n"));
 	
-	if (GetBit(&events, INPUT_PB2_DOWN))
+	if (GetBitUInt8(&events, INPUT_PB2_DOWN))
 		CON_SendString(PSTR("b2.d\r\n"));
 	
-	if (GetBit(&events, INPUT_PB2_UP))
+	if (GetBitUInt8(&events, INPUT_PB2_UP))
 		CON_SendString(PSTR("b2.u\r\n"));
 	
 	TME_DelayRealMillis(100);

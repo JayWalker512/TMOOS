@@ -7,6 +7,7 @@
 
 #include <math.h>
 #include <string.h>
+#include <stdlib.h>
 
 #define PI 3.14159f
 
@@ -24,6 +25,7 @@ GFX_Init(void)
 	GFX_SwapBuffers = &DSP_SwapBuffers;
 }
 
+void
 GFX_Enable(enum e_GFXState parameter)
 {
 	SetBitUInt8(&m_GFXState, parameter);
@@ -145,7 +147,8 @@ GFX_DrawLine(const char x1, const char y1,
 	}
 }
 
-void GFX_DrawCircle(const char x, const char y, float radius, const unsigned char divisions)
+void 
+GFX_DrawCircle(const char x, const char y, float radius, const unsigned char divisions)
 {
 	float step = PI*2 / (float)divisions;
 	
@@ -164,7 +167,8 @@ void GFX_DrawCircle(const char x, const char y, float radius, const unsigned cha
 	}
 }
 
-void GFX_DrawText(const char *text, const char x, const char y)
+void 
+GFX_DrawText(const char *text, const char x, const char y)
 {
 	char len = strlen(text) - 1; //minus one to omit the NULL char
 	char spacingMp = 3; //spacing multiplier
@@ -173,25 +177,26 @@ void GFX_DrawText(const char *text, const char x, const char y)
 	{
 		if (*(text+step) >= 'A' && *(text+step) <= 'Z')
 		{
-			DSP_BitBLTF(&g_alphaNumGlyphs[*(text+step) - 'A'],
+			DSP_BitBLTF((const char * const)&g_alphaNumGlyphs[*(text+step) - 'A'][0],
 				3, 5, 
 				xLoc + (step * spacingMp), y);
 		}
 		else if (*(text+step) >= '0' && *(text+step) <= '9')
 		{
-			DSP_BitBLTF(&g_alphaNumGlyphs[*(text+step) - '0' + 26],
+			DSP_BitBLTF((const char * const)&g_alphaNumGlyphs[*(text+step) - '0' + 26][0],
 				3, 5, 
 				xLoc + (step * spacingMp), y);
 		}
 		else
-			DSP_BitBLTF(&g_testGlyph, 2, 3, xLoc + (step * spacingMp), y);
+			DSP_BitBLTF((const char * const)&g_testGlyph, 2, 3, xLoc + (step * spacingMp), y);
 		
 		step++;
 	}
 }
 
 //Same purpose as above, but gets input string from flash memory. 
-void GFX_DrawTextF(const char *text, const char x, const char y)
+void 
+GFX_DrawTextF(const char *text, const char x, const char y)
 {
 	char len = strnlen_P(text, 255) - 1; //minus one to omit the NULL char
 	char spacingMp = 3; //spacing multiplier
@@ -201,18 +206,18 @@ void GFX_DrawTextF(const char *text, const char x, const char y)
 		//double parenthesis necessary?
 		if (pgm_read_byte((text+step)) >= 'A' && pgm_read_byte((text+step)) <= 'Z')
 		{
-			DSP_BitBLTF(&g_alphaNumGlyphs[pgm_read_byte((text+step)) - 'A'],
+			DSP_BitBLTF((const char * const)&g_alphaNumGlyphs[pgm_read_byte((text+step)) - 'A'][0],
 				3, 5, 
 				xLoc + (step * spacingMp), y);
 		}
 		else if (pgm_read_byte((text+step)) >= '0' && pgm_read_byte((text+step)) <= '9')
 		{
-			DSP_BitBLTF(&g_alphaNumGlyphs[pgm_read_byte((text+step)) - '0' + 26],
+			DSP_BitBLTF((const char * const)&g_alphaNumGlyphs[pgm_read_byte((text+step)) - '0' + 26][0],
 				3, 5, 
 				xLoc + (step * spacingMp), y);
 		}
 		else
-			DSP_BitBLTF(&g_testGlyph, 2, 3, xLoc + (step * spacingMp), y);
+			DSP_BitBLTF((const char * const)&g_testGlyph, 2, 3, xLoc + (step * spacingMp), y);
 		
 		step++;
 	}

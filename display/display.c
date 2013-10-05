@@ -71,21 +71,21 @@ static unsigned char m_DSPState;
 int 
 DSP_Init(void) //TODO init settings (refresh rate, double buffer) should be passed here from OS
 {
-	for(char b = 0; b < 2; b++)
+	for(unsigned char b = 0; b < 2; b++)
 	{
-		for(char r = 0; r < FRAMEBUFFER_ROWS; r++)
+		for(unsigned char r = 0; r < FRAMEBUFFER_ROWS; r++)
 		{
 			m_frameBuffer[b][r] = 0x00;
 		}
 	}
 
 	#ifndef NO_DOUBLE_BUFFER_SAVE_MEMORY
-	m_frontBuffer = &m_frameBuffer[0];
-	m_backBuffer = &m_frameBuffer[1];
+	m_frontBuffer = &m_frameBuffer[0][0];
+	m_backBuffer = &m_frameBuffer[1][0];
 	#endif
 	
 	#ifdef NO_DOUBLE_BUFFER_SAVE_MEMORY
-	m_frontBuffer = m_backBuffer = &m_frameBuffer;
+	m_frontBuffer = m_backBuffer = &m_frameBuffer[0][0];
 	#endif
 
 	m_curRow = 0; //for driver1
@@ -157,15 +157,15 @@ DSP_SwapBuffers(void)
 		return;
 	
 	#ifndef NO_DOUBLE_BUFFER_SAVE_MEMORY
-	if (m_frontBuffer == &m_frameBuffer[0])
+	if (m_frontBuffer == &m_frameBuffer[0][0])
 	{
-		m_frontBuffer = &m_frameBuffer[1];
-		m_backBuffer = &m_frameBuffer[0];
+		m_frontBuffer = &m_frameBuffer[1][0];
+		m_backBuffer = &m_frameBuffer[0][0];
 	}
 	else
 	{
-		m_frontBuffer = &m_frameBuffer[0];
-		m_backBuffer = &m_frameBuffer[1];
+		m_frontBuffer = &m_frameBuffer[0][0];
+		m_backBuffer = &m_frameBuffer[1][0];
 	}
 	#endif
 }
@@ -360,7 +360,7 @@ DSP_GetPixelMem(const char * const src,
 	unsigned char accessedBit = (srcY * srcWidth) + srcX;
 	unsigned char offset = floor(accessedBit / srcBits);
 	
-	return GetBitUInt8((src+offset), srcBits - (accessedBit % srcBits) - 1);
+	return GetBitUInt8((unsigned char *)(src+offset), srcBits - (accessedBit % srcBits) - 1);
 }
 
 char 
@@ -377,7 +377,7 @@ DSP_GetPixelMemF(const char * const src,
 	unsigned char accessedBit = (srcY * srcWidth) + srcX;
 	unsigned char offset = floor(accessedBit / srcBits);
 	
-	char inByte = pgm_read_byte((src+offset));
+	unsigned char inByte = pgm_read_byte((src+offset));
 	return GetBitUInt8(&inByte, srcBits - (accessedBit % srcBits) - 1);
 }
 
@@ -500,15 +500,15 @@ DSP_SetConfig(enum e_DSPParameter parameter, const unsigned char newValue)
 			break;
 		case DSP_DESTRUCTIVE_BITBLT:
 			if (newValue == 0)
-				ClearBitUInt8(m_DSPState, DSP_DESTRUCTIVE_BITBLT);
+				ClearBitUInt8(&m_DSPState, DSP_DESTRUCTIVE_BITBLT);
 			else if (newValue == 1)
 				SetBitUInt8(&m_DSPState, DSP_DESTRUCTIVE_BITBLT);
 			break;
 		case DSP_DOUBLE_BUFFER:
 			if (newValue == 0)
 			{
-				ClearBitUInt8(m_DSPState, DSP_DOUBLE_BUFFER);
-				m_frontBuffer = m_backBuffer = &m_frameBuffer[0];
+				ClearBitUInt8(&m_DSPState, DSP_DOUBLE_BUFFER);
+				m_frontBuffer = m_backBuffer = &m_frameBuffer[0][0];
 			}
 			else if (newValue == 1)
 				SetBitUInt8(&m_DSPState, DSP_DOUBLE_BUFFER);

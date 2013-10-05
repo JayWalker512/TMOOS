@@ -8,12 +8,20 @@
 #include "common/print.h"
 #include "input/input.h"
 
+//#define NEIGHBORS_LOOPS
+
 char NumLivingNeighbors(char x, char y);
 char Wrap4BitUInt(char fourBitInt);
+
+unsigned long endTime;
+unsigned char gens;
 
 char 
 GameOfLifeInit(void)
 {
+	endTime = GLIB_GetGameMillis() + 1000;
+	gens = 0;
+	
 	GFX_Clear(0);
 	srand(GLIB_GetGameMillis()); 
 	GFX_BitBLT((const char * const)(intptr_t)RandLong(0,2304),16,16,0,0);
@@ -33,22 +41,15 @@ GameOfLifeLoop(void)
 		{
 			char numNeighbors = NumLivingNeighbors(x,y);
 			
-			/*if (y < 1 && x < 3)
-			{
-				CON_SendString(PSTR("LN: "));
-				printInt(numNeighbors, VAR_SIGNED);
-				CON_SendString(PSTR("\r\n"));
-			}*/
-			
 			char cellIsLiving = GFX_GetPixel(x,y);
 			if (cellIsLiving)
 			{
 				//we subtract 1 to avoid including self
-				if (numNeighbors - 1 >= 2 && numNeighbors - 1 <= 3)
+				if (numNeighbors >= 2 && numNeighbors <= 3)
 				{
 					GFX_PutPixel(x,y,1); //cell was alive, stays alive
 				}	
-				else if (numNeighbors - 1 < 2 || numNeighbors - 1 > 3)
+				else if (numNeighbors < 2 || numNeighbors > 3)
 				{
 					GFX_PutPixel(x,y,0); //cell was alive, dies
 				}
@@ -69,12 +70,23 @@ GameOfLifeLoop(void)
 		srand(GLIB_GetGameMillis()); 
 		GFX_BitBLT((const char * const)(intptr_t)RandLong(0,2304),16,16,0,0);	
 	}
-	
-	//TME_DelayRealMillis(16);
+
 	GFX_SwapBuffers();
+	
+	gens++;
+	if (GLIB_GetGameMillis() >= endTime)
+	{
+		endTime = GLIB_GetGameMillis() + 1000;
+		CON_SendString(PSTR("Gen/s: "));
+		printInt((long)gens, VAR_UNSIGNED);
+		CON_SendString(PSTR("\r\n"));
+		gens = 0;
+	}
+	
 	return 1;
 }
 
+#ifdef NEIGHBORS_LOOPS
 char 
 NumLivingNeighbors(char x, char y)
 {
@@ -93,8 +105,52 @@ NumLivingNeighbors(char x, char y)
 		}
 	}
 	
+	if (GFX_GetPixel(x,y) == 1)
+		sumLivingNeighbors--; //subtract self
+	
 	return sumLivingNeighbors;
 }
+#else
+char 
+NumLivingNeighbors(char x, char y)
+{
+	char sumLivingNeighbors = 0;
+	
+	//check upper-left
+	if (GFX_GetPixel(Wrap4BitUInt(x-1),Wrap4BitUInt(y-1)) == 1)
+		sumLivingNeighbors++;
+	
+	//top-center
+	if (GFX_GetPixel(x,Wrap4BitUInt(y-1)) == 1)
+		sumLivingNeighbors++;
+	
+	//upper-right
+	if (GFX_GetPixel(Wrap4BitUInt(x+1),Wrap4BitUInt(y-1)) == 1)
+		sumLivingNeighbors++;
+	
+	//left
+	if (GFX_GetPixel(Wrap4BitUInt(x-1),y) == 1)
+		sumLivingNeighbors++;
+	
+	//right
+	if (GFX_GetPixel(Wrap4BitUInt(x+1),y) == 1)
+		sumLivingNeighbors++;
+	
+	//bottom-left
+	if (GFX_GetPixel(Wrap4BitUInt(x-1),Wrap4BitUInt(y+1)) == 1)
+		sumLivingNeighbors++;
+	
+	//bottom
+	if (GFX_GetPixel(x,Wrap4BitUInt(y+1)) == 1)
+		sumLivingNeighbors++;
+	
+	//bottom-right
+	if (GFX_GetPixel(Wrap4BitUInt(x+1),Wrap4BitUInt(y+1)) == 1)
+		sumLivingNeighbors++;
+	
+	return sumLivingNeighbors;
+}
+#endif
 
 char 
 Wrap4BitUInt(char fourBitInt)

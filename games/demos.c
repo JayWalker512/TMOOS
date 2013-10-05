@@ -1,4 +1,5 @@
 #include "gamelib.h"
+#include "gamemath.h"
 #include "../os.h"
 #include "../battery.h"
 #include "../common/avr.h"
@@ -6,8 +7,6 @@
 #include "input/input.h"
 #include "time/time.h"
 #include <stdlib.h>
-
-static unsigned long endTime = 0; //used multiple times
 
 #define SMILEY_WINK_DELAY_MAX 480000
 #define SMILEY_WINK_DELAY_MIN 300000
@@ -25,6 +24,7 @@ InitSmiley()
 {
 	nextWinkTime = GLIB_GetGameMillis();
 	elapsed = 0;
+	return 1;
 }
 
 char
@@ -98,7 +98,6 @@ SmileyFace(void)
 }
 
 static char lastChar = 0;
-static unsigned int fps = 0;
 char
 GameInputTest(void)
 {	
@@ -109,7 +108,7 @@ GameInputTest(void)
 
 	GFX_Clear(0);
 	
-	char characterSelect = wheelPos / 10;
+	unsigned char characterSelect = wheelPos / 10;
 	if (characterSelect > 35)
 		characterSelect = 35;
 		
@@ -134,7 +133,8 @@ GameInputTest(void)
 		GFX_PutPixel(5,0,1);
 	}
 	
-	GFX_BitBLTF(&g_alphaNumGlyphs[characterSelect], 3, 5, 0, 0);
+	GFX_BitBLTF((const char * const)&g_alphaNumGlyphs[characterSelect][0], 
+		3, 5, 0, 0);
 	
 	/*char string[2];
 	string[0] = INP_PollEvents() + 48;
@@ -176,7 +176,8 @@ GameSlidingWheelChar(void)
 	x = (wheelPos / 42);
 
 	GFX_Clear(0);
-	GFX_BitBLT(&g_alphaNumGlyphs[0], 3, 5, x, 0);
+	GFX_BitBLT((const char * const)&g_alphaNumGlyphs[0][0], 
+		3, 5, x, 0);
 
 	GFX_SwapBuffers(); 
 	return 1;
@@ -191,6 +192,7 @@ InitGameScrollText(void)
 	m_textX = 16;
 	m_scrollTime = 0;
 	m_scrollRate = GLIB_GetInput(GLIB_WHEEL);
+	return 1;
 }
 
 char 
@@ -221,7 +223,8 @@ GameWheelRegionTest(void)
 {
 	GFX_Clear(0);
 	char region = GLIB_GetWheelRegion(9);
-	GFX_BitBLT(&g_alphaNumGlyphs[26 + region], 3, 5, 0, 0);
+	GFX_BitBLT((const char * const)&g_alphaNumGlyphs[26 + region][0], 
+		3, 5, 0, 0);
 	GFX_SwapBuffers();
 	return 1;
 }

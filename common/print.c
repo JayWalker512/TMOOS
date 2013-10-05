@@ -43,7 +43,7 @@ printInt(long input, enum e_VarType type)
 	char tempDigit = 0;
 	if (numDigits % 2 == 0) //if number of digits is even, we need to change algorithm
 	{
-		char i;
+		unsigned char i;
 		for (i = 0; i < numDigits; i++)
 		{
 			tempDigit = myDigits[i];
@@ -55,7 +55,7 @@ printInt(long input, enum e_VarType type)
 	}
 	else
 	{
-		char i;
+		unsigned char i;
 		for (i = 0; i < numDigits; i++)
 		{
 			tempDigit = myDigits[i];
@@ -95,5 +95,5 @@ printDouble(double input, enum e_VarType type)
 void
 printString(const char *string)
 {
-	CON_SendRAMString(&string);
+	CON_SendRAMString((const char *)&string);
 }

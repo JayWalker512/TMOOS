@@ -34,7 +34,6 @@ GameOfLifeLoop(void)
 {
 	unsigned char x = 0;
 	unsigned char y = 0;
-	GFX_Clear(0);
 	for (y = 0; y <= 15; y++)
 	{
 		for (x = 0; x <= 15; x++) //rules applied in this inner loop
@@ -43,7 +42,6 @@ GameOfLifeLoop(void)
 			char cellIsLiving = GFX_GetPixel(x,y);
 			if (cellIsLiving)
 			{
-				//we subtract 1 to avoid including self
 				if (numNeighbors >= 2 && numNeighbors <= 3)
 				{
 					GFX_PutPixel(x,y,1); //cell was alive, stays alive
@@ -60,29 +58,20 @@ GameOfLifeLoop(void)
 			}
 		}
 	}
-
+	
 	GFX_SwapBuffers();
 	
-	//calculate generations/s
-	gens++;
-	unsigned long now = GLIB_GetGameMillis();
-	if (now >= endTime)
-	{
-		endTime = now + 1000;
-		CON_SendString(PSTR("Gen/s: "));
-		printInt((long)gens, VAR_UNSIGNED);
-		CON_SendString(PSTR("\r\n"));
-		gens = 0;
-	}
-	
 	//if 3rd button is pressed, reset the game
+	unsigned long now = GLIB_GetGameMillis();
 	unsigned char events = INP_PollEvents();
 	if (GetBitUInt8(&events, INPUT_PB2_DOWN))
 	{
 		GFX_Clear(0);
 		srand(now); 
-		GFX_BitBLT((const char * const)(intptr_t)RandLong(0,2304),16,16,0,0);	
+		GFX_BitBLT((const char * )(intptr_t)RandLong(0,2304),16,16,0,0);	
 	}
+	else
+		GFX_Clear(0);
 	
 	return 1;
 }

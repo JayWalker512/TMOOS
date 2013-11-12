@@ -51,6 +51,7 @@ AlienShip_t g_alienShips[MAX_ALIENS];
 
 unsigned char g_InvadersState;
 char g_shipX;
+unsigned int g_playerScore;
 PROGMEM const char g_shipGlyph = B01011100;
 
 void HandleInvadersInput(void);
@@ -58,6 +59,9 @@ void UpdateProjectiles(Projectile_t *projectileList, unsigned char num);
 void FirePlayerProjectile(char x, Projectile_t *projectileList, unsigned char num);
 void UpdateAliens(AlienShip_t *alienList, unsigned char num);
 void SpawnRandAlien(AlienShip_t *alienList, unsigned char num);
+void DetectCollisions(Projectile_t *projectileList, unsigned char numProj,
+	AlienShip_t *alienList, unsigned char numAliens);
+char bIntersect(AlienShip_t *alien, Projectile_t *proj);
 void RenderInvaders(void);
 
 char
@@ -65,6 +69,7 @@ InitInvaders(void)
 {
 	g_shipX = 0;
 	g_InvadersState = 0;
+	g_playerScore = 0;
 	
 	//set projectiles way away and .y < 0 when they're "inactive"
 	unsigned char i;
@@ -99,6 +104,8 @@ InvadersLoop(void)
 	HandleInvadersInput();
 	UpdateProjectiles(g_playerBullets, MAX_PLAYER_PROJECTILES);
 	UpdateAliens(g_alienShips, MAX_ALIENS);
+	DetectCollisions(g_playerBullets, MAX_PLAYER_PROJECTILES,
+		g_alienShips, MAX_ALIENS);
 	RenderInvaders();
 	
 	return 1;
@@ -216,6 +223,40 @@ SpawnRandAlien(AlienShip_t *alienList, unsigned char num)
 			return; //Found a free alien and spawned it.
 		}
 	}
+}
+
+void 
+DetectCollisions(Projectile_t *projectileList, unsigned char numProj,
+	AlienShip_t *alienList, unsigned char numAliens)
+{
+	unsigned char p;
+	unsigned char a;
+	for (p = 0; p < numProj; p++)
+	{
+		for (a = 0; a < numAliens; a++)
+		{
+			if (bIntersect(alienList+a, projectileList+p))
+			{
+				(alienList+a)->pos.x = -50;
+				(alienList+a)->pos.y = -50;
+				(projectileList+p)->pos.x = -50;
+				(projectileList+p)->pos.y = -50;	
+				g_playerScore++;
+			}
+		}
+	}
+}
+
+char bIntersect(AlienShip_t *alien, Projectile_t *proj)
+{
+	if (roundf(alien->pos.x) == roundf(proj->pos.x) &&
+		roundf(proj->pos.y) <= roundf(alien->pos.y) && 
+		roundf(proj->pos.y >= roundf(alien->pos.y - 1)))
+	{
+		return 1;
+	}
+	
+	return 0;
 }
 
 void

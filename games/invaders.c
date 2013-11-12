@@ -1,3 +1,5 @@
+//Brace yourself for shitty code, I wrote most of this late one night rushing
+//to get some semblance of a game working for a game showcase.
 #include "gamelib.h"
 #include "gamemath.h"
 #include "../common/avr.h"
@@ -6,12 +8,20 @@
 #include "input/input.h"
 #include "console/console.h"
 
+#include <math.h> //should probably include from gamemath.h
+#include <stdlib.h>
+
 #define SHIP_WIDTH 3
 #define SHIP_HEIGHT 2
 #define MAX_PLAYER_PROJECTILES 2 
-#define PLAYER_PROJECTILE_YSPEED 0.020f;
-#define ALIEN_DESCENT_SPEED 0.005f;
+#define PLAYER_PROJECTILE_YSPEED 0.020f
+#define ALIEN_DESCENT_SPEED 0.005f
 #define MAX_ALIENS 2
+#define MAX_AMP 3
+#define MIN_AMP 1.25f
+#define MAX_DIV 8.0f
+#define MIN_DIV 5.0f
+#define DART_PROBABILITY 0.010f
 
 #define FRAME_STEP_MS 17
 
@@ -30,6 +40,10 @@ typedef struct Projectile_s
 typedef struct AlienShip_s 
 {
 	Vec2Df_t pos;
+	float dartXSpeed; //for when they *maybe* pick a direction below the midpoint
+	float xCenter; //axis sin wave is generated about. Set to initial pos.x
+	float amplitude; //height of sin wave
+	float wavDiv; //divider for width of sin wave
 } AlienShip_t;
 
 Projectile_t g_playerBullets[MAX_PLAYER_PROJECTILES];
@@ -146,12 +160,37 @@ UpdateAliens(AlienShip_t *alienList, unsigned char num)
 		AlienShip_t *cAlien = (alienList+i);
 		
 		//sin wave code in here
-		//ALIEN_DESCENT_SPEED * FRAME_STEP_MS gives compile error.
-		float ads = ALIEN_DESCENT_SPEED; 
-		if (cAlien->pos.y > 0 && cAlien->pos.y < DISPLAY_HEIGHT)
-			cAlien->pos.y += ads * FRAME_STEP_MS;
-			
+		if (cAlien->pos.y > 0 && cAlien->pos.y < DISPLAY_HEIGHT &&
+			cAlien->dartXSpeed == 0)
+		{
+			//move straight down
+			cAlien->pos.y += ALIEN_DESCENT_SPEED * FRAME_STEP_MS;
+			cAlien->pos.x = cAlien->xCenter + 
+				(cAlien->amplitude * sin(cAlien->pos.y + 
+				(cAlien->pos.y / cAlien->wavDiv)));
+		}	
 		//end sin wave code
+		
+		//code for probabilistically deciding to dart in one direction
+		if (RandFloat(0.0, 1.0) < DART_PROBABILITY && 
+			cAlien->dartXSpeed == 0 &&
+			cAlien->pos.y >= (DISPLAY_HEIGHT / 3))
+		{
+			cAlien->dartXSpeed = RandFloat(-ALIEN_DESCENT_SPEED * 1.25, 
+				ALIEN_DESCENT_SPEED * 1.25);
+		}
+		
+		//code for moving in the darted direction.
+		//not sure what the FP error is like on here, so I provide a 
+		//small error range.
+		if (cAlien->dartXSpeed > 0.001f || 
+			cAlien->dartXSpeed < -0.001f ||
+			cAlien->dartXSpeed != 0.0f) 
+		{
+			cAlien->pos.x += cAlien->dartXSpeed * FRAME_STEP_MS;
+			cAlien->pos.y += ALIEN_DESCENT_SPEED * FRAME_STEP_MS;
+		}
+		
 		if (cAlien->pos.y < 0) 
 		{
 			cAlien->pos.x = -50;
@@ -169,7 +208,11 @@ SpawnRandAlien(AlienShip_t *alienList, unsigned char num)
 		if (cAlien->pos.y < 0 || cAlien->pos.y > DISPLAY_HEIGHT) //we can use it!
 		{
 			cAlien->pos.y = 0.05f;
-			cAlien->pos.x = RandFloat(0,15);
+			cAlien->pos.x = RandFloat(2,13);
+			cAlien->xCenter = cAlien->pos.x;
+			cAlien->amplitude = RandFloat(MIN_AMP, MAX_AMP);
+			cAlien->wavDiv = RandFloat(MIN_DIV, MAX_DIV);
+			cAlien->dartXSpeed = 0.0;
 			return; //Found a free alien and spawned it.
 		}
 	}
@@ -189,9 +232,18 @@ RenderInvaders(void)
 		GFX_PutPixel(roundf(g_playerBullets[i].pos.x), 
 			roundf(g_playerBullets[i].pos.y), 1);
 	
+	//alien ships drawn 1 pixel tall.
 	for (i = 0; i < MAX_ALIENS; i++)
-		GFX_PutPixel(roundf(g_alienShips[i].pos.x),
-			roundf(g_alienShips[i].pos.y), 1);
+	{
+		if (g_alienShips[i].pos.y > 0 && 
+			g_alienShips[i].pos.y < 16)
+		{
+			GFX_PutPixel(roundf(g_alienShips[i].pos.x),
+				roundf(g_alienShips[i].pos.y), 1);
+			GFX_PutPixel(roundf(g_alienShips[i].pos.x),
+				roundf(g_alienShips[i].pos.y - 1), 1);
+		}
+	}
 	
 	GFX_SwapBuffers();
 }

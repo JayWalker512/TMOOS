@@ -37,7 +37,7 @@ INP_Init(void) //TODO init settings (poll rate, calib) should be passed here fro
 	
 	/*TODO These values will need loaded from EEPROM eventually*/
 	m_calibMin = 100;
-	m_calibMax = 900;
+	m_calibMax = 925;
 	
 	//init events list
 	m_inputEvents = 0;

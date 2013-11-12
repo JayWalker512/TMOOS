@@ -8,14 +8,13 @@
 
 #define SHIP_WIDTH 3
 #define SHIP_HEIGHT 2
-#define WEAPON_COOLDOWN_MS 800
-#define MAX_PLAYER_PROJECTILES 2 /*The enum will need updated if we change this.
-	Very sloppy way to save a few bytes. */
+#define MAX_PLAYER_PROJECTILES 2 
 #define PLAYER_PROJECTILE_YSPEED 0.020f;
 
 enum e_InvadersStates 
 {
 	SOME_STATE = 0,
+	//I guess I wrote this for "scoreboard" state or something?
 };
 
 typedef struct Projectile_s 
@@ -35,8 +34,6 @@ unsigned char g_InvadersState;
 char g_shipX;
 PROGMEM const char g_shipGlyph = B01011100;
 
-int g_playerWeaponCooldown;
-
 void HandleInvadersInput(void);
 void UpdateProjectiles(Projectile_t *projectileList, unsigned char num);
 void FirePlayerProjectile(char x, Projectile_t *projectileList, unsigned char num);
@@ -46,7 +43,6 @@ char
 InitInvaders(void)
 {
 	g_shipX = 0;
-	g_playerWeaponCooldown = 0;
 	g_InvadersState = 0;
 	
 	//set projectiles way away  and .y < 0 when they're "inactive"
@@ -64,7 +60,6 @@ char
 InvadersLoop(void)
 {
 	/* TODO clearly we need a dt variable here... Projectile speeds? Duh? */
-	
 	HandleInvadersInput();
 	UpdateProjectiles(g_playerBullets, MAX_PLAYER_PROJECTILES);
 	RenderInvaders();

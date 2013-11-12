@@ -19,7 +19,7 @@ unsigned char gens;
 char 
 GameOfLifeInit(void)
 {
-	endTime = GLIB_GetGameMillis() + 1000;
+	endTime = GLIB_GetGameMillis() + (255 - GLIB_GetInput(INPUT_WHEEL) * 3);
 	gens = 0;
 	
 	GFX_Clear(0);
@@ -32,6 +32,12 @@ GameOfLifeInit(void)
 char 
 GameOfLifeLoop(void)
 {
+	unsigned long now = GLIB_GetGameMillis();
+	if (now < endTime) //this is an obvious bug that will manifest every time GLIB_GetGameMillis() rolls over.
+		return 1;
+	else
+		endTime = GLIB_GetGameMillis() + (255 - GLIB_GetInput(INPUT_WHEEL) * 2);
+	
 	unsigned char x = 0;
 	unsigned char y = 0;
 	for (y = 0; y <= 15; y++)
@@ -62,7 +68,6 @@ GameOfLifeLoop(void)
 	GFX_SwapBuffers();
 	
 	//if 3rd button is pressed, reset the game
-	unsigned long now = GLIB_GetGameMillis();
 	unsigned char events = INP_PollEvents();
 	if (GetBitUInt8(&events, INPUT_PB2_DOWN))
 	{

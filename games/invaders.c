@@ -23,13 +23,14 @@
 #define MIN_DIV 5.0f
 #define DART_PROBABILITY 0.01f
 #define ALIEN_WAVE_LENGTH_MS 8000
+#define SCORE_BOARD_DELAY 3000
 
 #define FRAME_STEP_MS 17
 
 enum e_InvadersStates 
 {
-	SOME_STATE = 0,
-	//I guess I wrote this for "scoreboard" state or something?
+	INVADERS_PLAYING = 0,
+	INVADERS_SCOREBOARD,
 };
 
 typedef struct Projectile_s 
@@ -68,12 +69,14 @@ void DetectCollisions(Projectile_t *projectileList, unsigned char numProj,
 char bIntersectAlienProjectile(AlienShip_t *alien, Projectile_t *proj);
 char bAlienIntersectPlayer(AlienShip_t *alien);
 void RenderInvaders(void);
+char bDrawInvadersScoreboad(void);
+void PlayerDeath(void);
 
 char
 InitInvaders(void)
 {
 	g_shipX = GLIB_GetWheelRegion(13);
-	g_InvadersState = 0;
+	g_InvadersState = INVADERS_PLAYING;
 	g_playerScore = 0;
 	g_alienSpawnProbability = 0.005f;
 	g_waveTime = GLIB_GetGameMillis() + ALIEN_WAVE_LENGTH_MS;
@@ -82,14 +85,14 @@ InitInvaders(void)
 	unsigned char i;
 	for (i = 0; i < MAX_PLAYER_PROJECTILES; i++)
 	{
-		g_playerBullets[i].pos.x = -50; 
-		g_playerBullets[i].pos.y = -1;
+		g_playerBullets[i].pos.x = -60; 
+		g_playerBullets[i].pos.y = -60;
 	}
 	
 	for (i = 0; i < MAX_ALIENS; i++)
 	{
 		g_alienShips[i].pos.x = -50;
-		g_alienShips[i].pos.y = -1;
+		g_alienShips[i].pos.y = -50;
 	}
 	
 	srand(GLIB_GetGameMillis());
@@ -108,13 +111,16 @@ InvadersLoop(void)
 	else
 		endTime = now + FRAME_STEP_MS;
 	
-	HandleInvadersInput();
-	SpawnAlienWaves();
-	UpdateProjectiles(g_playerBullets, MAX_PLAYER_PROJECTILES);
-	UpdateAliens(g_alienShips, MAX_ALIENS);
-	DetectCollisions(g_playerBullets, MAX_PLAYER_PROJECTILES,
-		g_alienShips, MAX_ALIENS);
-	RenderInvaders();
+	if (!bDrawInvadersScoreboad())
+	{
+		HandleInvadersInput();
+		SpawnAlienWaves();
+		UpdateProjectiles(g_playerBullets, MAX_PLAYER_PROJECTILES);
+		UpdateAliens(g_alienShips, MAX_ALIENS);
+		DetectCollisions(g_playerBullets, MAX_PLAYER_PROJECTILES,
+			g_alienShips, MAX_ALIENS);
+		RenderInvaders();
+	}
 	
 	return 1;
 }
@@ -264,8 +270,8 @@ DetectCollisions(Projectile_t *projectileList, unsigned char numProj,
 			{
 				(alienList+a)->pos.x = -50;
 				(alienList+a)->pos.y = -50;
-				(projectileList+p)->pos.x = -50;
-				(projectileList+p)->pos.y = -50;	
+				(projectileList+p)->pos.x = -60;
+				(projectileList+p)->pos.y = -60;	
 				g_playerScore++;
 			}
 		}
@@ -275,8 +281,8 @@ DetectCollisions(Projectile_t *projectileList, unsigned char numProj,
 	{
 		if (bAlienIntersectPlayer(alienList+a))
 		{
-			//PlayerDeath();
-			InitInvaders();
+			//player 'dies'
+			SetBitUInt8(&g_InvadersState, INVADERS_SCOREBOARD);
 		}
 	}
 }
@@ -336,4 +342,46 @@ RenderInvaders(void)
 	}
 	
 	GFX_SwapBuffers();
+}
+
+char bDrawInvadersScoreboad(void)
+{
+	static unsigned int elapsed = SCORE_BOARD_DELAY + 100;
+	
+	if (GetBitUInt8(&g_InvadersState, INVADERS_SCOREBOARD))
+	{
+		elapsed = 0;
+		//why am I setting bits when state is discrete?
+		ClearBitUInt8(&g_InvadersState, INVADERS_SCOREBOARD);
+	}
+	
+	if (elapsed <= SCORE_BOARD_DELAY)
+	{
+		//draw the score
+		GFX_Clear(0);
+		GFX_DrawTextF(PSTR("SHOT"), 0,0);
+		char number[3];
+		number[2] = '\0';
+		number[1] = (g_playerScore % 10) + 48;
+		number[0] = (g_playerScore / 10) + 48;
+		GFX_DrawText(number, 0, 8);
+		GFX_SwapBuffers();
+		//end drawing
+			
+		elapsed += FRAME_STEP_MS;
+		if (elapsed > SCORE_BOARD_DELAY)
+		{
+			InitInvaders();
+			return 0;
+		}
+		
+		return 1;
+	}
+	
+	return 0;
+}
+
+void PlayerDeath(void)
+{
+	
 }

@@ -16,12 +16,13 @@
 #define MAX_PLAYER_PROJECTILES 2 
 #define PLAYER_PROJECTILE_YSPEED 0.020f
 #define ALIEN_DESCENT_SPEED 0.005f
-#define MAX_ALIENS 2
+#define MAX_ALIENS 4
 #define MAX_AMP 3
 #define MIN_AMP 1.25f
 #define MAX_DIV 8.0f
 #define MIN_DIV 5.0f
-#define DART_PROBABILITY 0.010f
+#define DART_PROBABILITY 0.01f
+#define ALIEN_WAVE_LENGTH_MS 8000
 
 #define FRAME_STEP_MS 17
 
@@ -52,24 +53,30 @@ AlienShip_t g_alienShips[MAX_ALIENS];
 unsigned char g_InvadersState;
 char g_shipX;
 unsigned int g_playerScore;
+float g_alienSpawnProbability;
+unsigned long g_waveTime;
 PROGMEM const char g_shipGlyph = B01011100;
 
 void HandleInvadersInput(void);
+void SpawnAlienWaves(void);
 void UpdateProjectiles(Projectile_t *projectileList, unsigned char num);
 void FirePlayerProjectile(char x, Projectile_t *projectileList, unsigned char num);
 void UpdateAliens(AlienShip_t *alienList, unsigned char num);
 void SpawnRandAlien(AlienShip_t *alienList, unsigned char num);
 void DetectCollisions(Projectile_t *projectileList, unsigned char numProj,
 	AlienShip_t *alienList, unsigned char numAliens);
-char bIntersect(AlienShip_t *alien, Projectile_t *proj);
+char bIntersectAlienProjectile(AlienShip_t *alien, Projectile_t *proj);
+char bAlienIntersectPlayer(AlienShip_t *alien);
 void RenderInvaders(void);
 
 char
 InitInvaders(void)
 {
-	g_shipX = 0;
+	g_shipX = GLIB_GetWheelRegion(13);
 	g_InvadersState = 0;
 	g_playerScore = 0;
+	g_alienSpawnProbability = 0.005f;
+	g_waveTime = GLIB_GetGameMillis() + ALIEN_WAVE_LENGTH_MS;
 	
 	//set projectiles way away and .y < 0 when they're "inactive"
 	unsigned char i;
@@ -102,6 +109,7 @@ InvadersLoop(void)
 		endTime = now + FRAME_STEP_MS;
 	
 	HandleInvadersInput();
+	SpawnAlienWaves();
 	UpdateProjectiles(g_playerBullets, MAX_PLAYER_PROJECTILES);
 	UpdateAliens(g_alienShips, MAX_ALIENS);
 	DetectCollisions(g_playerBullets, MAX_PLAYER_PROJECTILES,
@@ -121,6 +129,23 @@ HandleInvadersInput(void)
 	
 	if (GetBitUInt8(&events, INPUT_PB1_DOWN))
 		SpawnRandAlien(g_alienShips, MAX_ALIENS);
+}
+
+void
+SpawnAlienWaves(void)
+{
+	float decider = RandFloat(0.0f,1.0f);
+	if (decider < g_alienSpawnProbability)
+	{
+		SpawnRandAlien(g_alienShips, MAX_ALIENS);
+	}
+	
+	unsigned long now = GLIB_GetGameMillis();
+	if (now >= g_waveTime)
+	{
+		g_alienSpawnProbability += 0.01;
+		g_waveTime = now + ALIEN_WAVE_LENGTH_MS;
+	}
 }
 
 void 
@@ -235,7 +260,7 @@ DetectCollisions(Projectile_t *projectileList, unsigned char numProj,
 	{
 		for (a = 0; a < numAliens; a++)
 		{
-			if (bIntersect(alienList+a, projectileList+p))
+			if (bIntersectAlienProjectile(alienList+a, projectileList+p))
 			{
 				(alienList+a)->pos.x = -50;
 				(alienList+a)->pos.y = -50;
@@ -245,13 +270,37 @@ DetectCollisions(Projectile_t *projectileList, unsigned char numProj,
 			}
 		}
 	}
+	
+	for (a = 0; a < numAliens; a++)
+	{
+		if (bAlienIntersectPlayer(alienList+a))
+		{
+			//PlayerDeath();
+			InitInvaders();
+		}
+	}
 }
 
-char bIntersect(AlienShip_t *alien, Projectile_t *proj)
+char 
+bIntersectAlienProjectile(AlienShip_t *alien, Projectile_t *proj)
 {
 	if (roundf(alien->pos.x) == roundf(proj->pos.x) &&
 		roundf(proj->pos.y) <= roundf(alien->pos.y) && 
 		roundf(proj->pos.y >= roundf(alien->pos.y - 1)))
+	{
+		return 1;
+	}
+	
+	return 0;
+}
+
+char 
+bAlienIntersectPlayer(AlienShip_t *alien)
+{
+	
+	if ((roundf(alien->pos.x) >= g_shipX && 
+		roundf(alien->pos.x) <= g_shipX + SHIP_WIDTH - 1) &&
+		(roundf(alien->pos.y) == 15 || roundf(alien->pos.y) == 16))
 	{
 		return 1;
 	}

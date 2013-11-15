@@ -3,8 +3,8 @@
 #include "gamelib.h"
 #include <string.h>
 
-#define ESCAPE_SEQUENCE_DELAY 1500
-#define ESCAPE_KEY1 GLIB_PB1
+#define ESCAPE_SEQUENCE_DELAY 10
+#define ESCAPE_KEY1 GLIB_PB2
 #define ESCAPE_KEY2 GLIB_PB2
 
 #define MENU_SCROLL_START_DELAY 750

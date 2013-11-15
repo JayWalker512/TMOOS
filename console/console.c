@@ -16,8 +16,8 @@ static char m_cmdBufferIndex;
 static char m_cmdBufferString[CMD_BUFFER_SIZE];
 
 //console command strings
-PROGMEM char cmd_version[] = "version";
-PROGMEM char cmd_displaypower[] = "dsppow";
+PROGMEM const char cmd_version[] = "version";
+PROGMEM const char cmd_displaypower[] = "dsppow";
 
 int 
 CON_Init(void)

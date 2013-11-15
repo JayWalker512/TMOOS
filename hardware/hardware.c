@@ -13,7 +13,7 @@
 
 //#if defined(__AVR_ATmega32U4__)
 
-PROGMEM unsigned char m_arduinoPinsTable[] = \
+PROGMEM const unsigned char m_arduinoPinsTable[] = \
 {'B',0, 'B',1, 'B',2, 'B',3, 'B', 7,
 'D',0, 'D',1, 'D',2, 'D',3, 'C',6, 'C',7, 'D',6, 'D',7, 'B',4, 'B',5, 'B',6,
 'F',7, 'F',6, 'F',5, 'F',4, 'F',1, 'F',0, 'D',4, 'D',5, 'E',6};

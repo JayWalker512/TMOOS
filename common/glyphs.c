@@ -3,7 +3,7 @@
 #include "avr.h"
 
 /* Alphanumeric 3x5 glyphs. Capital A-Z and 0-9 */
-PROGMEM unsigned char g_alphaNumGlyphs[36][2] = \
+PROGMEM const unsigned char g_alphaNumGlyphs[36][2] = \
 {
 
 	/*      010
@@ -294,4 +294,4 @@ PROGMEM unsigned char g_alphaNumGlyphs[36][2] = \
 	   B10010010 }
 };
 
-PROGMEM unsigned char g_testGlyph = B11010100;
+PROGMEM const unsigned char g_testGlyph = B11010100;

@@ -362,7 +362,7 @@ HandleInput(void)
 	if (GetBitUInt8(&g_pongState, PONG_BALLLAUNCHED) == 0 &&
 		GetBitUInt8(&g_pongState, PONG_WHOSTURN) == 0)
 	{
-		if (GLIB_GetInput(GLIB_PB2))
+		if (GLIB_GetInput(GLIB_PB1))
 		{
 			SetBitUInt8(&g_pongState, PONG_BALLLAUNCHED);
 			char direction = GLIB_GetGameMillis() % 2;

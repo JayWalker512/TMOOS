@@ -9,7 +9,7 @@
 #include <math.h>
 #include <string.h>
 
-#define NUM_GAME_ITEMS 9
+#define NUM_GAME_ITEMS 4
 ProgData_t m_gameDataTable[NUM_GAME_ITEMS];
 
 char 
@@ -22,6 +22,7 @@ GLIB_Init(void)
 	GLIB_GetWheelRegion = &INP_GetWheelRegion;
 	
 	//next set up game data table
+	/*
 	m_gameDataTable[0].name = PSTR("INP");
 	m_gameDataTable[0].initFunc = &GameInputTest;
 	m_gameDataTable[0].loopFunc = &GameInputTest;
@@ -38,26 +39,25 @@ GLIB_Init(void)
 	m_gameDataTable[3].initFunc = &BatteryLevelTest;
 	m_gameDataTable[3].loopFunc = &BatteryLevelTest;
 	
-	m_gameDataTable[4].name = PSTR("PMEM");
-	m_gameDataTable[4].initFunc = &ProgMemTest;
-	m_gameDataTable[4].loopFunc = &ProgMemTest;
+	m_gameDataTable[0].name = PSTR("PMEM");
+	m_gameDataTable[0].initFunc = &ProgMemTest;
+	m_gameDataTable[0].loopFunc = &ProgMemTest;
+	*/
+	m_gameDataTable[0].name = PSTR("PONG");
+	m_gameDataTable[0].initFunc = &InitPongGame;
+	m_gameDataTable[0].loopFunc = &PongGameLoop;
 	
-	m_gameDataTable[5].name = PSTR("PONG");
-	m_gameDataTable[5].initFunc = &InitPongGame;
-	m_gameDataTable[5].loopFunc = &PongGameLoop;
-	
-	m_gameDataTable[6].name = PSTR("MEMV");
-	m_gameDataTable[6].initFunc = &MemViewer;
-	m_gameDataTable[6].loopFunc = &MemViewer;
-	
+	m_gameDataTable[1].name = PSTR("MEMV");
+	m_gameDataTable[1].initFunc = &MemViewer;
+	m_gameDataTable[1].loopFunc = &MemViewer;
 
-	m_gameDataTable[7].name = PSTR("INVA");
-	m_gameDataTable[7].initFunc = &InitInvaders;
-	m_gameDataTable[7].loopFunc = &InvadersLoop;
+	m_gameDataTable[2].name = PSTR("INVA");
+	m_gameDataTable[2].initFunc = &InitInvaders;
+	m_gameDataTable[2].loopFunc = &InvadersLoop;
 
-	m_gameDataTable[8].name = PSTR("GOL");
-	m_gameDataTable[8].initFunc = &GameOfLifeInit;
-	m_gameDataTable[8].loopFunc = &GameOfLifeLoop;
+	m_gameDataTable[3].name = PSTR("GOL");
+	m_gameDataTable[3].initFunc = &GameOfLifeInit;
+	m_gameDataTable[3].loopFunc = &GameOfLifeLoop;
 
 	
 	return 1;

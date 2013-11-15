@@ -69,7 +69,7 @@ GameOfLifeLoop(void)
 	
 	//if 3rd button is pressed, reset the game
 	unsigned char events = INP_PollEvents();
-	if (GetBitUInt8(&events, INPUT_PB2_DOWN))
+	if (GetBitUInt8(&events, INPUT_PB0_DOWN))
 	{
 		GFX_Clear(0);
 		srand(now); 

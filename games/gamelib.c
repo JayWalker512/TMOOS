@@ -10,7 +10,7 @@
 #include <string.h>
 
 #define NUM_GAME_ITEMS 4
-ProgData_t m_gameDataTable[NUM_GAME_ITEMS];
+ProgData_t m_gameDataTable[NUM_GAME_ITEMS + 1];
 
 char 
 GLIB_Init(void)
@@ -26,10 +26,6 @@ GLIB_Init(void)
 	m_gameDataTable[0].name = PSTR("INP");
 	m_gameDataTable[0].initFunc = &GameInputTest;
 	m_gameDataTable[0].loopFunc = &GameInputTest;
-	
-	m_gameDataTable[1].name = PSTR("SMLY");
-	m_gameDataTable[1].initFunc = &InitSmiley;
-	m_gameDataTable[1].loopFunc = &GameSmiley;
 	
 	m_gameDataTable[2].name = PSTR("STXT");
 	m_gameDataTable[2].initFunc = &InitGameScrollText;
@@ -47,11 +43,11 @@ GLIB_Init(void)
 	m_gameDataTable[0].initFunc = &InitPongGame;
 	m_gameDataTable[0].loopFunc = &PongGameLoop;
 	
-	m_gameDataTable[1].name = PSTR("MEMV");
+	m_gameDataTable[1].name = PSTR("MEMVIEW");
 	m_gameDataTable[1].initFunc = &MemViewer;
 	m_gameDataTable[1].loopFunc = &MemViewer;
 
-	m_gameDataTable[2].name = PSTR("INVA");
+	m_gameDataTable[2].name = PSTR("INVADERS");
 	m_gameDataTable[2].initFunc = &InitInvaders;
 	m_gameDataTable[2].loopFunc = &InvadersLoop;
 
@@ -59,6 +55,9 @@ GLIB_Init(void)
 	m_gameDataTable[3].initFunc = &GameOfLifeInit;
 	m_gameDataTable[3].loopFunc = &GameOfLifeLoop;
 
+	m_gameDataTable[4].name = PSTR("SMLY");
+	m_gameDataTable[4].initFunc = &InitSmiley;
+	m_gameDataTable[4].loopFunc = &GameSmiley;
 	
 	return 1;
 }

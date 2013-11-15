@@ -18,7 +18,7 @@
 #define ALIEN_DESCENT_SPEED 0.005f
 #define MAX_ALIENS 4
 #define MAX_AMP 3
-#define MIN_AMP 1.25f
+#define MIN_AMP -3
 #define MAX_DIV 8.0f
 #define MIN_DIV 5.0f
 #define DART_PROBABILITY 0.01f

@@ -8,13 +8,13 @@
 #include "time/time.h"
 #include <stdlib.h>
 
-#define SMILEY_WINK_DELAY_MAX 480000
-#define SMILEY_WINK_DELAY_MIN 300000
+#define SMILEY_WINK_DELAY_MAX 60000
+#define SMILEY_WINK_DELAY_MIN 20000
 #define SMILEY_WINK_LENGTH 500
 
-unsigned long int nextWinkTime;
-unsigned long int elapsed;
-unsigned long int g_lastTime;
+unsigned long nextWinkTime;
+unsigned long elapsed;
+unsigned long g_lastTime;
 
 void SmileyWink(void);
 void SmileyFace(void);
@@ -30,8 +30,8 @@ InitSmiley()
 char
 GameSmiley(void)
 {
-	unsigned long int dt;
-	unsigned long int thisTime;
+	unsigned long dt;
+	unsigned long thisTime;
 	thisTime = GLIB_GetGameMillis();
 	dt = thisTime - g_lastTime;
 	g_lastTime = thisTime;
